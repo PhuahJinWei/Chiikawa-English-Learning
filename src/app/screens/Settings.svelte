@@ -3,6 +3,7 @@
   import { everLearned, everMastered } from '../../learn/schedule.ts';
   import { play, setSoundMethod, soundInfo } from '../audio.svelte.ts';
   import { audioPath } from '../clips.ts';
+  import Ja from '../components/Ja.svelte';
   import { shareText } from '../platform.ts';
   import { app, go, save, versionText } from '../state.svelte.ts';
 
@@ -84,10 +85,10 @@
 
     <h2>学習</h2>
     <section class="card soft list">
-      <div class="item static">
+      <div class="item static stack">
         <span class="label">
           1回に習う新しいフレーズの数
-          <small>今日のレッスンのあと「もっと覚える」で、いくつでも先に進めます。</small>
+          <small><Ja text="今日のレッスンのあと|「もっと覚える」で、|いくつでも|先に進めます。" /></small>
         </span>
         <span class="seg">
           {#each [1, 2, 3] as n (n)}
@@ -99,10 +100,10 @@
 
     <h2>音</h2>
     <section class="card soft list">
-      <div class="item static">
+      <div class="item static stack">
         <span class="label">
           音の再生方式
-          <small>音が出ない・途中で止まるときは「予備」にしてください。</small>
+          <small><Ja text="音が出ない・|途中で止まるときは|「予備」に|してください。" /></small>
         </span>
         <span class="seg words">
           <button class:on={s.sound === 'standard'} onclick={() => setSound('standard')}>標準</button>
@@ -189,6 +190,13 @@
   .item.static {
     flex-wrap: wrap;
   }
+  /* A setting with a note under its name: the control goes under both, lined up with them on the left. */
+  .item.stack {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px 14px;
+  }
   .item + .item {
     border-top: 2px dashed var(--paper-3);
   }
@@ -252,10 +260,12 @@
   }
   .label {
     display: grid;
-    gap: 2px;
+    gap: 4px;
   }
   .label small {
-    font-size: 13px;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.5;
     color: var(--ink-2);
   }
   .text-out {
@@ -273,13 +283,13 @@
   }
   .note {
     margin: 0;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
     text-align: center;
     font-weight: 700;
   }
   .legal {
-    font-size: 12px;
+    font-size: 13px;
   }
   .legal a {
     color: inherit;

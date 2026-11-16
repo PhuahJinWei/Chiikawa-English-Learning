@@ -46,6 +46,15 @@
   );
   /** Today's conversation (会話してみよう), once she has learned enough phrases for one. */
   const talks = $derived(left.filter((s) => s.kind === 'talk').length);
+  /** What today's lesson holds, in one short line under its new phrases: 新しいフレーズ 2・復習 3問・練習 2問. */
+  const rest = $derived(
+    [
+      { name: '新しいフレーズ', n: newTitles.length, unit: '' },
+      { name: '復習', n: reviews, unit: '問' },
+      { name: '練習', n: practice, unit: '問' },
+      { name: '会話', n: talks, unit: '' },
+    ].filter((r) => r.n > 0),
+  );
   // The days she has studied (one stamp each), not the days since she started: a day she skipped does not count.
   const studied = $derived(app.progress.days.length);
   const lv = $derived(englishLevel(app.progress));
@@ -108,6 +117,13 @@
   </div>
 {/if}
 
+<!-- Phrase titles as small labels that wrap whole, never in the middle of a title. -->
+{#snippet chips(titles: string[])}
+  <ul class="phrases">
+    {#each titles as t, i (i)}<li>{t}</li>{/each}
+  </ul>
+{/snippet}
+
 <StepLayout>
   {#snippet body()}
     <div class="card lesson">
@@ -122,21 +138,18 @@
       {#if going}
         <p class="line"><b>途中から</b>：あと{left.length}ステップ</p>
       {:else if doneToday}
-        <p class="line">今日のスタンプをもらいました。</p>
+        <!-- 完了 ✓ and the pink stamp below already say it is done: the card shows what comes next, if anything. -->
         {#if moreTitles.length}
-          <p class="line">
-            <b>次の新しいフレーズ</b>：{#each moreTitles as t, i (i)}<span class="nobreak">「{t}」</span>{/each}
-          </p>
+          <p class="label">次の新しいフレーズ</p>
+          {@render chips(moreTitles)}
+        {:else}
+          <p class="line">今日のスタンプをもらいました。</p>
         {/if}
       {:else if left.length}
-        {#if newTitles.length}
-          <p class="line">
-            <b>新しいフレーズ</b>：{#each newTitles as t, i (i)}<span class="nobreak">「{t}」</span>{/each}
-          </p>
-        {/if}
-        {#if reviews || practice || talks}
-          <p class="line">
-            {#if reviews}<b>復習</b>：{reviews}問{/if}{#if reviews && practice}・{/if}{#if practice}<b>練習</b>：{practice}問{/if}{#if talks && (reviews || practice)}・{/if}{#if talks}<b>会話</b>：{talks}{/if}
+        {#if newTitles.length}{@render chips(newTitles)}{/if}
+        {#if rest.length}
+          <p class="meta">
+            {#each rest as r, i (r.name)}{#if i}<span class="sep">・</span>{/if}{r.name} <b>{r.n}</b>{r.unit}{/each}
           </p>
         {/if}
       {:else}
@@ -144,33 +157,36 @@
       {/if}
     </div>
 
-    <div class="level" aria-label="英語レベル{lv.level}。次のレベルまで、あと{lv.toNext}フレーズ">
-      <span class="level-name">英語レベル<b>{lv.level}</b></span>
-      <span class="track"><span class="fill" style="width:{Math.max(lv.fill * 100, 3)}%"></span></span>
-      <!-- The next level's friend, while one is still to join: something to look forward to (src/learn/partners.ts). -->
-      <span class="next"
-        >あと{lv.toNext}フレーズでレベル{lv.level + 1}{#if joinsNext?.level === lv.level + 1}（{FRIENDS[joinsNext.id].name}が仲間に！）{/if}</span
-      >
-    </div>
+    <!-- Her progress in one card: the English level, then the week's stamps. -->
+    <section class="card soft progress">
+      <div class="level" aria-label="英語レベル{lv.level}。次のレベルまで、あと{lv.toNext}フレーズ">
+        <span class="level-name">英語レベル<b>{lv.level}</b></span>
+        <span class="track"><span class="fill" style="width:{Math.max(lv.fill * 100, 3)}%"></span></span>
+        <!-- The next level's friend, while one is still to join: something to look forward to (src/learn/partners.ts). -->
+        <span class="to-next"
+          >あと<b>{lv.toNext}</b>フレーズでレベル{lv.level + 1}{#if joinsNext?.level === lv.level + 1}、{FRIENDS[joinsNext.id].name}が仲間に！{/if}</span
+        >
+      </div>
 
-    <div class="week-box">
-      <div class="week-head">
-        <span>今週のスタンプ</span>
-        {#if studied}<span class="muted">がんばった日：{studied}日</span>{/if}
+      <div class="week-box">
+        <div class="week-head">
+          <span>今週のスタンプ</span>
+          {#if studied}<span class="studied">がんばった日 <b>{studied}</b>日</span>{/if}
+        </div>
+        <!-- Each day's letter sits in its circle, and a stamped day is inked over in pink like a date stamp. -->
+        <div class="week">
+          {#each week as w (w.d)}
+            <span
+              class="day"
+              class:done={w.done}
+              class:today={w.d === app.today}
+              role="img"
+              aria-label="{w.label}曜日{w.done ? '：スタンプあり' : ''}">{w.label}</span
+            >
+          {/each}
+        </div>
       </div>
-      <!-- Each day's letter sits in its circle, and a stamped day is inked over in pink like a date stamp. -->
-      <div class="week">
-        {#each week as w (w.d)}
-          <span
-            class="day"
-            class:done={w.done}
-            class:today={w.d === app.today}
-            role="img"
-            aria-label="{w.label}曜日{w.done ? '：スタンプあり' : ''}">{w.label}</span
-          >
-        {/each}
-      </div>
-    </div>
+    </section>
 
     <!-- "Ready offline" is for the first open (the install guide tells her to look for it); after her first lesson it
          only takes room. Not being ready yet always shows. -->
@@ -253,33 +269,86 @@
     margin: 0;
     font-size: 14px;
   }
+  /* The new phrases: small labels that wrap whole, never in the middle of a title. */
+  .label {
+    margin: 8px 0 5px;
+    font-size: 13.5px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .phrases {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .label + .phrases {
+    margin-top: 0;
+  }
+  .phrases li {
+    padding: 4px 11px;
+    border-radius: 10px;
+    background: var(--paper-2);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  .meta {
+    margin: 10px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .meta b,
+  .to-next b,
+  .studied b {
+    margin: 0 1px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .sep {
+    margin: 0 3px;
+  }
+  /* Her progress in one card: the level, a dashed line (as between the items of a settings card), the stamps. */
+  .progress {
+    display: grid;
+    gap: 10px;
+    padding: 10px 14px 12px;
+  }
   .level {
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 2px 10px;
-    padding: 0 2px;
+    gap: 4px 12px;
   }
   .level-name {
     font-size: 15px;
     font-weight: 800;
+    line-height: 1.3;
   }
   .level-name b {
-    font-size: 20px;
-    margin-left: 3px;
+    margin-left: 4px;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
   }
-  .next {
+  .to-next {
     grid-column: 1 / -1;
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 700;
+    line-height: 1.4;
     color: var(--ink-2);
   }
   .track {
-    height: 10px;
+    height: 12px;
     border: var(--line) solid var(--ink);
     border-radius: 99px;
     overflow: hidden;
-    background: var(--white);
+    background: var(--paper);
   }
   .fill {
     display: block;
@@ -289,17 +358,25 @@
   .week-box {
     display: grid;
     gap: 6px;
-    padding: 0 2px;
+    padding-top: 10px;
+    border-top: 2px dashed var(--paper-3);
   }
   .week-head {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    align-items: baseline;
+    font-size: 14px;
     font-weight: 800;
+    line-height: 1.4;
+  }
+  .studied {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-2);
   }
   .offline {
     margin: 0;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--ink-2);
     text-align: center;
@@ -311,13 +388,13 @@
     justify-items: center;
   }
   .day {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: 2px dashed var(--ink-3);
     display: grid;
     place-items: center;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
     color: var(--ink-2);
   }
@@ -343,11 +420,43 @@
   .pair .soft {
     min-height: 60px;
   }
-  /* On a short screen (an iPhone SE, or any iPhone in Safari with its bars), a slightly lower button leaves the
-     lesson card, the level and the stamps room to show whole. */
+  /* On a short screen (an iPhone SE, or any iPhone in Safari with its bars), a slightly lower button and tighter
+     cards leave the lesson card and her progress room to show whole. */
   @media (max-height: 700px) {
-    .btn.start {
-      min-height: 54px;
+    .btn.start,
+    .pair .soft {
+      min-height: 52px;
+    }
+    .lesson {
+      padding: 8px 14px 10px;
+    }
+    .lesson-head {
+      margin-bottom: 2px;
+    }
+    .label {
+      margin: 4px 0 3px;
+    }
+    .phrases li {
+      padding: 3px 10px;
+    }
+    .meta {
+      margin-top: 6px;
+    }
+    .progress {
+      gap: 6px;
+      padding: 7px 14px 8px;
+    }
+    .level {
+      gap: 2px 12px;
+    }
+    .week-box {
+      gap: 4px;
+      padding-top: 6px;
+    }
+    .day {
+      width: 29px;
+      height: 29px;
+      font-size: 13px;
     }
   }
 </style>

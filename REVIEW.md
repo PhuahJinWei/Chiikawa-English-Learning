@@ -6,6 +6,19 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Polish: Today, Practice, Notebook, Settings (2026-11-17)
+
+You asked whether the design looks good, modern and neat. The lesson screens did; the four tab screens were plainer and less tidy. This pass changes only how they look.
+
+- **Today:** the new phrases show as small labels that never break in the middle, with one line under them: 「新しいフレーズ 2・復習 1問・練習 1問」. The level and the week's stamps are one card, with a dashed line between them and even text sizes. The level's two lines are now one: 「あと10フレーズでレベル2、うさぎが仲間に！」. After the lesson, the card shows the next phrases; 「今日のスタンプをもらいました。」 only appears when none are left, since 完了 ✓ and the stamp already say it.
+- **Fits a small iPhone:** on an iPhone SE the friends' scene is a little shorter (41% of the screen instead of 44%) and the spacing tighter, so both cards show whole above the button, before and after the lesson, with no scrolling. The line heights are now set, not left to the font, so the iPhone's rounded font measures the same as here.
+- **Practice:** each choice has an icon in a coloured circle (the lesson's own for listening, speaking and conversations). One choice is suggested (おすすめ): 苦手なフレーズ once she has missed a phrase, otherwise 全部まぜて. It is the one yellow sticker button; the others are light, like the quiz's choices.
+- **Notebook:** each phrase (and each note) is one card with the lessons' round ▶, which turns yellow while it plays. A small key, 「●●○ 覚えた度」, explains the bars beside each phrase.
+- **Settings:** a setting with a note puts its control under both, lined up on the left, and the notes have room between their lines.
+- **Line breaks:** the notes and page intros on these screens break only between phrases (「…『もっと覚える』で、／いくつでも先に進めます。」), never mid-word.
+- **Small text raised:** the smallest text on these screens is now 13 to 14px (it was 11 to 13px).
+- **Checked:** the screens at iPhone 13 and SE sizes; tests (117), type check, build, and the WebKit smoke test (28 of 28). Not checked on a real iPhone.
+
 ## もっと覚える: no daily limit on new phrases (2026-11-17)
 
 You asked whether she can move ahead on the same day. She could not: a lesson taught 2 new phrases (up to 3 in 設定), counted per day, and 練習 only reviews. Now she can.

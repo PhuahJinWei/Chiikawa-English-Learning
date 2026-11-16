@@ -5,9 +5,10 @@
   import { notesMessage } from '../../learn/notes.ts';
   import type { Note } from '../../learn/progress.ts';
   import { TOP_BOX } from '../../learn/schedule.ts';
-  import { play } from '../audio.svelte.ts';
+  import { audioState, play } from '../audio.svelte.ts';
   import { audioPath, heartPath } from '../clips.ts';
   import NoteReading from '../components/NoteReading.svelte';
+  import Ja from '../components/Ja.svelte';
   import NoteSheet from '../components/NoteSheet.svelte';
   import PhraseSheet from '../components/PhraseSheet.svelte';
   import StepLayout from '../components/StepLayout.svelte';
@@ -63,6 +64,8 @@
   const PIPS = Array.from({ length: TOP_BOX }, (_, i) => i + 1);
   const sections = $derived(SHELVES.map((s) => ({ shelf: s.topic, items: s.exchanges.filter(learned) })).filter((s) => s.items.length));
   const count = $derived(EXCHANGES.filter(learned).length);
+  /** The clip playing now: its ▶ turns yellow, as in a lesson. */
+  const playing = $derived(audioState.playing?.path ?? '');
   const main = (e: Exchange) => (e.kind === 'say' ? e.short[0] : e.heard[0]);
   const level = (e: Exchange) => {
     const ep = app.progress.ex[e.id];
@@ -77,13 +80,15 @@
     <header>
       <h1 class="page-title">ノート</h1>
       <p class="page-intro">
-        {shelf === 'notes'
-          ? notes.length
-            ? 'メモは▶で聞けます。タップすると書き直せます。'
-            : '送ってもらった英語を貼り付けたり、英語で何て言うか知りたいことを書いたりできます。'
-          : count
-            ? '習ったフレーズは▶で聞けます。タップすると詳しく見られます。'
-            : '「今日」のレッスンで習ったフレーズが、ここにたまっていきます。'}
+        <Ja
+          text={shelf === 'notes'
+            ? notes.length
+              ? 'メモは▶で聞けます。|タップすると|書き直せます。'
+              : '送ってもらった英語を|貼り付けたり、|英語で何て言うか|知りたいことを|書いたりできます。'
+            : count
+              ? '習ったフレーズは|▶で聞けます。|タップすると|詳しく見られます。'
+              : '「今日」のレッスンで|習ったフレーズが、|ここに|たまっていきます。'}
+        />
       </p>
     </header>
   {/snippet}
@@ -139,7 +144,13 @@
       </div>
     {:else}
       <div class="shelf">
-        <p class="count">習ったフレーズ <b>{count}</b> / {EXCHANGES.length}</p>
+        <div class="count-row">
+          <p class="count">習ったフレーズ <b>{count}</b> / {EXCHANGES.length}</p>
+          {#if count}
+            <!-- What the bars beside each phrase mean, said once. -->
+            <span class="legend"><span class="level" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>覚えた度</span>
+          {/if}
+        </div>
         {#each sections as s (s.shelf.id)}
           <section>
             <h3>{s.shelf.title}</h3>
@@ -148,6 +159,7 @@
                 <li class="row">
                   <button
                     class="play"
+                    class:on={playing === audioPath(main(e).en)}
                     onclick={() => play(audioPath(main(e).en), e.kind === 'say' ? 'model' : 'other')}
                     aria-label="「{main(e).en}」を聞く"
                   >
@@ -197,39 +209,69 @@
     display: grid;
     gap: 8px;
   }
-  .row {
+  .count-row {
     display: flex;
-    align-items: stretch;
+    align-items: baseline;
+    justify-content: space-between;
     gap: 8px;
   }
-  .play {
-    flex: none;
-    width: 48px;
+  .legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-2);
+  }
+  .legend .level i {
+    height: 11px;
+  }
+  /* One card per phrase: ▶ on the left, then the phrase, which opens it. */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-left: 9px;
     border: var(--line) solid var(--ink);
     border-radius: var(--r-row);
     border-image: var(--frame-row);
-    background: var(--sky);
+    background: var(--white);
+  }
+  /* ▶ as in a lesson: a round button in a drawn ring, yellow while its phrase plays. */
+  .play {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: var(--line) solid var(--ink);
+    border-radius: 50%;
+    border-image: var(--frame-ring);
+    background: var(--white);
     display: grid;
     place-items: center;
     padding: 0;
   }
+  .play.on {
+    background: var(--sun);
+  }
+  .play:active {
+    transform: scale(0.92);
+  }
   .play svg {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     fill: var(--ink);
     margin-left: 2px;
   }
   .row-main {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    min-height: 58px;
-    padding: 6px 10px 6px 12px;
-    border: var(--line) solid var(--ink);
-    border-radius: var(--r-row);
-    border-image: var(--frame-row);
-    background: var(--white);
+    min-height: 60px;
+    padding: 8px 10px 8px 8px;
+    border: none;
+    background: none;
     text-align: left;
   }
   .text {
@@ -269,7 +311,7 @@
   }
   .later {
     margin: 4px 0 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--ink-2);
   }
@@ -344,7 +386,7 @@
     padding: 0 6px;
     border-radius: 6px;
     background: var(--paper-2);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
     color: var(--ink-2);
   }

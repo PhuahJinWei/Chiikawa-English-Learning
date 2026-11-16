@@ -152,6 +152,13 @@
   .mode-scene {
     --stage-now: clamp(230px, 44dvh, 420px);
   }
+  /* On a short screen (an iPhone SE) the scene gives up a little room, so Today's lesson card and her progress card
+     show whole above the button. */
+  @media (max-height: 700px) {
+    .mode-scene {
+      --stage-now: clamp(220px, 41dvh, 420px);
+    }
+  }
   /* In a lesson the friends react while she works on the cards below, so the cards get most of the room
      (2026-11-17: the band was 32dvh, which left a small iPhone about 250px for the cards). */
   .mode-band {
