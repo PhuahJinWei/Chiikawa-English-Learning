@@ -1,7 +1,7 @@
 # English Learner: plan
 
 Status: building. Approved and started 2026-11-16. After a full review of the first version, the app was restructured (step A: menu, notebook, pause and back, a new lesson shape); see [REVIEW.md](REVIEW.md) for the findings, the revised design and what is still open. Where REVIEW.md and this plan differ, REVIEW.md is current. Not yet run on a real iPhone.
-Name: 「えいごフレンズ」, repo `eigo-friends`.
+Name: 「えいごフレンズ」 (`eigo-friends` inside the code), repository https://github.com/PhuahJinWei/Chiikawa-English-Learning.
 
 ## 1. Goal and ground rules
 
@@ -301,7 +301,7 @@ If New Year week is too busy for a new pack, the packs slide by one week and reh
 Made on 2026-11-16:
 
 1. **Country:** Malaysia.
-2. **Name:** 「えいごフレンズ」, repo `eigo-friends`.
+2. **Name:** 「えいごフレンズ」, repo `eigo-friends` (published as Chiikawa-English-Learning).
 3. **Reading:** assume she cannot read English words.
 4. **Testing:** no iPhone on your side, so she is the tester.
 5. **Voices:** a normal American generated voice, made on your PC. No recordings and no online voice service.

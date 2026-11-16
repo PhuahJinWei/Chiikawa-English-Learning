@@ -6,7 +6,7 @@ import { serviceWorker } from './tools/build/service-worker.ts';
 
 
 export default defineConfig({
-  // Relative paths, so the built app works from the GitHub Pages sub-folder (/eigo-friends/).
+  // Relative paths, so the built app works from the GitHub Pages sub-folder (/Chiikawa-English-Learning/).
   base: './',
   plugins: [svelte(), serviceWorker(), devSave()],
   define: {

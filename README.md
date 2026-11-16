@@ -5,6 +5,9 @@ Listening and speaking only; the plan and the reasoning behind it are in [PLAN.m
 
 The review of the first version and what has been fixed since are in [REVIEW.md](REVIEW.md).
 
+**On the web:** https://phuahjinwei.github.io/Chiikawa-English-Learning/, published from `main` by GitHub Actions
+(one-time setup on GitHub: Settings → Pages → Build and deployment → Source: "GitHub Actions").
+
 Not affiliated with or endorsed by the Chiikawa rights holders. Non-commercial, made for one person.
 
 ## Run it
