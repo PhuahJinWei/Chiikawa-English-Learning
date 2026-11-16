@@ -35,7 +35,8 @@
   const practice = $derived(
     left.filter((s) => (s.kind === 'catch' || s.kind === 'answer') && !s.review && !learning.has(s.exId)).length,
   );
-  const day = $derived(app.progress.started === null ? 1 : app.today - app.progress.started + 1);
+  // The days she has studied (one stamp each), not the days since she started: a day she skipped does not count.
+  const studied = $derived(app.progress.days.length);
   const lv = $derived(englishLevel(app.progress));
   const week = $derived(
     Array.from({ length: 7 }, (_, i) => {
@@ -133,7 +134,7 @@
     <div class="week-box">
       <div class="week-head">
         <span>今週のスタンプ</span>
-        <span class="muted">はじめて{day}日目</span>
+        {#if studied}<span class="muted">がんばった日：{studied}日</span>{/if}
       </div>
       <!-- Each day's letter sits in its circle, and a stamped day is inked over in pink like a date stamp. -->
       <div class="week">

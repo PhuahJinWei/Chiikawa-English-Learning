@@ -6,6 +6,18 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Study days, not days since the start (2026-11-16)
+
+- **Before:** 「はじめて{n}日目」 on Today counted calendar days since her first lesson, skipped days included, and so did the number on the lesson's stamp. Her 8th lesson could get a stamp saying 20日目.
+- **Now:**
+  - Both count the days she studied. Today shows 「がんばった日：{n}日」 (nothing before her first lesson), and the stamp shows her n-th study day.
+  - Next to a stamp, the stamp screen no longer repeats がんばった日, since the stamp shows the same number.
+- **Kept on purpose:** the weekly stamp row. It is where each lesson's stamp lands, and it has no streak to lose. The review schedule still runs on calendar days, as it must.
+- **Checked:**
+  - A record that started 10 days ago with 3 study days shows がんばった日：3日 on Today.
+  - After a lesson, the same record gets a 4日目 stamp (it would have said 10日目).
+  - The tests, the type check, the build and the WebKit smoke test pass.
+
 ## The stage's meadow (2026-11-16)
 
 You said the ground the friends stand on looked plain, not like Chiikawa's world.

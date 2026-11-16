@@ -32,7 +32,9 @@
   let phase = $state<'stamp' | 'bye'>(untrack(() => (daily && !stamped ? 'bye' : 'stamp')));
   const hour = new Date().getHours();
   const late = hour >= 20 || hour < 4;
-  const day = $derived(app.progress.started === null ? 1 : app.today - app.progress.started + 1);
+  // The stamp's number: her study days so far, today's included (not the days since she started, which would count
+  // the days she skipped too).
+  const studied = $derived(app.progress.days.filter((d) => d <= app.today).length);
 
   // The friends' stage grows into a scene for the celebration (App.svelte), and shrinks back when she leaves.
   app.celebrating = true;
@@ -73,16 +75,17 @@
   {#snippet body()}
     <div class="card stamp-card">
       {#if daily && stamped}
-        <div class="stamp" aria-hidden="true">
-          <span class="stamp-day">{day}</span>
+        <div class="stamp" role="img" aria-label="{studied}日目のスタンプ">
+          <span class="stamp-day">{studied}</span>
           <span class="stamp-label">日目</span>
         </div>
       {/if}
+      <!-- がんばった日 only without a stamp: with one, the stamp already shows the same number. -->
       <dl class="stats">
         {#if counts.fresh}<div><dt>新しいフレーズ</dt><dd>{counts.fresh}</dd></div>{/if}
         {#if counts.reviews}<div><dt>復習</dt><dd>{counts.reviews}</dd></div>{/if}
         {#if counts.practice}<div><dt>練習</dt><dd>{counts.practice}</dd></div>{/if}
-        {#if daily}<div><dt>がんばった日</dt><dd>{app.progress.days.length}</dd></div>{/if}
+        {#if daily && !stamped}<div><dt>がんばった日</dt><dd>{app.progress.days.length}</dd></div>{/if}
       </dl>
     </div>
   {/snippet}
