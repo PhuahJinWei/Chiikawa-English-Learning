@@ -168,8 +168,8 @@ describe('Japanese → English shift', () => {
 
   it('self-rated speaking never switches anything; the meter counts learned phrases in levels of ten', () => {
     const p = emptyProgress();
-    p.ex['understand'] = { met: 1, say: { box: 6, best: 6, due: 99, last: 1, reviews: 9, misses: 0 } };
-    expect(shiftStage(UI.yes, p)).toBe(1);
+    p.ex['next'] = { met: 1, say: { box: 6, best: 6, due: 99, last: 1, reviews: 9, misses: 0 } };
+    expect(shiftStage(UI.next, p)).toBe(1);
     expect(englishLevel(p)).toEqual({ level: 1, learned: 0, toNext: LEVEL_SIZE, fill: 0 });
     // The course has no end: the level just keeps counting, whatever its size.
     for (const e of EXCHANGES) p.ex[e.id] = { met: 1, hear: { box: 2, best: 2, due: 9, last: 1, reviews: 1, misses: 0 } };

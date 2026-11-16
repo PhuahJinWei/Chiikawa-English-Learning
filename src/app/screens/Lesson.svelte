@@ -8,7 +8,6 @@
   import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown, type Run, type StepResult } from '../../learn/run.ts';
   import { buildSession, newSaved, resumable, type Step } from '../../learn/session.ts';
   import { onInterruption } from '../audio.svelte.ts';
-  import ConfirmQuit from '../components/ConfirmQuit.svelte';
   import LessonBar from '../components/LessonBar.svelte';
   import PauseSheet from '../components/PauseSheet.svelte';
   import { accentStyle } from '../friends.ts';
@@ -25,10 +24,10 @@
   import { keepAwake } from '../wakelock.svelte.ts';
 
   /**
-   * Runs a lesson step by step, with her in control (REVIEW section 1): ⏸ pauses everything, ← goes back a step,
-   * the pause sheet restarts or skips a step, ✕ asks first. Today's lesson is saved after every step, so ✕, a reload
-   * or a phone call never loses her place; 「続きから」 on the Today screen picks it up again on the same day.
-   * The bookkeeping itself lives in src/learn/run.ts (tested).
+   * Runs a lesson step by step, with her in control (REVIEW section 1): ⏸ pauses everything and opens the menu
+   * (restart or skip a step, go back, stop for today), ← goes back a step. Today's lesson is saved after every step,
+   * so stopping, a reload or a phone call never loses her place; 「続きから」 on the Today screen picks it up again on
+   * the same day. The bookkeeping itself lives in src/learn/run.ts (tested).
    */
   const cfg = untrack(() => app.lesson);
   const daily = cfg.mode === 'daily';
@@ -47,7 +46,6 @@
   );
 
   let restart = $state(0);
-  let quitting = $state(false);
 
   const step = $derived(run.steps[run.index] as Step | undefined);
   const ex = $derived(step ? exchangeById(step.exId) : undefined);
@@ -66,7 +64,7 @@
   });
 
   // The screen stays on while a step runs, not while paused or on the last screen (REVIEW 4.2).
-  const awake = $derived(!lesson.paused && !quitting && run.index < run.steps.length);
+  const awake = $derived(!lesson.paused && run.index < run.steps.length);
   $effect(() => keepAwake(awake));
   onDestroy(() => keepAwake(false));
 
@@ -132,23 +130,17 @@
   }
 
   function leave() {
-    quitting = false;
     resumeLesson();
     calm(cast);
     leaveRun(run, app.progress);
     save();
     go(cfg.returnTo);
   }
-
-  function askQuit() {
-    pauseLesson();
-    quitting = true;
-  }
 </script>
 
 <div class="lesson" style={accentStyle(ex?.host ?? 'hachiware')}>
   {#if step && ex}
-    <LessonBar index={run.index} total={run.steps.length} kind={step.kind} {label} {tag} onQuit={askQuit} onPause={pauseLesson} />
+    <LessonBar index={run.index} total={run.steps.length} kind={step.kind} {label} {tag} onPause={pauseLesson} />
     {#key `${run.index}:${restart}`}
       <div class="slot">
         {#if step.kind === 'meet'}
@@ -166,16 +158,7 @@
     </div>
   {/if}
 
-  {#if quitting}
-    <ConfirmQuit
-      {daily}
-      onYes={leave}
-      onNo={() => {
-        quitting = false;
-        resumeLesson();
-      }}
-    />
-  {:else if lesson.paused && run.index < run.steps.length}
+  {#if lesson.paused && run.index < run.steps.length}
     <PauseSheet
       canBack={run.index > 0}
       {daily}

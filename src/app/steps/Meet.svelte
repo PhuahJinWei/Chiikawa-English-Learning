@@ -1,23 +1,28 @@
 <script lang="ts">
-  import { tick, untrack } from 'svelte';
+  import { untrack } from 'svelte';
   import { UI, replyWord } from '../../content/index.ts';
   import type { Exchange, Line } from '../../content/types.ts';
-  import type { Channel } from '../audio.svelte.ts';
+  import { stop, type Channel } from '../audio.svelte.ts';
   import { audioPath } from '../clips.ts';
   import Bubble from '../components/Bubble.svelte';
   import SpeakerCard from '../components/SpeakerCard.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
   import { act, calm } from '../scene.ts';
-  import { lifetime } from '../script.svelte.ts';
+  import { lifetime, type Run } from '../script.svelte.ts';
   import { sfx } from '../sfx.ts';
 
   /**
-   * Meet: ears first. The phrase plays twice before any text appears; then the card shows it with its meaning and
-   * when it is used (which stays on the card), and it plays once more. Other ways of saying it follow. For an
-   * exchange she answers, the reply comes next, again heard before it is shown (REVIEW 2.3). Every card can be
-   * replayed and every block tapped, and Hachiware asks her to say what she will say out loud, in her own time: there
-   * is no timed repeat-after-me (removed 2026-11-17, your decision).
+   * Meet: ears first, one thing per page, so that each page fits the screen (2026-11-17; it used to be one long page):
+   *
+   * 1. The phrase. It plays twice before any text appears; then the card shows it with its meaning and when it is
+   *    used, and it plays once more. For a phrase she says, the situation is shown first (こんなとき).
+   * 2. Other ways of saying it, if there are any.
+   * 3. For a phrase she answers, the reply: the phrase, then the reply, heard before it is shown (REVIEW 2.3).
+   *
+   * 次へ goes to the next page and ← 前へ to the one before; a page she has seen comes back as she left it, without
+   * playing again. Every card can be replayed and every block tapped. Hachiware asks her to say out loud what she will
+   * say, in her own time: there is no timed repeat-after-me (removed 2026-11-17, your decision).
    */
   let {
     ex: exProp,
@@ -41,23 +46,80 @@
   const others = isSay ? [] : ex.heard.slice(1);
   const replies = ex.kind === 'reply' ? ex.short : [];
 
+  type Page = 'phrase' | 'others' | 'reply';
+  const pages: Page[] = ['phrase'];
+  if (others.length) pages.push('others');
+  if (replies.length) pages.push('reply');
+
+  let at = $state(0);
+  const page = $derived(pages[at]);
+  /** Pages shown to the end once: they come back as she left them. */
+  const seen = new Set<number>();
+
   let say = $state('');
   let look = $state(false);
-  let showCue = $state(false);
   let showMain = $state(false);
   let reveal = $state(false);
-  let shownOthers = $state<Line[]>([]);
+  let shownOthers = $state(0);
   /** Reply cards on screen, and how many of them show their text yet. */
   let shownReplies = $state(0);
   let revealedReplies = $state(0);
   let canGo = $state(false);
   let layout: StepLayout | undefined = $state();
 
-  life.run(async (s) => {
-    calm(cast);
+  /**
+   * What Hachiware says once a page is done, one line at a time: what to do now, then what comes next or that every
+   * card can be heard again. One short line keeps the bubble small, so the cards keep their room.
+   */
+  function doneLines(i: number): string[] {
+    const next = pages[i + 1];
+    const then = next === 'others' ? '次は、ほかの言い方を聞いてみよう' : next === 'reply' ? '次は、答え方を聞いてみよう' : 'タップで何度でも聞けるよ';
+    if (pages[i] === 'phrase') return isSay && !next ? ['まねして、声に出して言ってみよう', then] : [then];
+    if (pages[i] === 'others') return ['どれも同じ場面で使うよ', then];
+    return ['答えをまねして、声に出して言ってみよう', then];
+  }
+
+  /** A page as she left it: everything shown, 次へ ready. */
+  function settle(i: number) {
+    seen.add(i);
+    if (pages[i] === 'phrase') {
+      showMain = true;
+      reveal = true;
+    } else if (pages[i] === 'others') shownOthers = others.length;
+    else shownReplies = revealedReplies = replies.length;
+    look = false;
+    canGo = true;
+    const lines = doneLines(i);
+    life.run(async (s) => {
+      for (const [k, line] of lines.entries()) {
+        if (k) await s.wait(3000);
+        say = line;
+      }
+    });
+  }
+
+  function show(i: number) {
+    if (i !== at) stop(); // what the page she leaves was playing
+    at = i;
+    canGo = false;
+    look = false;
+    layout?.toTop();
+    if (seen.has(i)) {
+      settle(i); // its own run ends whatever the page she left was still doing
+      return;
+    }
+    life.run(async (s) => {
+      calm(cast);
+      if (pages[i] === 'phrase') await phrase(s, i);
+      else if (pages[i] === 'others') await otherWays(s);
+      else await reply(s);
+      settle(i);
+    });
+  }
+
+  async function phrase(s: Run, i: number) {
     if (isSay) {
       say = 'こんなとき、どうする？';
-      showCue = true;
       act(ex.scene.heard);
       await s.wait(2600);
       say = 'そんなときは、こう言おう。まずは聞いてね';
@@ -75,84 +137,93 @@
     await s.play(audioPath(main.en), channel);
     await s.wait(500);
     reveal = true;
-    // With a reply still to come, she goes on only once she has met it.
-    canGo = !replies.length;
     look = true;
     sfx.pop();
+    // Once she has heard and seen it, she may go on (or say she knows it) while it plays once more.
+    seen.add(i);
+    canGo = true;
     say = '意味と使い方は、カードに書いてあるよ';
     await s.wait(800);
     await s.play(audioPath(main.en), channel);
-    for (const l of others) {
-      await s.wait(1000);
-      shownOthers = [...shownOthers, l];
+  }
+
+  async function otherWays(s: Run) {
+    shownOthers = 0;
+    say = 'ほかにも、こんな言い方があるよ';
+    await s.wait(900);
+    for (const [i, l] of others.entries()) {
+      shownOthers = i + 1;
+      sfx.pop();
+      await s.wait(400);
       await s.play(audioPath(l.en), 'other');
+      await s.wait(700);
     }
-    if (replies.length) {
-      if (others.length) {
-        say = 'どれも同じ場面で使うよ';
-        await s.wait(1600);
-      }
-      say = 'こう言われたら、こう答えよう。まずは聞いてね';
-      for (const [i, line] of replies.entries()) {
-        shownReplies = i + 1;
-        await s.wait(900);
-        act(ex.scene.replies?.[i]);
-        await s.play(audioPath(line.en), 'model');
-        revealedReplies = i + 1;
-        sfx.pop();
-        await tick();
-        layout?.toEnd();
-        await s.wait(600);
-        await s.play(audioPath(line.en), 'model');
-      }
-      canGo = true;
-      say = '答えをまねして、声に出して言ってみよう。タップで何度でも聞けるよ';
-      return;
+  }
+
+  async function reply(s: Run) {
+    shownReplies = revealedReplies = 0;
+    say = 'こう言われたら、こう答えよう。まずは聞いてね';
+    await s.wait(1000);
+    await s.play(audioPath(main.en), channel);
+    for (const [i, line] of replies.entries()) {
+      shownReplies = i + 1;
+      await s.wait(800);
+      act(ex.scene.replies?.[i]);
+      await s.play(audioPath(line.en), 'model');
+      revealedReplies = i + 1;
+      sfx.pop();
+      await s.wait(600);
+      await s.play(audioPath(line.en), 'model');
     }
-    if (isSay) say = 'まねして、声に出して言ってみよう。タップで何度でも聞けるよ';
-    else say = others.length ? 'どれも同じ場面で使うよ。タップで何度でも聞けるよ' : 'タップで何度でも聞けるよ';
-    layout?.toTop();
-  });
+  }
+
+  show(0);
 </script>
 
-<StepLayout {onBack} bind:this={layout}>
+<StepLayout onBack={at > 0 ? () => show(at - 1) : onBack} bind:this={layout}>
   {#snippet top()}
-    <Bubble who={ex.host} text={say}>
+    <Bubble who={ex.host} text={say} named={false}>
       {#snippet before()}
         {#if look}<span class="lead"><UiWord t={UI.look} size="bubble" /></span>{/if}
       {/snippet}
     </Bubble>
   {/snippet}
   {#snippet body()}
-    {#if showCue}
-      <div class="card soft cue">
-        <span class="chip">こんなとき</span>
-        <p class="cue-text">{ex.cue}</p>
-      </div>
+    {#if page === 'phrase'}
+      {#if isSay}
+        <div class="card soft cue">
+          <span class="chip">こんなとき</span>
+          <span class="cue-text">{ex.cue}</span>
+        </div>
+      {/if}
+      {#if showMain}
+        <SpeakerCard kind={channel} line={main} {reveal} note={reveal ? ex.when : ''} badge={isSay ? replyWord(ex) : ''}>
+          {#snippet aside()}
+            {#if onKnown && reveal}
+              <!-- She already knows it: it comes back for a check in a few days instead of being taught today. -->
+              <button class="known" onclick={onKnown}>もう知ってる</button>
+            {/if}
+          {/snippet}
+        </SpeakerCard>
+      {/if}
+    {:else if page === 'others'}
+      <p class="title">ほかの言い方</p>
+      {#each others.slice(0, shownOthers) as l (l.en)}
+        <SpeakerCard kind="other" line={l} compact />
+      {/each}
+    {:else}
+      <!-- The phrase, small, so the reply has the room: she hears them as a pair. -->
+      <SpeakerCard kind={channel} line={main} compact />
+      <p class="title">答え方</p>
+      {#each replies.slice(0, shownReplies) as line, i (line.en)}
+        <SpeakerCard kind="model" {line} reveal={i < revealedReplies} badge={replyWord(ex)} />
+      {/each}
     {/if}
-    {#if showMain}
-      <SpeakerCard kind={channel} line={main} {reveal} note={reveal ? ex.when : ''} badge={isSay ? replyWord(ex) : ''} />
-    {/if}
-    {#if shownOthers.length}<p class="others-title">ほかの言い方</p>{/if}
-    {#each shownOthers as l (l.en)}
-      <SpeakerCard kind="other" line={l} compact />
-    {/each}
-    {#if shownReplies}<p class="others-title">答え方</p>{/if}
-    {#each replies.slice(0, shownReplies) as line, i (line.en)}
-      <SpeakerCard kind="model" {line} reveal={i < revealedReplies} badge={replyWord(ex)} />
-    {/each}
   {/snippet}
   {#snippet primary()}
-    {#if onKnown}
-      <!-- Once she has heard and seen the phrase, she can say she knows it already: it comes back for a check in a
-           few days instead of being taught today. -->
-      <div class="pair">
-        <button class="btn soft known keep" disabled={!reveal} onclick={onKnown}>もう<wbr />知ってる</button>
-        <button class="btn primary" disabled={!canGo} onclick={onDone}><UiWord t={UI.next} /></button>
-      </div>
-    {:else}
-      <button class="btn primary" disabled={!canGo} onclick={onDone}><UiWord t={UI.next} /></button>
-    {/if}
+    <button class="btn primary" disabled={!canGo} onclick={() => (at < pages.length - 1 ? show(at + 1) : onDone())}>
+      <UiWord t={UI.next} />
+    </button>
   {/snippet}
 </StepLayout>
 
@@ -162,7 +233,13 @@
     font-size: 20px;
     margin-bottom: 2px;
   }
+  /* The situation, in one line above the phrase: it sets the scene, the phrase is what she learns. */
   .cue {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding: 8px 12px;
     background: var(--paper-2);
   }
   /* Chips have no outline, and their usual cream is this card's own colour: white here. */
@@ -170,29 +247,26 @@
     background: var(--white);
   }
   .cue-text {
-    margin: 8px 0 0;
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 800;
   }
-  .pair {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 10px;
-  }
-  .known {
-    width: auto;
-    padding: 8px 12px;
-  }
-  /* On a narrow phone, beside ← 前へ, the label goes on two lines (もう / 知ってる) so 次へ stays the widest button. */
-  @media (max-width: 359px) {
-    .known {
-      max-width: 90px;
-    }
-  }
-  .others-title {
-    margin: 4px 0 -4px;
+  .title {
+    margin: 2px 0 -4px;
     font-size: 13px;
     font-weight: 800;
     color: var(--ink-2);
+  }
+  /* A small link beside ▶, not a button: going on (次へ) is the main way, and this one skips the phrase. */
+  .known {
+    min-height: 44px;
+    margin-right: 6px;
+    padding: 0 6px;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 </style>

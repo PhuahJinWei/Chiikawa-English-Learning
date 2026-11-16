@@ -24,9 +24,6 @@ export const UI = {
   allDone: ui('All|done!', '全部終わり！', ['done']),
   /** When a new phrase is shown in Meet. */
   look: ui('Look!', '見て！', ['look']),
-  /** The quit question's buttons. */
-  yes: ui('Yes.', 'はい', ['understand']),
-  no: ui('No.', 'いいえ', ['understand']),
   /** The replay button: asking again IS the phrase she is learning. */
   sorry: ui('Sorry,|what?', 'もう一回聞く', ['sorry-what']),
   /** The end of the daily lesson is a little conversation: Hachiware hands over the stamp... */

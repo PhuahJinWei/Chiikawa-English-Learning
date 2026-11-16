@@ -96,8 +96,9 @@ async function phoneChecks(browser, phone) {
     await page.getByText('一時停止中').waitFor();
     await page.getByRole('button', { name: '続ける' }).click();
     await page.getByText('一時停止中').waitFor({ state: 'hidden' });
-    await page.getByRole('button', { name: 'やめる' }).click();
-    await page.getByRole('dialog').getByRole('button').nth(1).click();
+    // Stopping is in the pause menu (there is no ✕ in the lesson bar since 2026-11-17).
+    await page.getByRole('button', { name: '一時停止' }).click();
+    await page.getByRole('button', { name: '今日はここまでにする' }).click();
     await page.getByRole('button', { name: '続きから' }).waitFor();
   });
 

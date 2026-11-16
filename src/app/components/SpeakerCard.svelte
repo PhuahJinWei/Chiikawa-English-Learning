@@ -22,6 +22,7 @@
     note = '',
     hiddenNote = '',
     compact = false,
+    aside,
     children,
   }: {
     kind: Channel;
@@ -33,6 +34,8 @@
     /** Said under the ♪ marks while the English is hidden, so a card with no text never looks broken. */
     hiddenNote?: string;
     compact?: boolean;
+    /** Something small in the top row, beside ▶ (もう知ってる): it takes no room of its own. */
+    aside?: Snippet;
     children?: Snippet;
   } = $props();
 
@@ -73,6 +76,7 @@
       {/if}
     </span>
     {#if badge}<span class="badge">{badge}</span>{/if}
+    {#if aside}<span class="aside">{@render aside()}</span>{/if}
     {#if playable}
       <button class="play" class:on={!!mine} onclick={() => play(path, kind)} aria-label="もう一回聞く">
         {@render glyph()}
@@ -162,8 +166,12 @@
     place-items: center;
     padding: 0;
   }
-  .head .play {
+  .head .play,
+  .aside {
     margin-left: auto;
+  }
+  .aside + .play {
+    margin-left: 0;
   }
   .play.on {
     background: var(--sun);

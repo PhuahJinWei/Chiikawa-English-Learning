@@ -18,7 +18,9 @@
    * Answer: someone asks (voice only, no text), she answers out loud, then hears the model. Only then does she rate
    * herself, and the rating buttons ignore taps for a moment, so a double tap can never rate before the model was
    * heard (REVIEW 1.9, 1.10). Hachiware asks her to say the model once more, in her own time (no timed turn since
-   * 2026-11-17). Longer answers are steps of their own, built from the short one. The phone does not judge her speech.
+   * 2026-11-17), and then, separately, how her first answer went. Once she checks, the question shrinks to one row
+   * so the model is in full view. Longer answers are steps of their own, built from the short one. The phone does not
+   * judge her speech.
    */
   let { ex: exProp, onDone, onBack }: { ex: Exchange; onDone: (r: StepResult) => void; onBack: (() => void) | null } = $props();
   const ex = untrack(() => exProp);
@@ -29,6 +31,8 @@
   const word = replyWord(ex);
 
   let phase = $state<'ask' | 'failed' | 'turn' | 'model' | 'rate'>('ask');
+  /** 答え合わせ was tapped: the model is playing or has played. */
+  const checking = $derived(phase === 'model' || phase === 'rate');
   let say = $state('');
   let shown = $state(0);
   let armed = $state(false);
@@ -75,9 +79,11 @@
         await s.play(audioPath(l.en), 'model');
         await s.wait(500);
       }
+      // One thing at a time: say the model, then rate the first answer.
       phase = 'rate';
-      say = 'まねして、もう一度言ってみてね。最初の答えはどうだった？';
-      await s.wait(600);
+      say = 'まねして、もう一度言ってみてね';
+      await s.wait(2200);
+      say = '最初の答えはどうだった？';
       armed = true;
     });
   }
@@ -89,7 +95,7 @@
 
 <StepLayout onBack={phase === 'rate' ? null : onBack}>
   {#snippet top()}
-    <Bubble who={ex.host} text={say}>
+    <Bubble who={ex.host} text={say} named={false}>
       {#snippet before()}
         {#if phase === 'ask' && question}<span class="lead"><UiWord t={UI.listen} size="bubble" /></span>{/if}
       {/snippet}
@@ -97,12 +103,19 @@
   {/snippet}
   {#snippet body()}
     {#if question}
-      <SpeakerCard kind="other" line={question} reveal={phase === 'rate'} hiddenNote="英語は答え合わせのあとに出ます" />
+      <!-- Once she checks, the question shrinks to one row, so the model answer has the room. -->
+      <SpeakerCard
+        kind="other"
+        line={question}
+        reveal={checking}
+        compact={checking}
+        hiddenNote="英語は答え合わせのあとに出ます"
+      />
       {#if phase === 'turn'}<SorryButton line={question} channel="other" />{/if}
     {:else}
       <div class="card soft cue">
         <span class="chip">こんなとき</span>
-        <p class="cue-text">{ex.cue}</p>
+        <span class="cue-text">{ex.cue}</span>
       </div>
     {/if}
     {#each ex.short.slice(0, shown) as line (line.en)}
@@ -136,7 +149,13 @@
     font-size: 20px;
     margin-bottom: 2px;
   }
+  /* The situation in one line, as in 新しいフレーズ. */
   .cue {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding: 8px 12px;
     background: var(--paper-2);
   }
   /* Chips have no outline, and their usual cream is this card's own colour: white here. */
@@ -144,8 +163,7 @@
     background: var(--white);
   }
   .cue-text {
-    margin: 8px 0 0;
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 800;
   }
   .rates {

@@ -3,8 +3,10 @@
   import { STEP_ICONS } from '../step-kinds.ts';
 
   /**
-   * The lesson's top row: ✕ (stop, asks first), which step this is and how far she is, ⏸ (pause). Each kind of step
-   * has its own name and icon, so she always knows what she is doing (the Focus design, 2026-11-16).
+   * The lesson's top row: which step this is and how far she is, and ⏸, which pauses and opens the lesson's menu
+   * (restart, back, skip, stop for today). Each kind of step has its own name and icon, so she always knows what she
+   * is doing (the Focus design, 2026-11-16). There is no ✕ beside it since 2026-11-17: stopping is in the menu, one
+   * button fewer on every step.
    */
   let {
     index,
@@ -12,7 +14,6 @@
     kind,
     label,
     tag = '',
-    onQuit,
     onPause,
   }: {
     index: number;
@@ -20,16 +21,12 @@
     kind: Step['kind'];
     label: string;
     tag?: string;
-    onQuit: () => void;
     onPause: () => void;
   } = $props();
   const shown = $derived(Math.min(index + 1, total));
 </script>
 
 <div class="bar">
-  <button class="icon" onclick={onQuit} aria-label="やめる">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-  </button>
   <div class="where">
     <div class="what">
       <svg class="kind" viewBox="0 0 24 24" aria-hidden="true">{#each STEP_ICONS[kind] as d (d)}<path {d} />{/each}</svg>

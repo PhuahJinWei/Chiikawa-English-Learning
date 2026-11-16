@@ -147,8 +147,10 @@
   .mode-scene {
     --stage-now: clamp(230px, 44dvh, 420px);
   }
+  /* In a lesson the friends react while she works on the cards below, so the cards get most of the room
+     (2026-11-17: the band was 32dvh, which left a small iPhone about 250px for the cards). */
   .mode-band {
-    --stage-now: clamp(180px, 32dvh, 300px);
+    --stage-now: clamp(140px, 24dvh, 230px);
   }
   .mode-strip {
     --stage-now: clamp(120px, 18dvh, 170px);

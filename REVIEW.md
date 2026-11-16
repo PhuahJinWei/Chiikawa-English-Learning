@@ -6,6 +6,41 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Calmer lesson screens (2026-11-17)
+
+You found the app overwhelming at times. Today, the notebook, practice and settings were calm; the lesson steps were crowded. At iPhone 13 size the cards got about 306px of the 812, and 新しいフレーズ for "Hi!" had 722px of cards in that window. Every element also had the same thick outline, so nothing said where to look first. Five changes, all at your go-ahead:
+
+- **More room for the cards:**
+  - The friends' band in a lesson is smaller: 24% of the screen's height (140 to 230px) instead of 32% (180 to 300px). The friends still show from head to waist.
+  - Hachiware's bubble no longer carries her name: its tail already points at her.
+- **新しいフレーズ in short pages:**
+  - The phrase; then other ways of saying it, if any; then, for a phrase she answers, the reply, heard with the phrase in a small row above it.
+  - 次へ goes to the next page, ← 前へ to the one before. A page she has seen comes back as she left it, without playing again.
+  - At the end of each page Hachiware says what comes next (「次は、答え方を聞いてみよう」).
+- **Shorter 使うとき notes:** the ten over 60 characters now have 48 to 61, so the first page fits an iPhone SE. **Your content to check** (before → after):
+  - sorry-what: dropped 「わかったふりをしないで」 and the repeated "Sorry, what?"; kept why "Sorry" alone sounds like an apology.
+  - dont-understand: kept the difference from "Sorry, what?"; dropped 「身ぶりや翻訳アプリで助けてくれるはず！」.
+  - welcome: 「お礼への返事（どういたしまして）にも "Welcome!" を使うよ」 → 「「どういたしまして」にも使うよ」.
+  - auntie: dropped 「親しみをこめて」 and the glosses; "Uncle" is now 「（男の人は "Uncle"）」.
+  - no-need: dropped the gloss （しなくていいよ）, which the card shows.
+  - some-more: dropped 「すすめられたら」; 「どちらもていねいだよ」.
+  - excuse-me: 「…人に声をかけるときに使うよ。謝るときは "Sorry"、お礼は "Thank you" だよ。」
+  - youre-welcome: 「お礼を言われたら、これで返そう。おみやげを渡して "Thank you!" と言われたときもね！」
+  - say-it: dropped 「ゲームでも何でも、」.
+  - have-you-eaten: dropped the quoted 「ごはん食べた？」, which the card shows.
+- **One thick line per screen:** the main card and the main button keep it. ← 前へ, the quiz's choices and 「もう一回聞く」 are light buttons in a thin line with no shadow. 「もう一回聞く」 is a small pill under the sound card, not a full-width button.
+- **Fewer controls:**
+  - No ✕ in the lesson bar: ⏸ opens the menu, which has 「今日はここまでにする」. The quit question went with it, and so did its はい / いいえ, the only place those two app words were shown (16 app words now).
+  - 「もう知ってる」 is a small link beside ▶ on the phrase's card, not a button beside 次へ.
+- **答えてみよう:**
+  - Once she taps 答え合わせ, the question shrinks to one row, so the model answer is in full view.
+  - Hachiware asks one thing at a time: 「まねして、もう一度言ってみてね」, then 「最初の答えはどうだった？」 as the rating buttons wake up.
+  - Hachiware's closing lines in 新しいフレーズ also come one at a time, so her bubble stays one line.
+- **Checked:**
+  - Every lesson step in the browser at iPhone 13 (375×812) and iPhone SE (375×667) size: each page of 新しいフレーズ fits without scrolling on both, including "Sorry, what?" with the longest note. The quiz scrolls by a few pixels on the SE, with all three choices in view.
+  - ← 前へ between pages, and もう知ってる (12 steps became 7).
+  - The tests (97), the type check, the build and the WebKit smoke test (26 of 26; it now stops a lesson from the pause menu).
+
 ## GPL licence (2026-11-17)
 
 The pronunciation engine behind note readings, eSpeak NG, is under GPL-3.0-or-later. You chose to license the app the same way rather than swap the engine.

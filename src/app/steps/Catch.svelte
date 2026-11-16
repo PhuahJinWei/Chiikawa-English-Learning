@@ -22,7 +22,8 @@
   /**
    * Catch: she hears a line with no text, and only then do the choices appear (REVIEW 2.4). Either "what does it
    * mean?" (Japanese choices) or, for an exchange with a reply, "what would you answer?" (reply choices she can play).
-   * A miss gets a worried Chiikawa, the key part again, and another try. Passed = right on the first try.
+   * A miss gets a worried Chiikawa, the key part again, and another try. Passed = right on the first try. The choices
+   * are light buttons in a thin line, so the sound card stays the main thing on the page (2026-11-17).
    */
   let {
     ex: exProp,
@@ -165,9 +166,9 @@
 <StepLayout {onBack}>
   {#snippet top()}
     {#if solved}
-      <Bubble who={ex.host}><span class="cheer"><UiWord t={cheer} size="bubble" /></span></Bubble>
+      <Bubble who={ex.host} named={false}><span class="cheer"><UiWord t={cheer} size="bubble" /></span></Bubble>
     {:else}
-      <Bubble who={ex.host} text={say}>
+      <Bubble who={ex.host} text={say} named={false}>
         {#snippet before()}
           {#if !heard}<span class="lead"><UiWord t={UI.listen} size="bubble" /></span>{/if}
         {/snippet}
@@ -185,7 +186,7 @@
         {#each options as o, i (o.key)}
           {#if o.reply}
             <div class="reply-row">
-              <button class="btn option" class:oops={wrong.includes(i)} disabled={busy || wrong.includes(i)} onclick={() => choose(i)}>
+              <button class="btn light option" class:oops={wrong.includes(i)} disabled={busy || wrong.includes(i)} onclick={() => choose(i)}>
                 <Blocks line={o.reply} size="sm" />
               </button>
               <button class="play" onclick={() => o.reply && play(audioPath(o.reply.en), 'model')} aria-label="この答えを聞く">
@@ -193,7 +194,7 @@
               </button>
             </div>
           {:else}
-            <button class="btn option" class:oops={wrong.includes(i)} disabled={busy || wrong.includes(i)} onclick={() => choose(i)}>
+            <button class="btn light option" class:oops={wrong.includes(i)} disabled={busy || wrong.includes(i)} onclick={() => choose(i)}>
               {o.ja}
             </button>
           {/if}

@@ -4,9 +4,9 @@
 
    The hand-drawn lines are pictures laid around each element with border-image (sketch.css, drawn by
    tools/sketch/sketch.mjs), each with the corner radius that matches it (--r-*). They come in three weights, so the
-   page does not get heavy: thick for buttons, speech bubbles and the main cards; medium for small controls; thin for
-   lists, page sections and ordinary word blocks. Chips have no line at all. The plain `border` under each frame is
-   only what shows if a frame cannot be drawn. */
+   page does not get heavy: thick for the main buttons, speech bubbles and the main cards; medium for small controls;
+   thin for lists, page sections, ordinary word blocks and the light buttons that help on a lesson page. Chips have no
+   line at all. The plain `border` under each frame is only what shows if a frame cannot be drawn. */
 :root {
   --paper: #fff9ef;
   --paper-2: #fcefd8;
@@ -115,6 +115,20 @@ input {
   font-size: 15px;
   background: var(--paper-2);
   border-image: var(--frame-btn-soft);
+}
+/* Light: a thin line and no shadow, for what helps on a lesson page (← 前へ, hear it again, the quiz's choices),
+   so the step's one main button stays the thing that stands out (2026-11-17). */
+.btn.light {
+  min-height: 48px;
+  font-size: 16px;
+  background: var(--white);
+  border-radius: var(--r-row);
+  border-image: var(--frame-row);
+}
+.btn.light:active:not(:disabled) {
+  transform: scale(0.97);
+  border-image: var(--frame-row);
+  background: var(--paper-2);
 }
 .btn.good {
   background: var(--mint);

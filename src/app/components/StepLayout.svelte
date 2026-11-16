@@ -79,7 +79,7 @@
     {#if onBack || primary}
       <div class="final">
         {#if onBack}
-          <button class="btn soft back" onclick={() => backArmed && onBack?.()} aria-label="前のステップへ">
+          <button class="btn light back" onclick={() => backArmed && onBack?.()} aria-label="前へ戻る">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
             前へ
           </button>
