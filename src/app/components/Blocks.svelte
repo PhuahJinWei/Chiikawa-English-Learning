@@ -129,7 +129,8 @@
     line-height: 1.15;
     padding: 4px 10px 5px;
     border: 2px solid var(--ink);
-    border-radius: var(--hand-sm);
+    border-radius: var(--r-word);
+    border-image: var(--frame-word);
     background: var(--white);
     white-space: nowrap;
     transition:
@@ -142,6 +143,7 @@
   .hi .word {
     background: var(--accent);
     border-width: 3px;
+    border-image: var(--frame-word-hi);
     padding: 3px 9px 4px;
   }
   .hi .kana {

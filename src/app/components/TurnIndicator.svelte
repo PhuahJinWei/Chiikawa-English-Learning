@@ -31,7 +31,8 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 3px solid var(--ink);
+    border: var(--line) solid var(--ink);
+    border-image: var(--frame-ring);
     background: var(--sun);
     display: grid;
     place-items: center;

@@ -32,10 +32,11 @@
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    border: 2px solid var(--ink);
-    border-radius: 14px;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-btn);
+    /* A button's frame: the same hand-drawn line, with the hard shadow that lifts it off the page. */
+    border-image: var(--frame-btn);
     background: var(--white);
-    box-shadow: 0 3px 0 var(--ink);
     font-size: 14px;
     font-weight: 800;
     line-height: 1.45;

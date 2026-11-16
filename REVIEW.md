@@ -6,6 +6,50 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Hand-drawn outlines (2026-11-16)
+
+You asked for thicker, uneven outlines to fit the Chiikawa look. The 2px lines were also thinner than the friends' own outlines on the stage, so the page and the friends did not match.
+
+- **How they are drawn:**
+  - Each outline is a small picture drawn once on your PC by `tools/sketch/sketch.mjs` and laid around an element with CSS `border-image` (`src/app/sketch.css`, about 22 KB).
+  - Nothing is drawn while the app runs: no SVG filters, which iPhone Safari would redo on every scroll and animation frame. The WebKit self-check still measures about 60 fps.
+- **Three weights, so the page does not get heavy:**
+  - Thick: buttons (with their hard shadow drawn in the same line, so a press shrinks it), speech bubbles, the main cards and the panel's top edge.
+  - Medium: round buttons, switches, tabs and highlighted words.
+  - Thin: list rows, page sections, the こんなとき cards and ordinary words.
+  - Chips have no line. The stamp is an unevenly inked rubber-stamp ring.
+- **Built to survive any size:**
+  - The wobble lives in the corners and in one gentle bow along each top and bottom edge. The sides are straight, because a one-line bubble squeezes its sides to a few pixels and any wobble there turned into a notch.
+  - Each line always covers its element's own edge, so no fill shows outside it. Tests check this and that `sketch.css` is up to date.
+  - Scrolling areas got 4px of room at the sides, so they no longer cut the lines' outer edge.
+- **Checked:**
+  - In the browser pane at 375×812 and 375×667: the tour, Today, every lesson step, pause, the finish, the notebook, the phrase sheet, a memo, practice, settings, backup, the self-check and the install guide.
+  - WebKit screenshots at iPhone 13 size, the tests (88), the type check, the build and the WebKit smoke test (26 of 26).
+- **Found while checking, and fixed (below):** on a small iPhone, Today's 「はじめる」 button cut off the stamps. The last commit did the same.
+
+## Today on small iPhones (2026-11-16)
+
+- **What was wrong:**
+  - Measured in WebKit, with the home-screen app's status bar and home bar set as on the phone.
+  - Today's middle part did not fit on an iPhone SE: 31px short on the first day, 57px later (the lesson card grows by a line for reviews).
+  - It was also 33 to 37px short on an iPhone 13 in Safari. From the 12 mini up it fit.
+  - The friends' scene could not give the room back: the camera fits the friends to the scene's height, so a shorter scene shrinks them and Hachiware's greeting would cover their heads.
+- **Changes:**
+  - Each day's letter now sits in its stamp circle (one row instead of two). A stamped day is inked pink over its letter, and today's ring is darker.
+  - 復習 and 練習 share one line in the lesson card.
+  - 「✓ ネットなしでも使えます」 shows until her first lesson is done, which covers the install guide's "look for it on Today". 「ネットなしで使う準備中…」 still always shows.
+  - Today's spacing is slightly tighter, and on a short screen its button is 54px instead of 60px.
+  - Any step whose cards are cut off at the bottom (lessons included) now fades out there, so it reads as "scroll for more" instead of broken. The fade goes away at the end, and never shows when only empty space is below.
+- **Now:**
+  - Everything shows on every home-screen size, including the SE, and on an iPhone 13 in Safari.
+  - Only an SE in Safari (548px tall, with Safari's bars) still scrolls, behind the fade.
+  - On the real phone its own font may shift this by a few pixels either way.
+- **Checked:**
+  - WebKit at five iPhone sizes, on a first day and a busier second day.
+  - A lesson step on the SE size, with and without the fade.
+  - Today's finished state in the browser pane.
+  - The tests (88), the type check, the build and the WebKit smoke test (26 of 26).
+
 ## The Focus redesign (2026-11-16)
 
 A fresh walk-through as a new learner found the app usable but not confusion-proof, with the friends shrunk to a strip where she spends most time. You chose direction A, "Focus" (PLAN.md section 6):
@@ -27,11 +71,11 @@ A fresh walk-through as a new learner found the app usable but not confusion-pro
   - The backup page has ✕ at the top.
   - The level says what it counts ("あと10フレーズでレベル2"), and the stamps are labelled.
   - Phrase titles never break mid-word.
-  - On a small iPhone, nothing on Today is cut off.
+  - On a small iPhone, nothing on Today is cut off (true in the browser pane at 375×667; a later check in WebKit found the stamps still cut, fixed in "Today on small iPhones" above).
   - The quiz only offers a sound-alike wrong choice from phrases she has learned.
   - The tour is three pages, including how a lesson goes.
   - Buttons are 44px or more.
-- **Lighter look:** 2px lines instead of 3px, and flat cards with shadows only on buttons.
+- **Lighter look:** 2px lines instead of 3px, and flat cards with shadows only on buttons. (The lines have since become the hand-drawn outlines above.)
 - **Checked** at 375×812 and 375×667 through the tour, Today, every lesson step, the finish, the notebook, practice, settings and backup, plus the tests, the build and the WebKit smoke test.
 
 ## After step E: the content rework (2026-11-16)

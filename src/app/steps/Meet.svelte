@@ -84,7 +84,7 @@
   {/snippet}
   {#snippet body()}
     {#if showCue}
-      <div class="card cue">
+      <div class="card soft cue">
         <span class="chip">こんなとき</span>
         <p class="cue-text">{ex.cue}</p>
       </div>
@@ -110,6 +110,10 @@
   }
   .cue {
     background: var(--paper-2);
+  }
+  /* Chips have no outline, and their usual cream is this card's own colour: white here. */
+  .cue .chip {
+    background: var(--white);
   }
   .cue-text {
     margin: 8px 0 0;

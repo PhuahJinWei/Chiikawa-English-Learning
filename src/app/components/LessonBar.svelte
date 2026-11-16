@@ -57,6 +57,7 @@
     height: 44px;
     border-radius: 50%;
     border: var(--line) solid var(--ink);
+    border-image: var(--frame-ring);
     background: var(--white);
     display: grid;
     place-items: center;

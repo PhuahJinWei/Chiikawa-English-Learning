@@ -123,7 +123,8 @@
     width: 104px;
     height: 104px;
     border-radius: 50%;
-    border: 4px solid #e0607a;
+    /* An unevenly inked rubber-stamp ring (tools/sketch/sketch.mjs), drawn just inside the circle. */
+    background: var(--stamp) center / 100% 100% no-repeat, #fff7f8;
     color: #e0607a;
     display: flex;
     flex-direction: column;
@@ -131,7 +132,6 @@
     justify-content: center;
     transform: rotate(-12deg);
     animation: stamp 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
-    background: #fff7f8;
   }
   @keyframes stamp {
     from {

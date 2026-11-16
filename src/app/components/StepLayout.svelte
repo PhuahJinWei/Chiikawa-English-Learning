@@ -29,6 +29,28 @@
     scroller?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // While a card is cut off at the bottom, the bottom fades out: on a small phone the buttons can cut the last card,
+  // and the fade shows that the page scrolls, instead of looking broken. Only cards count, not the empty space below.
+  let more = $state(false);
+  $effect(() => {
+    if (!scroller || !content) return;
+    const box = scroller;
+    const cards = content;
+    const check = () => {
+      const last = cards.lastElementChild;
+      more = !!last && last.getBoundingClientRect().bottom > box.getBoundingClientRect().bottom + 1;
+    };
+    const ro = new ResizeObserver(check);
+    ro.observe(box);
+    ro.observe(cards);
+    box.addEventListener('scroll', check, { passive: true });
+    check();
+    return () => {
+      ro.disconnect();
+      box.removeEventListener('scroll', check);
+    };
+  });
+
   $effect(() => {
     if (!content) return;
     const box = content;
@@ -44,7 +66,7 @@
 
 <div class="step">
   {#if top}<div class="top">{@render top()}</div>{/if}
-  <div class="scroll" bind:this={scroller}>
+  <div class="scroll" class:more bind:this={scroller}>
     <div class="content" bind:this={content}>{@render body()}</div>
   </div>
   <div class="actions">
@@ -86,13 +108,18 @@
     padding: 0 16px;
     mask-image: linear-gradient(transparent 0, #000 12px);
   }
+  .scroll.more {
+    mask-image: linear-gradient(transparent 0, #000 12px, #000 calc(100% - 26px), transparent);
+  }
   .content {
     display: grid;
     gap: 10px;
     padding: 10px 0 8px;
   }
+  /* Today, the only step without a bubble on top: a little tighter, so its card, level and stamps fit a small phone. */
   .step:not(:has(.top)) .content {
-    padding-top: 16px;
+    padding-top: 10px;
+    gap: 8px;
   }
   .actions {
     flex: none;

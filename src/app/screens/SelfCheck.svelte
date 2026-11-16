@@ -218,7 +218,7 @@
   <SheetHead title="動作チェック" onClose={() => go('settings')} />
   <div class="scroll">
     {#each rows as r (r.id)}
-      <div class="card row-card">
+      <div class="card soft row-card">
         <span class="mark {r.status}" aria-hidden="true">{MARKS[r.status]}</span>
         <div class="text">
           <strong>{r.label}</strong>
@@ -244,7 +244,7 @@
       </div>
     {/each}
     {#if lost}
-      <div class="card row-card">
+      <div class="card soft row-card">
         <span class="mark ng" aria-hidden="true">✕</span>
         <div class="text">
           <strong>読めなかった記録があります</strong>
@@ -275,7 +275,9 @@
     display: grid;
     gap: 12px;
     align-content: start;
-    padding: 8px 0 12px;
+    /* 4px of room at each side, so the drawn lines' outer edge (they reach 2px outside each card) is not cut off. */
+    margin: 0 -4px;
+    padding: 8px 4px 12px;
   }
   .row-card {
     display: flex;
@@ -288,7 +290,8 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    border: 3px solid var(--ink);
+    border: var(--line) solid var(--ink);
+    border-image: var(--frame-ring);
     display: grid;
     place-items: center;
     font-weight: 900;

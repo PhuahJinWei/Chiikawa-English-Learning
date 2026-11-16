@@ -36,7 +36,7 @@
       </div>
     {:else if isIOS}
       <ol class="steps">
-        <li class="card">
+        <li class="card soft">
           <span class="num">1</span>
           <div>
             <p>画面の下の<b>共有ボタン</b>か <b>⋯</b> をタップ</p>
@@ -47,7 +47,7 @@
             </div>
           </div>
         </li>
-        <li class="card">
+        <li class="card soft">
           <span class="num">2</span>
           <div>
             <p>「<b>ホーム画面に追加</b>」をタップ</p>
@@ -58,13 +58,13 @@
             </div>
           </div>
         </li>
-        <li class="card">
+        <li class="card soft">
           <span class="num">3</span>
           <div>
             <p>右上の「<b>追加</b>」をタップ。これからは、ホーム画面の<b>えいごフレンズ</b>から開いてください。</p>
           </div>
         </li>
-        <li class="card">
+        <li class="card soft">
           <span class="num">4</span>
           <div>
             <p>はじめてホーム画面から開くときは、<b>ネットにつながった状態</b>で開いてください。</p>
@@ -98,7 +98,9 @@
     display: grid;
     gap: 12px;
     align-content: start;
-    padding: 8px 0 12px;
+    /* 4px of room at each side, so the drawn lines' outer edge (they reach 2px outside each card) is not cut off. */
+    margin: 0 -4px;
+    padding: 8px 4px 12px;
   }
   .steps {
     list-style: none;
@@ -117,7 +119,8 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    border: 3px solid var(--ink);
+    border: var(--line) solid var(--ink);
+    border-image: var(--frame-ring);
     background: var(--sun);
     display: grid;
     place-items: center;

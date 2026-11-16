@@ -48,7 +48,7 @@
 
 {#if compact && line && reveal && !hideEnglish}
   <!-- One row: for other ways of saying something, and lists. -->
-  <div class="card {kind} row-card" class:busy={!!mine}>
+  <div class="card soft {kind} row-card" class:busy={!!mine}>
     <div class="row-text">
       <Blocks {line} size="sm" tappable channel={kind} sweep={mine ? { startedAt: mine.startedAt, durationMs: mine.durationMs } : null} />
       <span class="row-ja">{line.ja}</span>
@@ -152,6 +152,7 @@
     height: 44px;
     border-radius: 50%;
     border: var(--line) solid var(--ink);
+    border-image: var(--frame-ring);
     background: var(--white);
     display: grid;
     place-items: center;

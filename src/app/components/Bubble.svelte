@@ -63,7 +63,9 @@
     return () => stage.setTalking(id, false);
   });
 
-  // Keep the tail under the speaker as they move.
+  // Keep the tail under the speaker as they move, and on the straight part of the edge: the drawn tail reaches 16px
+  // either way (TAIL_REACH in tools/sketch/sketch.mjs), and the bubble's corners curve away within 22px.
+  const CLEAR = 16 + 22 + 1;
   $effect(() => {
     const id = who;
     const place = () => {
@@ -71,7 +73,7 @@
       const head = stage.headAnchor(id);
       const box = el.getBoundingClientRect();
       const x = head ? head.x - box.left : box.width / 2;
-      el.style.setProperty('--tail-x', `${Math.max(28, Math.min(box.width - 28, x))}px`);
+      el.style.setProperty('--tail-x', `${Math.max(CLEAR, Math.min(box.width - CLEAR, x))}px`);
     };
     place();
     return stage.onFrame(place);
@@ -91,41 +93,30 @@
     position: relative;
     background: var(--white);
     border: var(--line) solid var(--ink);
-    border-radius: var(--hand);
+    border-radius: var(--r-bubble);
+    border-image: var(--frame-bubble);
     padding: 7px 13px 9px;
     font-size: 15px;
     line-height: 1.5;
     font-weight: 700;
   }
-  .bubble::before,
-  .bubble::after {
+  /* The drawn tail (tools/sketch/sketch.mjs): the bubble's edge is 16px down the picture, where its sides run into
+     the bubble's line and its white covers that line between them. The picture's top is 18px above the inside of the
+     2px border, so its 16px mark lands on the edge; a tail that points down is the same picture turned over. */
+  .bubble::before {
     content: '';
     position: absolute;
     left: var(--tail-x);
-    border-style: solid;
+    top: -18px;
+    width: 32px;
+    height: 23px;
+    background: var(--tail) no-repeat;
     transform: translateX(-50%);
-  }
-  .bubble::before {
-    top: -15px;
-    border-width: 0 10px 15px 10px;
-    border-color: transparent transparent var(--ink) transparent;
-  }
-  .bubble::after {
-    top: -11px;
-    border-width: 0 7px 12px 7px;
-    border-color: transparent transparent var(--white) transparent;
   }
   .down::before {
     top: auto;
-    bottom: -15px;
-    border-width: 15px 10px 0 10px;
-    border-color: var(--ink) transparent transparent transparent;
-  }
-  .down::after {
-    top: auto;
-    bottom: -11px;
-    border-width: 12px 7px 0 7px;
-    border-color: var(--white) transparent transparent transparent;
+    bottom: -18px;
+    transform: translateX(-50%) scaleY(-1);
   }
   .name {
     display: block;

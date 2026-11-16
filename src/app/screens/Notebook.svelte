@@ -203,8 +203,9 @@
   .play {
     flex: none;
     width: 48px;
-    border-radius: 16px;
-    border: 2px solid var(--ink);
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-row);
+    border-image: var(--frame-row);
     background: var(--sky);
     display: grid;
     place-items: center;
@@ -223,8 +224,9 @@
     gap: 8px;
     min-height: 58px;
     padding: 6px 10px 6px 12px;
-    border: 2px solid var(--ink);
-    border-radius: 16px;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-row);
+    border-image: var(--frame-row);
     background: var(--white);
     text-align: left;
   }
@@ -286,11 +288,16 @@
     font-weight: 700;
     line-height: 1.5;
   }
+  /* A hand-drawn outline around both tabs. The ink behind them shows in the gap between them (the divider) and fills
+     any room the drawn line leaves along their edges. */
   .shelves {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 2px;
     border: 3px solid var(--ink);
-    border-radius: 14px;
+    border-radius: var(--r-ctl);
+    border-image: var(--frame-ctl);
+    background: var(--ink);
     overflow: hidden;
   }
   .shelves button {
@@ -299,9 +306,6 @@
     background: var(--white);
     font-weight: 900;
     font-size: 15px;
-  }
-  .shelves button + button {
-    border-left: 2px solid var(--ink);
   }
   .shelves button.on {
     background: var(--sun);

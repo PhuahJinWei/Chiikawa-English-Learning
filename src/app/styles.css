@@ -1,7 +1,12 @@
-/* えいごフレンズ: a picture-book look. Cream paper, fine ink-brown lines instead of black (2px, closer to the
-   original's light line than the first version's 3px), rounded type, sticker buttons with a hard shadow that squash
-   when pressed. Cards lie flat on the page; only buttons cast a shadow, so what can be tapped stands out. One fixed
-   light theme, like a printed book. */
+/* えいごフレンズ: a picture-book look. Cream paper, thick ink-brown lines drawn by hand, like the friends' own
+   outlines, rounded type, sticker buttons with a hard shadow that squash when pressed. Cards lie flat on the page;
+   only buttons cast a shadow, so what can be tapped stands out. One fixed light theme, like a printed book.
+
+   The hand-drawn lines are pictures laid around each element with border-image (sketch.css, drawn by
+   tools/sketch/sketch.mjs), each with the corner radius that matches it (--r-*). They come in three weights, so the
+   page does not get heavy: thick for buttons, speech bubbles and the main cards; medium for small controls; thin for
+   lists, page sections and ordinary word blocks. Chips have no line at all. The plain `border` under each frame is
+   only what shows if a frame cannot be drawn. */
 :root {
   --paper: #fff9ef;
   --paper-2: #fcefd8;
@@ -23,9 +28,8 @@
   --accent: #cfe8fa;
   --accent-2: #86bfe9;
 
+  /* Plain lines, for small marks (dots, tracks) and under the hand-drawn frames. */
   --line: 2px;
-  --hand: 26px 21px 28px 23px / 23px 28px 21px 26px;
-  --hand-sm: 15px 12px 16px 13px / 13px 16px 12px 15px;
   --font: 'Hiragino Maru Gothic ProN', 'Hiragino Maru Gothic Pro', 'BIZ UDPGothic', 'Yu Gothic UI', Meiryo, system-ui, sans-serif;
   --font-en: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', 'Arial Rounded MT Bold', 'Segoe UI', system-ui, sans-serif;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -82,20 +86,20 @@ input {
   width: 100%;
   padding: 8px 16px;
   border: var(--line) solid var(--ink);
-  border-radius: 20px 17px 21px 18px / 18px 21px 17px 20px;
+  border-radius: var(--r-btn);
+  /* The outline and the hard shadow under it are one picture; a press swaps in the one with less shadow. */
+  border-image: var(--frame-btn);
   background: var(--white);
   font-size: 18px;
   font-weight: 800;
   line-height: 1.2;
-  box-shadow: 0 3px 0 var(--ink);
   transition:
     transform 0.09s ease-out,
-    box-shadow 0.09s ease-out,
     background-color 0.2s;
 }
 .btn:active:not(:disabled) {
   transform: translateY(2px) scale(0.98, 0.95);
-  box-shadow: 0 1px 0 var(--ink);
+  border-image: var(--frame-btn-down);
 }
 .btn:disabled {
   opacity: 0.45;
@@ -110,7 +114,7 @@ input {
   min-height: 48px;
   font-size: 15px;
   background: var(--paper-2);
-  box-shadow: 0 2px 0 var(--ink);
+  border-image: var(--frame-btn-soft);
 }
 .btn.good {
   background: var(--mint);
@@ -132,13 +136,17 @@ input {
   gap: 10px;
 }
 
-/* ── Cards */
+/* ── Cards: the main ones in a thick line; .soft for the sections of a page and the items of a list. */
 .card {
   position: relative;
   background: var(--white);
   border: var(--line) solid var(--ink);
-  border-radius: var(--hand);
+  border-radius: var(--r-card);
+  border-image: var(--frame-card);
   padding: 12px 14px 14px;
+}
+.card.soft {
+  border-image: var(--frame-card-soft);
 }
 
 /* A page's own heading, on pages without the friends' stage (Notebook, Practice, Settings, Backup). */
@@ -160,12 +168,12 @@ input {
   display: inline-block;
 }
 
+/* A label: colour only, no line, so it never competes with the outlined card it sits on. */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px 3px 8px;
-  border: 1.5px solid var(--ink);
+  padding: 4.5px 11.5px 4.5px 9.5px;
   border-radius: 99px;
   background: var(--paper-2);
   font-size: 13px;

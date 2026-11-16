@@ -173,10 +173,14 @@
     position: relative;
     flex: 1;
     min-height: 0;
-    padding: 12px 16px 10px;
+    padding: 10px 16px 10px;
     background: var(--paper);
-    border-top: var(--line) solid var(--ink);
+    /* The hand-drawn edge along the top. The top border is as deep as that line, so sheets laid over the panel
+       (they fill the inside of its border) never cover it; the padding above is 2px less to make up for it. */
+    border: 0 solid var(--ink);
+    border-top-width: 4px;
     border-radius: 26px 26px 0 0;
+    border-image: var(--frame-edge);
     display: flex;
     flex-direction: column;
   }
@@ -190,6 +194,7 @@
   }
   .mode-none .panel {
     border-top: none;
+    border-image: none;
     border-radius: 0;
     padding-top: calc(14px + var(--safe-top));
   }

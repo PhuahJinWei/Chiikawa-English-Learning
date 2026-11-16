@@ -96,7 +96,7 @@
     {#if done}<p class="note done">{done}</p>{/if}
 
     <h2>バックアップする</h2>
-    <section class="card box">
+    <section class="card soft box">
       <p class="muted">
         {app.progress.backedUp === null ? 'まだバックアップしていません。' : `前回のバックアップ：${dayLabel(app.progress.backedUp)}`}
       </p>
@@ -110,7 +110,7 @@
     </section>
 
     <h2>バックアップから戻す</h2>
-    <section class="card box">
+    <section class="card soft box">
       <button class="btn soft" onclick={pasteFromClipboard}>コピーしたバックアップを貼り付ける</button>
       <textarea class="text" rows="3" placeholder="または、ここに貼り付けてください" bind:value={pasted} oninput={check}></textarea>
       {#if readProblem}<p class="note">{readProblem}</p>{/if}
@@ -129,7 +129,7 @@
     </section>
 
     <h2>はじめからやり直す</h2>
-    <section class="card box">
+    <section class="card soft box">
       {#if erase === 0}
         <button class="btn soft oops" onclick={() => (erase = 1)}>記録をすべて消す</button>
       {:else if erase === 1}
@@ -169,7 +169,9 @@
     display: grid;
     gap: 12px;
     align-content: start;
-    padding: 4px 0 12px;
+    /* 4px of room at each side, so the drawn lines' outer edge (they reach 2px outside each card) is not cut off. */
+    margin: 0 -4px;
+    padding: 4px 4px 12px;
   }
   .intro,
   .box p {

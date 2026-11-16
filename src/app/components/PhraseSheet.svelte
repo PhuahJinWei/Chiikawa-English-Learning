@@ -35,7 +35,7 @@
   <SheetHead title={ex.title} {onClose} />
   <div class="scroll">
     <p class="when"><span class="label">使うとき</span>{ex.when}</p>
-    {#if ex.cue}<div class="card cue"><span class="chip">こんなとき</span><p>{ex.cue}</p></div>{/if}
+    {#if ex.cue}<div class="card soft cue"><span class="chip">こんなとき</span><p>{ex.cue}</p></div>{/if}
 
     {#if ex.heard.length}
       <h3>相手が言うフレーズ</h3>
@@ -47,7 +47,7 @@
       {#each ex.short as line (line.en)}<SpeakerCard kind="model" {line} badge={replyWord(ex)} compact />{/each}
     {/if}
 
-    <div class="card strength">
+    <div class="card soft strength">
       <div><span>聞く</span><span class="dots">{#each dots(ep?.hear?.box) as on, i (i)}<i class:on></i>{/each}</span></div>
       {#if ex.kind !== 'understand'}
         <div><span>話す</span><span class="dots">{#each dots(ep?.say?.box) as on, i (i)}<i class:on></i>{/each}</span></div>
@@ -81,7 +81,9 @@
     display: grid;
     gap: 10px;
     align-content: start;
-    padding: 6px 0 12px;
+    /* 4px of room at each side, so the drawn lines' outer edge (they reach 2px outside each card) is not cut off. */
+    margin: 0 -4px;
+    padding: 6px 4px 12px;
   }
   h3 {
     margin: 8px 0 -2px;
@@ -104,6 +106,10 @@
   }
   .cue {
     background: var(--paper-2);
+  }
+  /* Chips have no outline, and their usual cream is this card's own colour: white here. */
+  .cue .chip {
+    background: var(--white);
   }
   .cue p {
     margin: 6px 0 0;

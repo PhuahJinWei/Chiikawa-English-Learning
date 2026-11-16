@@ -96,6 +96,7 @@ iPhone's own English voice until you voice it:
 | `art/` | Source art: the star portrait the icons are made from |
 | `tools/audio/` | The audio generator (Kokoro, runs locally); `phonemes.mjs` writes the phonemes the readings are checked against, without audio; `say-as.mjs` respells words the voice misreads; `pitch.mjs` measures each clip's pitch for the review page |
 | `tools/sheet/` | Makes the content sheet |
+| `tools/sketch/` | Draws the hand-drawn outlines into `src/app/sketch.css` (don't edit that file: change the tool, then `npm run sketch`; a test fails while it is out of date) |
 | `tools/build/` | Service worker (content versions; unchanged files are reused on update) and dev-only save helper |
 | `tools/smoke/` | WebKit smoke tests (Playwright, its own install) |
-| `tests/` | Unit tests: content rules (how steps link up, highlights, quiz meanings, readings, audio), the content sheet, schedule and lessons, lesson bookkeeping, sound recovery, backups |
+| `tests/` | Unit tests: content rules (how steps link up, highlights, quiz meanings, readings, audio), the content sheet, the hand-drawn outlines, schedule and lessons, lesson bookkeeping, sound recovery, backups |

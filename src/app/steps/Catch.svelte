@@ -265,7 +265,8 @@
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    border: 2px solid var(--ink);
+    border: var(--line) solid var(--ink);
+    border-image: var(--frame-ring);
     background: var(--blush);
     display: grid;
     place-items: center;

@@ -1,4 +1,5 @@
 import { mount } from 'svelte';
+import './app/sketch.css';
 import './app/styles.css';
 import App from './app/App.svelte';
 import { errorText, noteError } from './app/errors.ts';

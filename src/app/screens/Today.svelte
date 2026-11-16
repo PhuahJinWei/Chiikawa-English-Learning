@@ -114,8 +114,11 @@
             <b>新しいフレーズ</b>：{#each newTitles as t, i (i)}<span class="nobreak">「{t}」</span>{/each}
           </p>
         {/if}
-        {#if reviews}<p class="line"><b>復習</b>：{reviews}問</p>{/if}
-        {#if practice}<p class="line"><b>練習</b>：{practice}問</p>{/if}
+        {#if reviews || practice}
+          <p class="line">
+            {#if reviews}<b>復習</b>：{reviews}問{/if}{#if reviews && practice}・{/if}{#if practice}<b>練習</b>：{practice}問{/if}
+          </p>
+        {/if}
       {:else}
         <p class="line">今日の分はありません。</p>
       {/if}
@@ -132,17 +135,23 @@
         <span>今週のスタンプ</span>
         <span class="muted">はじめて{day}日目</span>
       </div>
+      <!-- Each day's letter sits in its circle, and a stamped day is inked over in pink like a date stamp. -->
       <div class="week">
         {#each week as w (w.d)}
-          <span class="wday" class:today={w.d === app.today}>
-            <span class="circle" class:done={w.done}>{w.done ? '✓' : ''}</span>
-            <span class="wlabel">{w.label}</span>
-          </span>
+          <span
+            class="day"
+            class:done={w.done}
+            class:today={w.d === app.today}
+            role="img"
+            aria-label="{w.label}曜日{w.done ? '：スタンプあり' : ''}">{w.label}</span
+          >
         {/each}
       </div>
     </div>
 
-    {#if app.offline === 'ready'}
+    <!-- "Ready offline" is for the first open (the install guide tells her to look for it); after her first lesson it
+         only takes room. Not being ready yet always shows. -->
+    {#if app.offline === 'ready' && !app.progress.days.length}
       <p class="offline">✓ ネットなしでも使えます</p>
     {:else if app.offline === 'preparing'}
       <p class="offline">ネットなしで使う準備中…</p>
@@ -161,7 +170,7 @@
     {/if}
   {/snippet}
   {#snippet primary()}
-    <button class="btn primary" onclick={begin}>
+    <button class="btn primary start" onclick={begin}>
       {going ? '続きから' : doneToday || !left.length ? '練習する' : 'はじめる'}
     </button>
   {/snippet}
@@ -237,7 +246,7 @@
   }
   .track {
     height: 10px;
-    border: 1.5px solid var(--ink);
+    border: var(--line) solid var(--ink);
     border-radius: 99px;
     overflow: hidden;
     background: var(--white);
@@ -269,35 +278,36 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 4px;
+    justify-items: center;
   }
-  .wday {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-  .circle {
+  .day {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     border: 2px dashed var(--ink-3);
     display: grid;
     place-items: center;
-    font-weight: 900;
-    color: #e0607a;
-  }
-  .circle.done {
-    border: 2px solid #e0607a;
-    background: #fff7f8;
-  }
-  .wlabel {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
     color: var(--ink-2);
   }
-  .today .wlabel {
+  /* Today, before its stamp: a darker ring. */
+  .day.today {
+    border-color: var(--ink-2);
     color: var(--ink);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  }
+  /* A stamped day: the same rubber-stamp ring as the stamp at the end of a lesson, small. */
+  .day.done {
+    border: none;
+    background: var(--stamp-sm) center / 100% 100% no-repeat, #fff7f8;
+    color: #e0607a;
+    font-weight: 900;
+  }
+  /* On a short screen (an iPhone SE, or any iPhone in Safari with its bars), a slightly lower button leaves the
+     lesson card, the level and the stamps room to show whole. */
+  @media (max-height: 700px) {
+    .btn.start {
+      min-height: 54px;
+    }
   }
 </style>

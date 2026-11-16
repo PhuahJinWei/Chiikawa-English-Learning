@@ -69,7 +69,7 @@
   <h1 class="page-title">設定</h1>
   <div class="scroll">
     <h2>表示</h2>
-    <section class="card list">
+    <section class="card soft list">
       <button class="item" onclick={() => toggle('allJapanese')} role="switch" aria-checked={s.allJapanese}>
         <span>表示をすべて日本語に戻す</span>
         <span class="switch" class:on={s.allJapanese}></span>
@@ -81,7 +81,7 @@
     </section>
 
     <h2>学習</h2>
-    <section class="card list">
+    <section class="card soft list">
       <div class="item static">
         <span>1日に習う新しいフレーズの数</span>
         <span class="seg">
@@ -93,7 +93,7 @@
     </section>
 
     <h2>音</h2>
-    <section class="card list">
+    <section class="card soft list">
       <div class="item static">
         <span class="label">
           音の再生方式
@@ -113,7 +113,7 @@
     {/if}
 
     <h2>アプリ</h2>
-    <section class="card list">
+    <section class="card soft list">
       <button class="item" onclick={() => go('backup')}><span>記録のバックアップ</span><span class="go">›</span></button>
       <button class="item" onclick={tour}><span>使い方をもう一度見る</span><span class="go">›</span></button>
       <button class="item" onclick={() => go('selfcheck')}><span>動作チェック</span><span class="go">›</span></button>
@@ -153,7 +153,9 @@
     display: grid;
     gap: 12px;
     align-content: start;
-    padding: 4px 0 12px;
+    /* 4px of room at each side, so the drawn lines' outer edge (they reach 2px outside each card) is not cut off. */
+    margin: 0 -4px;
+    padding: 4px 4px 12px;
   }
   .list {
     padding: 4px 0;
@@ -189,6 +191,7 @@
     height: 30px;
     border-radius: 99px;
     border: 3px solid var(--ink);
+    border-image: var(--frame-pill);
     background: var(--paper-2);
     transition: background-color 0.2s;
   }
@@ -210,10 +213,14 @@
   .switch.on::after {
     transform: translateX(22px);
   }
+  /* Like the notebook's tabs: a hand-drawn outline, and the ink behind the buttons shows as the divider. */
   .seg {
     display: inline-flex;
+    gap: 2px;
     border: 3px solid var(--ink);
-    border-radius: 14px;
+    border-radius: var(--r-ctl);
+    border-image: var(--frame-ctl);
+    background: var(--ink);
     overflow: hidden;
   }
   .seg button {
@@ -223,9 +230,6 @@
     background: var(--white);
     font-weight: 900;
     font-size: 16px;
-  }
-  .seg button + button {
-    border-left: 2px solid var(--ink);
   }
   .seg button.on {
     background: var(--sun);

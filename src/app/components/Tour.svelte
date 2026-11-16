@@ -81,8 +81,11 @@
     gap: 12px;
     padding: 16px 16px calc(14px + var(--safe-bottom));
     background: var(--paper);
-    border-top: var(--line) solid var(--ink);
+    /* The same hand-drawn top edge as the page panel (App.svelte). */
+    border: 0 solid var(--ink);
+    border-top-width: 4px;
     border-radius: 26px 26px 0 0;
+    border-image: var(--frame-edge);
     overflow-y: auto;
   }
   .body {
@@ -115,7 +118,8 @@
     gap: 12px;
     padding: 8px 12px;
     border: var(--line) solid var(--ink);
-    border-radius: 14px;
+    border-radius: var(--r-row);
+    border-image: var(--frame-row);
     background: var(--white);
   }
   .steps svg {

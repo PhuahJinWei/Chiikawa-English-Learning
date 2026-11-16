@@ -10,7 +10,8 @@
     "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
     "test": "vitest run",
     "smoke": "node tools/smoke/smoke.mjs",
-    "sheet": "node tools/sheet/make-sheet.mjs"
+    "sheet": "node tools/sheet/make-sheet.mjs",
+    "sketch": "node tools/sketch/make-sketch.mjs"
   },
   "dependencies": {
     "three": "0.186.1"

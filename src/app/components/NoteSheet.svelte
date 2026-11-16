@@ -159,7 +159,9 @@
     display: grid;
     gap: 10px;
     align-content: start;
-    padding: 6px 0 12px;
+    /* 4px of room at each side, so the drawn lines' outer edge (they reach 2px outside each card) is not cut off. */
+    margin: 0 -4px;
+    padding: 6px 4px 12px;
   }
   .field {
     display: grid;
@@ -178,8 +180,9 @@
     font-weight: 700;
     line-height: 1.5;
     padding: 10px 12px;
-    border: 3px solid var(--ink);
-    border-radius: 14px;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-row);
+    border-image: var(--frame-row);
     background: var(--white);
     color: var(--ink);
     resize: none;
