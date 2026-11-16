@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Icon maker (dev only)</title>
+    <style>
+      body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: #e9e4dc; color: #66432f; }
+      #out { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; margin: 12px 0; }
+      canvas.icon { border-radius: 22%; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
+      button { font: inherit; padding: 8px 14px; margin-right: 8px; }
+    </style>
+  </head>
+  <body>
+    <p>Development only: makes the icons from art/portrait_hoshi.png and saves them to public/icons/.</p>
+    <div id="out"></div>
+    <button id="save">Save icons</button>
+    <span id="msg"></span>
+    <script type="module" src="./src/dev/icon-maker.ts"></script>
+  </body>
+</html>

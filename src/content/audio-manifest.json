@@ -1,0 +1,2141 @@
+{
+ "settings": {
+  "voice": "af_heart",
+  "speed": 1,
+  "process": 3,
+  "mp3": "cbr64"
+ },
+ "clips": {
+  "a-drink-q": {
+   "text": "a drink?",
+   "ms": 810,
+   "phonemes": "ɐ dɹˈɪŋk",
+   "pitch": {
+    "start": 200,
+    "low": 133,
+    "end": 201
+   }
+  },
+  "a-little": {
+   "text": "A little.",
+   "ms": 710,
+   "phonemes": "ɐ lˈɪɾəl",
+   "pitch": {
+    "start": 296,
+    "low": 98,
+    "end": 190
+   }
+  },
+  "a-little-its-good-x": {
+   "text": "A little. It's good!",
+   "ms": 1260,
+   "phonemes": "ɐ lˈɪɾəl ɪts ɡˈʊd",
+   "pitch": {
+    "start": 214,
+    "low": 152,
+    "end": 156
+   }
+  },
+  "a-moment": {
+   "text": "a moment.",
+   "ms": 870,
+   "phonemes": "ɐ mˈoʊmənt",
+   "pitch": {
+    "start": 233,
+    "low": 167,
+    "end": 232
+   }
+  },
+  "again": {
+   "text": "Again.",
+   "ms": 740,
+   "phonemes": "ɐɡˈɛn",
+   "pitch": {
+    "start": 228,
+    "low": 91,
+    "end": 188
+   }
+  },
+  "all": {
+   "text": "All",
+   "ms": 540,
+   "phonemes": "ˈɔːl",
+   "pitch": {
+    "start": 187,
+    "low": 106,
+    "end": 208
+   }
+  },
+  "all-done-x": {
+   "text": "All done!",
+   "ms": 800,
+   "phonemes": "ˈɔːl dˈʌn",
+   "pitch": {
+    "start": 233,
+    "low": 89,
+    "end": 188
+   }
+  },
+  "all-right-q": {
+   "text": "All right?",
+   "ms": 900,
+   "phonemes": "ˈɔːl ɹˈaɪt",
+   "pitch": {
+    "start": 224,
+    "low": 103,
+    "end": 143
+   }
+  },
+  "already-q": {
+   "text": "already?",
+   "ms": 830,
+   "phonemes": "ɔːlɹˈɛdi",
+   "pitch": {
+    "start": 234,
+    "low": 166,
+    "end": 190
+   }
+  },
+  "and-you-q": {
+   "text": "And you?",
+   "ms": 790,
+   "phonemes": "ænd jˈuː",
+   "pitch": {
+    "start": 236,
+    "low": 81,
+    "end": 186
+   }
+  },
+  "any-idea-q": {
+   "text": "Any idea?",
+   "ms": 930,
+   "phonemes": "ˌɛni aɪdˈiə",
+   "pitch": {
+    "start": 218,
+    "low": 80,
+    "end": 188
+   }
+  },
+  "are-you": {
+   "text": "Are you",
+   "ms": 770,
+   "phonemes": "ɑːɹ jˈuː",
+   "pitch": {
+    "start": 203,
+    "low": 81,
+    "end": 198
+   }
+  },
+  "are-you-full-q": {
+   "text": "Are you full?",
+   "ms": 870,
+   "phonemes": "ɑːɹ juː fˈʊl",
+   "pitch": {
+    "start": 174,
+    "low": 87,
+    "end": 174
+   }
+  },
+  "are-you-ok-q": {
+   "text": "Are you OK?",
+   "ms": 960,
+   "phonemes": "ɑːɹ juː ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 187,
+    "low": 108,
+    "end": 181
+   }
+  },
+  "are-you-ready-q": {
+   "text": "Are you ready?",
+   "ms": 970,
+   "phonemes": "ɑːɹ juː ɹˈɛdi",
+   "pitch": {
+    "start": 203,
+    "low": 160,
+    "end": 162
+   }
+  },
+  "are-you-tired-q": {
+   "text": "Are you tired?",
+   "ms": 1000,
+   "phonemes": "ɑːɹ juː tˈaɪɚd",
+   "pitch": {
+    "start": 238,
+    "low": 81,
+    "end": 167
+   }
+  },
+  "at-this-x": {
+   "text": "at this!",
+   "ms": 830,
+   "phonemes": "æt ðˈɪs",
+   "pitch": {
+    "start": 221,
+    "low": 194,
+    "end": 195
+   }
+  },
+  "auntie-x": {
+   "text": "Auntie!",
+   "ms": 780,
+   "phonemes": "ˈænti",
+   "pitch": {
+    "start": 216,
+    "low": 88,
+    "end": 176
+   }
+  },
+  "bye-x": {
+   "text": "Bye!",
+   "ms": 700,
+   "phonemes": "bˈaɪ",
+   "pitch": {
+    "start": 212,
+    "low": 179,
+    "end": 191
+   }
+  },
+  "can-i": {
+   "text": "Can I",
+   "ms": 760,
+   "phonemes": "kæn ˈaɪ",
+   "pitch": {
+    "start": 247,
+    "low": 178,
+    "end": 191
+   }
+  },
+  "can-i-help-q": {
+   "text": "Can I help?",
+   "ms": 950,
+   "phonemes": "kæn aɪ hˈɛlp",
+   "pitch": {
+    "start": 240,
+    "low": 92,
+    "end": 176
+   }
+  },
+  "can-you": {
+   "text": "Can you",
+   "ms": 770,
+   "phonemes": "kˈæn juː",
+   "pitch": {
+    "start": 248,
+    "low": 107,
+    "end": 217
+   }
+  },
+  "can-you-eat-spicy-food-q": {
+   "text": "Can you eat spicy food?",
+   "ms": 1580,
+   "phonemes": "kæn juː ˈiːt spˈaɪsi fˈuːd",
+   "pitch": {
+    "start": 236,
+    "low": 133,
+    "end": 145
+   }
+  },
+  "come": {
+   "text": "Come",
+   "ms": 670,
+   "phonemes": "kˈʌm",
+   "pitch": {
+    "start": 278,
+    "low": 197,
+    "end": 208
+   }
+  },
+  "come-here-x": {
+   "text": "Come here!",
+   "ms": 810,
+   "phonemes": "kˈʌm hˈɪɹ",
+   "pitch": {
+    "start": 253,
+    "low": 94,
+    "end": 193
+   }
+  },
+  "come-in-x": {
+   "text": "Come in!",
+   "ms": 780,
+   "phonemes": "kˈʌm ˈɪn",
+   "pitch": {
+    "start": 254,
+    "low": 93,
+    "end": 186
+   }
+  },
+  "delicious-x": {
+   "text": "delicious!",
+   "ms": 860,
+   "phonemes": "dᵻlˈɪʃəs",
+   "pitch": {
+    "start": 235,
+    "low": 89,
+    "end": 210
+   }
+  },
+  "do-you": {
+   "text": "Do you",
+   "ms": 790,
+   "phonemes": "dˈuː juː",
+   "pitch": {
+    "start": 201,
+    "low": 178,
+    "end": 213
+   }
+  },
+  "do-you-know-q": {
+   "text": "Do you know?",
+   "ms": 800,
+   "phonemes": "dˈuː juː nˈoʊ",
+   "pitch": {
+    "start": 229,
+    "low": 83,
+    "end": 177
+   }
+  },
+  "do-you-like-it-q": {
+   "text": "Do you like it?",
+   "ms": 1030,
+   "phonemes": "dˈuː juː lˈaɪk ɪt",
+   "pitch": {
+    "start": 219,
+    "low": 163,
+    "end": 197
+   }
+  },
+  "do-you-understand-q": {
+   "text": "Do you understand?",
+   "ms": 1120,
+   "phonemes": "dˈuː juː ˌʌndɚstˈænd",
+   "pitch": {
+    "start": 211,
+    "low": 81,
+    "end": 196
+   }
+  },
+  "do-you-want-some-more-q": {
+   "text": "Do you want some more?",
+   "ms": 1230,
+   "phonemes": "dˈuː juː wˈɔnt sˌʌm mˈoːɹ",
+   "pitch": {
+    "start": 215,
+    "low": 145,
+    "end": 179
+   }
+  },
+  "doing-q": {
+   "text": "doing?",
+   "ms": 720,
+   "phonemes": "dˈuːɪŋ",
+   "pitch": {
+    "start": 226,
+    "low": 179,
+    "end": 197
+   }
+  },
+  "done-x": {
+   "text": "Done!",
+   "ms": 650,
+   "phonemes": "dˈʌn",
+   "pitch": {
+    "start": 206,
+    "low": 194,
+    "end": 196
+   }
+  },
+  "dont": {
+   "text": "don't",
+   "ms": 730,
+   "phonemes": "dˈoʊnt",
+   "pitch": {
+    "start": 204,
+    "low": 189,
+    "end": 209
+   }
+  },
+  "drink-q": {
+   "text": "drink?",
+   "ms": 740,
+   "phonemes": "dɹˈɪŋk",
+   "pitch": {
+    "start": 225,
+    "low": 192,
+    "end": 202
+   }
+  },
+  "eat": {
+   "text": "Eat",
+   "ms": 630,
+   "phonemes": "ˈiːt",
+   "pitch": {
+    "start": 221,
+    "low": 203,
+    "end": 218
+   }
+  },
+  "eat-already-q": {
+   "text": "Eat already?",
+   "ms": 970,
+   "phonemes": "ˈiːt ɔːlɹˈɛdi",
+   "pitch": {
+    "start": 214,
+    "low": 80,
+    "end": 181
+   }
+  },
+  "eaten-q": {
+   "text": "eaten?",
+   "ms": 750,
+   "phonemes": "ˈiːʔn̩",
+   "pitch": {
+    "start": 290,
+    "low": 178,
+    "end": 189
+   }
+  },
+  "excuse-me": {
+   "text": "Excuse me.",
+   "say": "Excuze me.",
+   "ms": 1010,
+   "phonemes": "ɛkskjˈuːz mˌiː",
+   "pitch": {
+    "start": 234,
+    "low": 87,
+    "end": 172
+   }
+  },
+  "finished-x": {
+   "text": "Finished!",
+   "ms": 780,
+   "phonemes": "fˈɪnɪʃt",
+   "pitch": {
+    "start": 216,
+    "low": 188,
+    "end": 201
+   }
+  },
+  "for-having-me-x": {
+   "text": "for having me!",
+   "ms": 1040,
+   "phonemes": "fɔːɹ hˈævɪŋ mˌiː",
+   "pitch": {
+    "start": 251,
+    "low": 81,
+    "end": 200
+   }
+  },
+  "for-you": {
+   "text": "for you.",
+   "ms": 800,
+   "phonemes": "fɔːɹ jˈuː",
+   "pitch": {
+    "start": 252,
+    "low": 98,
+    "end": 178
+   }
+  },
+  "for-you-x": {
+   "text": "For you!",
+   "ms": 810,
+   "phonemes": "fɔːɹ jˈuː",
+   "pitch": {
+    "start": 251,
+    "low": 98,
+    "end": 178
+   }
+  },
+  "from": {
+   "text": "from",
+   "ms": 710,
+   "phonemes": "fɹˈʌm",
+   "pitch": {
+    "start": 266,
+    "low": 188,
+    "end": 199
+   }
+  },
+  "from-q": {
+   "text": "from?",
+   "ms": 720,
+   "phonemes": "fɹˈʌm",
+   "pitch": {
+    "start": 260,
+    "low": 182,
+    "end": 195
+   }
+  },
+  "full": {
+   "text": "full.",
+   "ms": 690,
+   "phonemes": "fˈʊl",
+   "pitch": {
+    "start": 257,
+    "low": 183,
+    "end": 198
+   }
+  },
+  "full-already-q": {
+   "text": "Full already?",
+   "ms": 950,
+   "phonemes": "fˈʊl ɔːlɹˈɛdi",
+   "pitch": {
+    "start": 253,
+    "low": 156,
+    "end": 187
+   }
+  },
+  "full-q": {
+   "text": "full?",
+   "ms": 680,
+   "phonemes": "fˈʊl",
+   "pitch": {
+    "start": 257,
+    "low": 186,
+    "end": 203
+   }
+  },
+  "good": {
+   "text": "Good,",
+   "ms": 680,
+   "phonemes": "ɡˈʊd",
+   "pitch": {
+    "start": 217,
+    "low": 189,
+    "end": 193
+   }
+  },
+  "good-job-x": {
+   "text": "Good job!",
+   "ms": 950,
+   "phonemes": "ɡˈʊd dʒˈɑːb",
+   "pitch": {
+    "start": 205,
+    "low": 161,
+    "end": 196
+   }
+  },
+  "good-morning-x": {
+   "text": "Good morning!",
+   "ms": 910,
+   "phonemes": "ɡˈʊd mˈɔːɹnɪŋ",
+   "pitch": {
+    "start": 246,
+    "low": 82,
+    "end": 189
+   }
+  },
+  "good-night-x": {
+   "text": "Good night!",
+   "ms": 870,
+   "phonemes": "ɡˈʊd nˈaɪt",
+   "pitch": {
+    "start": 222,
+    "low": 170,
+    "end": 189
+   }
+  },
+  "good-night-x-see-you-tomorrow-x": {
+   "text": "Good night! See you tomorrow!",
+   "ms": 1620,
+   "phonemes": "ɡˈʊd nˈaɪt sˈiː juː təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 241,
+    "low": 108,
+    "end": 165
+   }
+  },
+  "good-thank-you": {
+   "text": "Good, thank you.",
+   "ms": 1040,
+   "phonemes": "ɡˈʊd θˈæŋk juː",
+   "pitch": {
+    "start": 239,
+    "low": 153,
+    "end": 168
+   }
+  },
+  "good-thank-you-and-you-q": {
+   "text": "Good, thank you. And you?",
+   "ms": 1600,
+   "phonemes": "ɡˈʊd θˈæŋk juː ænd jˈuː",
+   "pitch": {
+    "start": 247,
+    "low": 148,
+    "end": 168
+   }
+  },
+  "good-x": {
+   "text": "Good!",
+   "ms": 660,
+   "phonemes": "ɡˈʊd",
+   "pitch": {
+    "start": 209,
+    "low": 194,
+    "end": 199
+   }
+  },
+  "got-it-q": {
+   "text": "Got it?",
+   "ms": 770,
+   "phonemes": "ɡˈɑːt ɪt",
+   "pitch": {
+    "start": 211,
+    "low": 180,
+    "end": 181
+   }
+  },
+  "great-x": {
+   "text": "Great!",
+   "ms": 760,
+   "phonemes": "ɡɹˈeɪt",
+   "pitch": {
+    "start": 224,
+    "low": 180,
+    "end": 186
+   }
+  },
+  "have-a-seat": {
+   "text": "Have a seat.",
+   "ms": 930,
+   "phonemes": "hæv ɐ sˈiːt",
+   "pitch": {
+    "start": 233,
+    "low": 160,
+    "end": 184
+   }
+  },
+  "have-you": {
+   "text": "Have you",
+   "ms": 800,
+   "phonemes": "hˈæv juː",
+   "pitch": {
+    "start": 243,
+    "low": 171,
+    "end": 202
+   }
+  },
+  "have-you-eaten-q": {
+   "text": "Have you eaten?",
+   "ms": 960,
+   "phonemes": "hæv juː ˈiːʔn̩",
+   "pitch": {
+    "start": 239,
+    "low": 82,
+    "end": 163
+   }
+  },
+  "hello-x": {
+   "text": "Hello!",
+   "ms": 740,
+   "phonemes": "həlˈoʊ",
+   "pitch": {
+    "start": 251,
+    "low": 99,
+    "end": 189
+   }
+  },
+  "hello-x-nice-to-meet-you-x": {
+   "text": "Hello! Nice to meet you!",
+   "ms": 1480,
+   "phonemes": "həlˈoʊ nˈaɪs tə mˈiːt juː",
+   "pitch": {
+    "start": 238,
+    "low": 106,
+    "end": 182
+   }
+  },
+  "help-q": {
+   "text": "help?",
+   "ms": 720,
+   "phonemes": "hˈɛlp",
+   "pitch": {
+    "start": 253,
+    "low": 82,
+    "end": 130
+   }
+  },
+  "here": {
+   "text": "here.",
+   "ms": 650,
+   "phonemes": "hˈɪɹ",
+   "pitch": {
+    "start": 268,
+    "low": 185,
+    "end": 205
+   }
+  },
+  "here-x": {
+   "text": "here!",
+   "ms": 650,
+   "phonemes": "hˈɪɹ",
+   "pitch": {
+    "start": 269,
+    "low": 185,
+    "end": 206
+   }
+  },
+  "here-you-go": {
+   "text": "Here you go.",
+   "ms": 960,
+   "phonemes": "hˈɪɹ juː ɡˈoʊ",
+   "pitch": {
+    "start": 253,
+    "low": 81,
+    "end": 177
+   }
+  },
+  "hey-x": {
+   "text": "Hey!",
+   "ms": 630,
+   "phonemes": "hˈeɪ",
+   "pitch": {
+    "start": 257,
+    "low": 192,
+    "end": 203
+   }
+  },
+  "hi": {
+   "text": "Hi,",
+   "ms": 670,
+   "phonemes": "hˈaɪ",
+   "pitch": {
+    "start": 250,
+    "low": 188,
+    "end": 198
+   }
+  },
+  "hi-auntie-x": {
+   "text": "Hi, Auntie!",
+   "ms": 960,
+   "phonemes": "hˈaɪ ˈænti",
+   "pitch": {
+    "start": 247,
+    "low": 155,
+    "end": 177
+   }
+  },
+  "hi-uncle-x": {
+   "text": "Hi, Uncle!",
+   "ms": 1000,
+   "phonemes": "hˈaɪ ˈʌŋkəl",
+   "pitch": {
+    "start": 242,
+    "low": 97,
+    "end": 175
+   }
+  },
+  "hi-x": {
+   "text": "Hi!",
+   "ms": 650,
+   "phonemes": "hˈaɪ",
+   "pitch": {
+    "start": 261,
+    "low": 190,
+    "end": 203
+   }
+  },
+  "hi-x-nice-to-meet-you": {
+   "text": "Hi! Nice to meet you.",
+   "ms": 1510,
+   "phonemes": "hˈaɪ nˈaɪs tə mˈiːt juː",
+   "pitch": {
+    "start": 241,
+    "low": 108,
+    "end": 172
+   }
+  },
+  "hold-on": {
+   "text": "Hold on.",
+   "ms": 860,
+   "phonemes": "hˈoʊld ˈɔn",
+   "pitch": {
+    "start": 253,
+    "low": 88,
+    "end": 186
+   }
+  },
+  "how": {
+   "text": "How",
+   "ms": 650,
+   "phonemes": "hˈaʊ",
+   "pitch": {
+    "start": 263,
+    "low": 190,
+    "end": 206
+   }
+  },
+  "how-are-you": {
+   "text": "How are you",
+   "ms": 910,
+   "phonemes": "hˈaʊ ɑːɹ juː",
+   "pitch": {
+    "start": 242,
+    "low": 84,
+    "end": 209
+   }
+  },
+  "how-are-you-doing-q": {
+   "text": "How are you doing?",
+   "ms": 1110,
+   "phonemes": "hˌaʊ ɑːɹ juː dˈuːɪŋ",
+   "pitch": {
+    "start": 229,
+    "low": 163,
+    "end": 178
+   }
+  },
+  "how-are-you-q": {
+   "text": "How are you?",
+   "ms": 940,
+   "phonemes": "hˈaʊ ɑːɹ juː",
+   "pitch": {
+    "start": 244,
+    "low": 82,
+    "end": 189
+   }
+  },
+  "how-is-it-q": {
+   "text": "How is it?",
+   "ms": 870,
+   "phonemes": "hˈaʊ ɪz ɪt",
+   "pitch": {
+    "start": 238,
+    "low": 115,
+    "end": 179
+   }
+  },
+  "i": {
+   "text": "I",
+   "ms": 620,
+   "phonemes": "ˈaɪ",
+   "pitch": {
+    "start": 240,
+    "low": 197,
+    "end": 202
+   }
+  },
+  "i-dont-know": {
+   "text": "I don't know.",
+   "ms": 870,
+   "phonemes": "aɪ dˈoʊnt nˈoʊ",
+   "pitch": {
+    "start": 226,
+    "low": 81,
+    "end": 177
+   }
+  },
+  "i-dont-understand": {
+   "text": "I don't understand.",
+   "ms": 1180,
+   "phonemes": "aɪ dˈoʊnt ˌʌndɚstˈænd",
+   "pitch": {
+    "start": 216,
+    "low": 147,
+    "end": 209
+   }
+  },
+  "i-understand": {
+   "text": "I understand.",
+   "ms": 1060,
+   "phonemes": "aɪ ˌʌndɚstˈænd",
+   "pitch": {
+    "start": 200,
+    "low": 81,
+    "end": 200
+   }
+  },
+  "im": {
+   "text": "I'm",
+   "ms": 690,
+   "phonemes": "ˈaɪm",
+   "pitch": {
+    "start": 229,
+    "low": 188,
+    "end": 191
+   }
+  },
+  "im-from-japan": {
+   "text": "I'm from Japan.",
+   "ms": 1180,
+   "phonemes": "aɪm fɹʌm dʒəpˈæn",
+   "pitch": {
+    "start": 174,
+    "low": 82,
+    "end": 172
+   }
+  },
+  "im-full": {
+   "text": "I'm full.",
+   "ms": 830,
+   "phonemes": "aɪm fˈʊl",
+   "pitch": {
+    "start": 204,
+    "low": 85,
+    "end": 175
+   }
+  },
+  "im-full-thank-you-x": {
+   "text": "I'm full. Thank you!",
+   "ms": 1430,
+   "phonemes": "aɪm fˈʊl θˈæŋk juː",
+   "pitch": {
+    "start": 206,
+    "low": 82,
+    "end": 152
+   }
+  },
+  "im-ok": {
+   "text": "I'm OK.",
+   "ms": 910,
+   "phonemes": "aɪm ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 140,
+    "low": 82,
+    "end": 180
+   }
+  },
+  "im-ready-x": {
+   "text": "I'm ready!",
+   "ms": 840,
+   "phonemes": "aɪm ɹˈɛdi",
+   "pitch": {
+    "start": 196,
+    "low": 118,
+    "end": 194
+   }
+  },
+  "im-sorry": {
+   "text": "I'm sorry.",
+   "ms": 910,
+   "phonemes": "aɪm sˈɑːɹi",
+   "pitch": {
+    "start": 227,
+    "low": 99,
+    "end": 182
+   }
+  },
+  "is-it": {
+   "text": "Is it",
+   "ms": 790,
+   "phonemes": "ɪz ˈɪt",
+   "pitch": {
+    "start": 227,
+    "low": 176,
+    "end": 179
+   }
+  },
+  "is-it-q": {
+   "text": "is it?",
+   "ms": 770,
+   "phonemes": "ɪz ˈɪt",
+   "pitch": {
+    "start": 223,
+    "low": 90,
+    "end": 171
+   }
+  },
+  "is-it-spicy-q": {
+   "text": "Is it spicy?",
+   "ms": 1090,
+   "phonemes": "ɪz ɪt spˈaɪsi",
+   "pitch": {
+    "start": 220,
+    "low": 81,
+    "end": 167
+   }
+  },
+  "is-it-tasty-q": {
+   "text": "Is it tasty?",
+   "ms": 1120,
+   "phonemes": "ɪz ɪt tˈeɪsti",
+   "pitch": {
+    "start": 213,
+    "low": 130,
+    "end": 170
+   }
+  },
+  "it-was": {
+   "text": "It was",
+   "ms": 810,
+   "phonemes": "ɪt wˈʌz",
+   "pitch": {
+    "start": 239,
+    "low": 107,
+    "end": 197
+   }
+  },
+  "its": {
+   "text": "It's",
+   "ms": 660,
+   "phonemes": "ˈɪts",
+   "pitch": {
+    "start": 228,
+    "low": 203,
+    "end": 232
+   }
+  },
+  "its-delicious-x": {
+   "text": "It's delicious!",
+   "ms": 1080,
+   "phonemes": "ɪts dᵻlˈɪʃəs",
+   "pitch": {
+    "start": 233,
+    "low": 186,
+    "end": 189
+   }
+  },
+  "its-good-x": {
+   "text": "It's good!",
+   "ms": 850,
+   "phonemes": "ɪts ɡˈʊd",
+   "pitch": {
+    "start": 231,
+    "low": 82,
+    "end": 177
+   }
+  },
+  "its-ok": {
+   "text": "It's OK.",
+   "ms": 940,
+   "phonemes": "ɪts ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 228,
+    "low": 83,
+    "end": 170
+   }
+  },
+  "its-ok-no-problem-x": {
+   "text": "It's OK. No problem!",
+   "ms": 1690,
+   "phonemes": "ɪts ˌoʊkˈeɪ nˈoʊ pɹˈɑːbləm",
+   "pitch": {
+    "start": 220,
+    "low": 85,
+    "end": 162
+   }
+  },
+  "japan": {
+   "text": "Japan.",
+   "ms": 810,
+   "phonemes": "dʒəpˈæn",
+   "pitch": {
+    "start": 260,
+    "low": 93,
+    "end": 177
+   }
+  },
+  "japan-x": {
+   "text": "Japan!",
+   "ms": 850,
+   "phonemes": "dʒəpˈæn",
+   "pitch": {
+    "start": 260,
+    "low": 93,
+    "end": 180
+   }
+  },
+  "know": {
+   "text": "know.",
+   "ms": 650,
+   "phonemes": "nˈoʊ",
+   "pitch": {
+    "start": 216,
+    "low": 100,
+    "end": 208
+   }
+  },
+  "know-q": {
+   "text": "know?",
+   "ms": 650,
+   "phonemes": "nˈoʊ",
+   "pitch": {
+    "start": 216,
+    "low": 100,
+    "end": 203
+   }
+  },
+  "later-x": {
+   "text": "later!",
+   "ms": 720,
+   "phonemes": "lˈeɪɾɚ",
+   "pitch": {
+    "start": 219,
+    "low": 103,
+    "end": 198
+   }
+  },
+  "lets-eat-x": {
+   "text": "Let's eat!",
+   "ms": 900,
+   "phonemes": "lˈɛts ˈiːt",
+   "pitch": {
+    "start": 225,
+    "low": 83,
+    "end": 137
+   }
+  },
+  "lets-go-x": {
+   "text": "Let's go!",
+   "ms": 910,
+   "phonemes": "lˈɛts ɡˈoʊ",
+   "pitch": {
+    "start": 209,
+    "low": 86,
+    "end": 175
+   }
+  },
+  "like-it-q": {
+   "text": "like it?",
+   "ms": 780,
+   "phonemes": "lˈaɪk ɪt",
+   "pitch": {
+    "start": 208,
+    "low": 103,
+    "end": 157
+   }
+  },
+  "listen": {
+   "text": "Listen.",
+   "ms": 760,
+   "phonemes": "lˈɪsən",
+   "pitch": {
+    "start": 206,
+    "low": 175,
+    "end": 194
+   }
+  },
+  "listen-to-this": {
+   "text": "Listen to this.",
+   "ms": 1120,
+   "phonemes": "lˈɪsən tə ðˈɪs",
+   "pitch": {
+    "start": 209,
+    "low": 82,
+    "end": 194
+   }
+  },
+  "look": {
+   "text": "Look",
+   "ms": 650,
+   "phonemes": "lˈʊk",
+   "pitch": {
+    "start": 219,
+    "low": 197,
+    "end": 213
+   }
+  },
+  "look-at-this-x": {
+   "text": "Look at this!",
+   "ms": 970,
+   "phonemes": "lˈʊk æt ðˈɪs",
+   "pitch": {
+    "start": 218,
+    "low": 92,
+    "end": 156
+   }
+  },
+  "look-x": {
+   "text": "Look!",
+   "ms": 670,
+   "phonemes": "lˈʊk",
+   "pitch": {
+    "start": 200,
+    "low": 195,
+    "end": 203
+   }
+  },
+  "more-q": {
+   "text": "More?",
+   "ms": 700,
+   "phonemes": "mˈoːɹ",
+   "pitch": {
+    "start": 217,
+    "low": 86,
+    "end": 219
+   }
+  },
+  "morning-x": {
+   "text": "Morning!",
+   "ms": 760,
+   "phonemes": "mˈɔːɹnɪŋ",
+   "pitch": {
+    "start": 221,
+    "low": 88,
+    "end": 201
+   }
+  },
+  "next-one-x": {
+   "text": "Next one!",
+   "ms": 900,
+   "phonemes": "nˈɛkst wˌʌn",
+   "pitch": {
+    "start": 209,
+    "low": 86,
+    "end": 179
+   }
+  },
+  "next-x": {
+   "text": "Next!",
+   "ms": 770,
+   "phonemes": "nˈɛkst",
+   "pitch": {
+    "start": 204,
+    "low": 198,
+    "end": 212
+   }
+  },
+  "nice-to-meet-you": {
+   "text": "Nice to meet you.",
+   "ms": 1190,
+   "phonemes": "nˈaɪs tə mˈiːt juː",
+   "pitch": {
+    "start": 206,
+    "low": 101,
+    "end": 162
+   }
+  },
+  "nice-to-meet-you-too-x": {
+   "text": "Nice to meet you too!",
+   "ms": 1410,
+   "phonemes": "nˈaɪs tə mˈiːt juː tˈuː",
+   "pitch": {
+    "start": 203,
+    "low": 92,
+    "end": 164
+   }
+  },
+  "nice-to-meet-you-x": {
+   "text": "Nice to meet you!",
+   "ms": 1230,
+   "phonemes": "nˈaɪs tə mˈiːt juː",
+   "pitch": {
+    "start": 205,
+    "low": 152,
+    "end": 165
+   }
+  },
+  "night-x": {
+   "text": "Night!",
+   "ms": 720,
+   "phonemes": "nˈaɪt",
+   "pitch": {
+    "start": 213,
+    "low": 137,
+    "end": 177
+   }
+  },
+  "no": {
+   "text": "No.",
+   "ms": 650,
+   "phonemes": "nˈoʊ",
+   "pitch": {
+    "start": 216,
+    "low": 100,
+    "end": 208
+   }
+  },
+  "no-need-x": {
+   "text": "No need!",
+   "ms": 900,
+   "phonemes": "nˈoʊ nˈiːd",
+   "pitch": {
+    "start": 224,
+    "low": 83,
+    "end": 94
+   }
+  },
+  "no-problem-x": {
+   "text": "No problem!",
+   "ms": 1060,
+   "phonemes": "nˈoʊ pɹˈɑːbləm",
+   "pitch": {
+    "start": 209,
+    "low": 82,
+    "end": 184
+   }
+  },
+  "no-thank-you": {
+   "text": "No, thank you.",
+   "ms": 1110,
+   "phonemes": "nˈoʊ θˈæŋk juː",
+   "pitch": {
+    "start": 198,
+    "low": 163,
+    "end": 173
+   }
+  },
+  "no-thank-you-im-full": {
+   "text": "No, thank you. I'm full.",
+   "ms": 1520,
+   "phonemes": "nˈoʊ θˈæŋk juː aɪm fˈʊl",
+   "pitch": {
+    "start": 194,
+    "low": 86,
+    "end": 168
+   }
+  },
+  "not-yet": {
+   "text": "Not yet.",
+   "ms": 880,
+   "phonemes": "nˌɑːt jˈɛt",
+   "pitch": {
+    "start": 216,
+    "low": 97,
+    "end": 164
+   }
+  },
+  "ok": {
+   "text": "OK.",
+   "ms": 760,
+   "phonemes": "ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 279,
+    "low": 175,
+    "end": 184
+   }
+  },
+  "ok-q": {
+   "text": "OK?",
+   "ms": 770,
+   "phonemes": "ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 222,
+    "low": 96,
+    "end": 178
+   }
+  },
+  "ok-x": {
+   "text": "OK!",
+   "ms": 780,
+   "phonemes": "ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 224,
+    "low": 98,
+    "end": 181
+   }
+  },
+  "once-more": {
+   "text": "Once more.",
+   "ms": 890,
+   "phonemes": "wˈʌns mˈoːɹ",
+   "pitch": {
+    "start": 212,
+    "low": 82,
+    "end": 199
+   }
+  },
+  "one-more-time": {
+   "text": "One more time.",
+   "ms": 1150,
+   "phonemes": "wˈʌn mˈoːɹ tˈaɪm",
+   "pitch": {
+    "start": 200,
+    "low": 145,
+    "end": 190
+   }
+  },
+  "one-more-time-please": {
+   "text": "One more time, please.",
+   "ms": 1480,
+   "phonemes": "wˈʌn mˈoːɹ tˈaɪm plˈiːz",
+   "pitch": {
+    "start": 197,
+    "low": 161,
+    "end": 167
+   }
+  },
+  "please": {
+   "text": "please.",
+   "ms": 800,
+   "phonemes": "plˈiːz",
+   "pitch": {
+    "start": 252,
+    "low": 179,
+    "end": 204
+   }
+  },
+  "ready-q": {
+   "text": "Ready?",
+   "ms": 680,
+   "phonemes": "ɹˈɛdi",
+   "pitch": {
+    "start": 206,
+    "low": 186,
+    "end": 220
+   }
+  },
+  "ready-x": {
+   "text": "ready!",
+   "ms": 700,
+   "phonemes": "ɹˈɛdi",
+   "pitch": {
+    "start": 218,
+    "low": 182,
+    "end": 210
+   }
+  },
+  "say-it": {
+   "text": "Say it.",
+   "ms": 740,
+   "phonemes": "sˈeɪ ɪt",
+   "pitch": {
+    "start": 235,
+    "low": 108,
+    "end": 154
+   }
+  },
+  "see-you": {
+   "text": "See you",
+   "ms": 800,
+   "phonemes": "sˈiː juː",
+   "pitch": {
+    "start": 271,
+    "low": 179,
+    "end": 216
+   }
+  },
+  "see-you-later-x": {
+   "text": "See you later!",
+   "ms": 920,
+   "phonemes": "sˈiː juː lˈeɪɾɚ",
+   "pitch": {
+    "start": 267,
+    "low": 81,
+    "end": 187
+   }
+  },
+  "see-you-tomorrow-x": {
+   "text": "See you tomorrow!",
+   "ms": 1130,
+   "phonemes": "sˈiː juː təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 265,
+    "low": 147,
+    "end": 183
+   }
+  },
+  "see-you-x": {
+   "text": "See you!",
+   "ms": 780,
+   "phonemes": "sˈiː juː",
+   "pitch": {
+    "start": 270,
+    "low": 178,
+    "end": 198
+   }
+  },
+  "sit": {
+   "text": "Sit",
+   "ms": 660,
+   "phonemes": "sˈɪt",
+   "pitch": {
+    "start": 189,
+    "low": 97,
+    "end": 129
+   }
+  },
+  "sit-down": {
+   "text": "Sit down.",
+   "ms": 930,
+   "phonemes": "sˈɪt dˈaʊn",
+   "pitch": {
+    "start": 284,
+    "low": 89,
+    "end": 173
+   }
+  },
+  "sit-here": {
+   "text": "Sit here.",
+   "ms": 810,
+   "phonemes": "sˈɪt hˈɪɹ",
+   "pitch": {
+    "start": 277,
+    "low": 163,
+    "end": 175
+   }
+  },
+  "sleep-well-x": {
+   "text": "Sleep well!",
+   "ms": 930,
+   "phonemes": "slˈiːp wˈɛl",
+   "pitch": {
+    "start": 252,
+    "low": 83,
+    "end": 177
+   }
+  },
+  "slowly": {
+   "text": "Slowly,",
+   "ms": 810,
+   "phonemes": "slˈoʊli",
+   "pitch": {
+    "start": 249,
+    "low": 175,
+    "end": 193
+   }
+  },
+  "slowly-please": {
+   "text": "Slowly, please.",
+   "ms": 1260,
+   "phonemes": "slˈoʊli plˈiːz",
+   "pitch": {
+    "start": 238,
+    "low": 93,
+    "end": 137
+   }
+  },
+  "so-much-x": {
+   "text": "so much!",
+   "ms": 890,
+   "phonemes": "sˈoʊ mˌʌtʃ",
+   "pitch": {
+    "start": 228,
+    "low": 94,
+    "end": 208
+   }
+  },
+  "some-more-q": {
+   "text": "some more?",
+   "ms": 840,
+   "phonemes": "sˌʌm mˈoːɹ",
+   "pitch": {
+    "start": 256,
+    "low": 98,
+    "end": 197
+   }
+  },
+  "some-x": {
+   "text": "some!",
+   "ms": 660,
+   "phonemes": "sˈʌm",
+   "pitch": {
+    "start": 268,
+    "low": 194,
+    "end": 195
+   }
+  },
+  "sorry": {
+   "text": "Sorry,",
+   "ms": 740,
+   "phonemes": "sˈɑːɹi",
+   "pitch": {
+    "start": 261,
+    "low": 175,
+    "end": 198
+   }
+  },
+  "sorry-i-dont-know": {
+   "text": "Sorry, I don't know.",
+   "ms": 1290,
+   "phonemes": "sˈɑːɹi aɪ dˈoʊnt nˈoʊ",
+   "pitch": {
+    "start": 247,
+    "low": 89,
+    "end": 177
+   }
+  },
+  "sorry-i-dont-understand": {
+   "text": "Sorry, I don't understand.",
+   "ms": 1690,
+   "phonemes": "sˈɑːɹi aɪ dˈoʊnt ˌʌndɚstˈænd",
+   "pitch": {
+    "start": 246,
+    "low": 90,
+    "end": 185
+   }
+  },
+  "sorry-what-q": {
+   "text": "Sorry, what?",
+   "ms": 980,
+   "phonemes": "sˈɑːɹi wˈʌt",
+   "pitch": {
+    "start": 254,
+    "low": 85,
+    "end": 163
+   }
+  },
+  "sorry-x": {
+   "text": "Sorry!",
+   "ms": 740,
+   "phonemes": "sˈɑːɹi",
+   "pitch": {
+    "start": 264,
+    "low": 176,
+    "end": 197
+   }
+  },
+  "spicy-food-q": {
+   "text": "spicy food?",
+   "ms": 1120,
+   "phonemes": "spˈaɪsi fˈuːd",
+   "pitch": {
+    "start": 208,
+    "low": 81,
+    "end": 171
+   }
+  },
+  "spicy-q": {
+   "text": "spicy?",
+   "ms": 900,
+   "phonemes": "spˈaɪsi",
+   "pitch": {
+    "start": 204,
+    "low": 88,
+    "end": 196
+   }
+  },
+  "tasty-q": {
+   "text": "tasty?",
+   "ms": 820,
+   "phonemes": "tˈeɪsti",
+   "pitch": {
+    "start": 240,
+    "low": 173,
+    "end": 179
+   }
+  },
+  "tea": {
+   "text": "Tea,",
+   "ms": 670,
+   "phonemes": "tˈiː",
+   "pitch": {
+    "start": 278,
+    "low": 186,
+    "end": 205
+   }
+  },
+  "tea-please": {
+   "text": "Tea, please.",
+   "ms": 980,
+   "phonemes": "tˈiː plˈiːz",
+   "pitch": {
+    "start": 257,
+    "low": 88,
+    "end": 129
+   }
+  },
+  "thank-you": {
+   "text": "Thank you",
+   "ms": 850,
+   "phonemes": "θˈæŋk juː",
+   "pitch": {
+    "start": 248,
+    "low": 91,
+    "end": 197
+   }
+  },
+  "thank-you-for-having-me-x": {
+   "text": "Thank you for having me!",
+   "ms": 1340,
+   "phonemes": "θˈæŋk juː fɔːɹ hˈævɪŋ mˌiː",
+   "pitch": {
+    "start": 235,
+    "low": 147,
+    "end": 169
+   }
+  },
+  "thank-you-so-much-x": {
+   "text": "Thank you so much!",
+   "ms": 1190,
+   "phonemes": "θˈæŋk juː sˈoʊ mˌʌtʃ",
+   "pitch": {
+    "start": 237,
+    "low": 156,
+    "end": 204
+   }
+  },
+  "thank-you-x": {
+   "text": "Thank you!",
+   "ms": 850,
+   "phonemes": "θˈæŋk juː",
+   "pitch": {
+    "start": 248,
+    "low": 94,
+    "end": 183
+   }
+  },
+  "thank-you-x-it-was-delicious-x": {
+   "text": "Thank you! It was delicious!",
+   "ms": 1740,
+   "phonemes": "θˈæŋk juː ɪt wʌz dᵻlˈɪʃəs",
+   "pitch": {
+    "start": 249,
+    "low": 162,
+    "end": 224
+   }
+  },
+  "thanks-x": {
+   "text": "Thanks!",
+   "ms": 760,
+   "phonemes": "θˈæŋks",
+   "pitch": {
+    "start": 187,
+    "low": 114,
+    "end": 202
+   }
+  },
+  "the-toilet-q": {
+   "text": "the toilet?",
+   "ms": 880,
+   "phonemes": "ðə tˈɔɪlɪt",
+   "pitch": {
+    "start": 203,
+    "low": 102,
+    "end": 131
+   }
+  },
+  "this-is": {
+   "text": "This is",
+   "ms": 800,
+   "phonemes": "ðɪs ˈɪz",
+   "pitch": {
+    "start": 201,
+    "low": 93,
+    "end": 206
+   }
+  },
+  "this-is-for-you": {
+   "text": "This is for you.",
+   "ms": 1110,
+   "phonemes": "ðɪs ɪz fɔːɹ jˈuː",
+   "pitch": {
+    "start": 192,
+    "low": 160,
+    "end": 166
+   }
+  },
+  "this-is-for-you-from-japan-x": {
+   "text": "This is for you. From Japan!",
+   "ms": 1940,
+   "phonemes": "ðɪs ɪz fɔːɹ jˈuː fɹʌm dʒəpˈæn",
+   "pitch": {
+    "start": 181,
+    "low": 81,
+    "end": 168
+   }
+  },
+  "this-way-x": {
+   "text": "This way!",
+   "ms": 820,
+   "phonemes": "ðɪs wˈeɪ",
+   "pitch": {
+    "start": 204,
+    "low": 96,
+    "end": 188
+   }
+  },
+  "this-x": {
+   "text": "this!",
+   "ms": 710,
+   "phonemes": "ðˈɪs",
+   "pitch": {
+    "start": 211,
+    "low": 197,
+    "end": 199
+   }
+  },
+  "time-to-eat-x": {
+   "text": "Time to eat!",
+   "ms": 1030,
+   "phonemes": "tˈaɪm tʊ ˈiːt",
+   "pitch": {
+    "start": 242,
+    "low": 80,
+    "end": 127
+   }
+  },
+  "time-to-go-x": {
+   "text": "Time to go!",
+   "ms": 1010,
+   "phonemes": "tˈaɪm tə ɡˈoʊ",
+   "pitch": {
+    "start": 242,
+    "low": 80,
+    "end": 187
+   }
+  },
+  "tired-q": {
+   "text": "Tired?",
+   "ms": 790,
+   "phonemes": "tˈaɪɚd",
+   "pitch": {
+    "start": 252,
+    "low": 178,
+    "end": 227
+   }
+  },
+  "to-malaysia-x": {
+   "text": "to Malaysia!",
+   "ms": 970,
+   "phonemes": "tə məlˈeɪʒə",
+   "pitch": {
+    "start": 270,
+    "low": 192,
+    "end": 198
+   }
+  },
+  "to-this": {
+   "text": "to this.",
+   "ms": 790,
+   "phonemes": "tə ðˈɪs",
+   "pitch": {
+    "start": 238,
+    "low": 200,
+    "end": 203
+   }
+  },
+  "tomorrow-x": {
+   "text": "tomorrow!",
+   "ms": 800,
+   "phonemes": "təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 252,
+    "low": 100,
+    "end": 198
+   }
+  },
+  "too-x": {
+   "text": "too!",
+   "ms": 680,
+   "phonemes": "tˈuː",
+   "pitch": {
+    "start": 273,
+    "low": 182,
+    "end": 201
+   }
+  },
+  "try": {
+   "text": "Try",
+   "ms": 690,
+   "phonemes": "tɹˈaɪ",
+   "pitch": {
+    "start": 281,
+    "low": 189,
+    "end": 202
+   }
+  },
+  "try-some-x": {
+   "text": "Try some!",
+   "ms": 900,
+   "phonemes": "tɹˈaɪ sˌʌm",
+   "pitch": {
+    "start": 264,
+    "low": 83,
+    "end": 185
+   }
+  },
+  "try-this-x": {
+   "text": "Try this!",
+   "ms": 890,
+   "phonemes": "tɹˈaɪ ðˈɪs",
+   "pitch": {
+    "start": 253,
+    "low": 98,
+    "end": 211
+   }
+  },
+  "uncle-x": {
+   "text": "Uncle!",
+   "ms": 730,
+   "phonemes": "ˈʌŋkəl",
+   "pitch": {
+    "start": 193,
+    "low": 94,
+    "end": 191
+   }
+  },
+  "understand": {
+   "text": "understand.",
+   "ms": 950,
+   "phonemes": "ˌʌndɚstˈænd",
+   "pitch": {
+    "start": 214,
+    "low": 80,
+    "end": 198
+   }
+  },
+  "understand-q": {
+   "text": "Understand?",
+   "ms": 940,
+   "phonemes": "ˌʌndɚstˈænd",
+   "pitch": {
+    "start": 179,
+    "low": 81,
+    "end": 164
+   }
+  },
+  "wait": {
+   "text": "Wait",
+   "ms": 710,
+   "phonemes": "wˈeɪt",
+   "pitch": {
+    "start": 208,
+    "low": 106,
+    "end": 193
+   }
+  },
+  "wait-a-moment": {
+   "text": "Wait a moment.",
+   "ms": 1080,
+   "phonemes": "wˈeɪt ɐ mˈoʊmənt",
+   "pitch": {
+    "start": 213,
+    "low": 83,
+    "end": 128
+   }
+  },
+  "wait-x": {
+   "text": "Wait!",
+   "ms": 720,
+   "phonemes": "wˈeɪt",
+   "pitch": {
+    "start": 203,
+    "low": 107,
+    "end": 114
+   }
+  },
+  "want": {
+   "text": "Want",
+   "ms": 720,
+   "phonemes": "wˈɔnt",
+   "pitch": {
+    "start": 215,
+    "low": 195,
+    "end": 213
+   }
+  },
+  "want-a-drink-q": {
+   "text": "Want a drink?",
+   "ms": 980,
+   "phonemes": "wˈɔnt ɐ dɹˈɪŋk",
+   "pitch": {
+    "start": 206,
+    "low": 86,
+    "end": 210
+   }
+  },
+  "want-some-more-q": {
+   "text": "Want some more?",
+   "ms": 1080,
+   "phonemes": "wˈɔnt sˌʌm mˈoːɹ",
+   "pitch": {
+    "start": 201,
+    "low": 185,
+    "end": 193
+   }
+  },
+  "want-to": {
+   "text": "want to",
+   "ms": 870,
+   "phonemes": "wˈɔnt tuː",
+   "pitch": {
+    "start": 205,
+    "low": 87,
+    "end": 177
+   }
+  },
+  "water": {
+   "text": "Water,",
+   "ms": 700,
+   "phonemes": "wˈɔːɾɚ",
+   "pitch": {
+    "start": 211,
+    "low": 175,
+    "end": 207
+   }
+  },
+  "water-please": {
+   "text": "Water, please.",
+   "ms": 1120,
+   "phonemes": "wˈɔːɾɚ plˈiːz",
+   "pitch": {
+    "start": 207,
+    "low": 82,
+    "end": 110
+   }
+  },
+  "welcome": {
+   "text": "Welcome",
+   "ms": 800,
+   "phonemes": "wˈɛlkʌm",
+   "pitch": {
+    "start": 211,
+    "low": 170,
+    "end": 181
+   }
+  },
+  "welcome-to-malaysia-x": {
+   "text": "Welcome to Malaysia!",
+   "ms": 1380,
+   "phonemes": "wˈɛlkʌm tə məlˈeɪʒə",
+   "pitch": {
+    "start": 194,
+    "low": 167,
+    "end": 206
+   }
+  },
+  "welcome-x": {
+   "text": "Welcome!",
+   "ms": 820,
+   "phonemes": "wˈɛlkʌm",
+   "pitch": {
+    "start": 214,
+    "low": 88,
+    "end": 186
+   }
+  },
+  "what": {
+   "text": "What",
+   "ms": 630,
+   "phonemes": "wˈʌt",
+   "pitch": {
+    "start": 211,
+    "low": 110,
+    "end": 178
+   }
+  },
+  "what-do-you-want-to-drink-q": {
+   "text": "What do you want to drink?",
+   "ms": 1280,
+   "phonemes": "wˌʌt dˈuː juː wˈɔnt tə dɹˈɪŋk",
+   "pitch": {
+    "start": 198,
+    "low": 126,
+    "end": 211
+   }
+  },
+  "what-q": {
+   "text": "what?",
+   "ms": 680,
+   "phonemes": "wˈʌt",
+   "pitch": {
+    "start": 212,
+    "low": 110,
+    "end": 188
+   }
+  },
+  "where": {
+   "text": "Where",
+   "ms": 640,
+   "phonemes": "wˈɛɹ",
+   "pitch": {
+    "start": 246,
+    "low": 189,
+    "end": 202
+   }
+  },
+  "where-are-you-from-q": {
+   "text": "Where are you from?",
+   "ms": 1060,
+   "phonemes": "wˈɛɹ ɑːɹ juː fɹʌm",
+   "pitch": {
+    "start": 209,
+    "low": 94,
+    "end": 187
+   }
+  },
+  "where-from-q": {
+   "text": "Where from?",
+   "ms": 830,
+   "phonemes": "wˈɛɹ fɹʌm",
+   "pitch": {
+    "start": 245,
+    "low": 89,
+    "end": 183
+   }
+  },
+  "where-is": {
+   "text": "Where is",
+   "ms": 820,
+   "phonemes": "wˈɛɹ ɪz",
+   "pitch": {
+    "start": 213,
+    "low": 98,
+    "end": 209
+   }
+  },
+  "where-is-the-toilet-q": {
+   "text": "Where is the toilet?",
+   "ms": 1200,
+   "phonemes": "wˌɛɹ ɪz ðə tˈɔɪlɪt",
+   "pitch": {
+    "start": 206,
+    "low": 116,
+    "end": 206
+   }
+  },
+  "yes": {
+   "text": "Yes.",
+   "ms": 720,
+   "phonemes": "jˈɛs",
+   "pitch": {
+    "start": 217,
+    "low": 98,
+    "end": 196
+   }
+  },
+  "yes-please": {
+   "text": "Yes, please.",
+   "ms": 1020,
+   "phonemes": "jˈɛs plˈiːz",
+   "pitch": {
+    "start": 212,
+    "low": 84,
+    "end": 88
+   }
+  },
+  "you": {
+   "text": "You",
+   "ms": 630,
+   "phonemes": "jˈuː",
+   "pitch": {
+    "start": 219,
+    "low": 185,
+    "end": 216
+   }
+  },
+  "you-ok-q": {
+   "text": "You OK?",
+   "ms": 880,
+   "phonemes": "juː ˌoʊkˈeɪ",
+   "pitch": {
+    "start": 208,
+    "low": 89,
+    "end": 185
+   }
+  },
+  "you-too-x": {
+   "text": "You too!",
+   "ms": 830,
+   "phonemes": "juː tˈuː",
+   "pitch": {
+    "start": 219,
+    "low": 95,
+    "end": 180
+   }
+  },
+  "your-turn-x": {
+   "text": "Your turn!",
+   "ms": 900,
+   "phonemes": "jʊɹ tˈɜːn",
+   "pitch": {
+    "start": 219,
+    "low": 82,
+    "end": 180
+   }
+  },
+  "youre-welcome": {
+   "text": "You're welcome.",
+   "ms": 960,
+   "phonemes": "jʊɹ wˈɛlkʌm",
+   "pitch": {
+    "start": 207,
+    "low": 81,
+    "end": 188
+   }
+  }
+ }
+}

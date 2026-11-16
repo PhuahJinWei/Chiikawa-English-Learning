@@ -1,0 +1,42 @@
+{
+  "nod": {
+    "duration": 1.3,
+    "fadeIn": 0.1,
+    "fadeOut": 0.25,
+    "nodding": [0, 0.06, 0.95, 1.2],
+    "nodsPerSecond": 2.3,
+    "head": 17,
+    "lean": 0.022,
+    "squash": -0.035,
+    "ears": 12
+  },
+  "shake": {
+    "duration": 1.45,
+    "fadeIn": 0.1,
+    "fadeOut": 0.25,
+    "shaking": [0, 0.08, 1.1, 1.4],
+    "shakesPerSecond": 2.4,
+    "head": 24,
+    "body": 7,
+    "lean": 0.014,
+    "ears": 10,
+    "earsLag": 0.7
+  },
+  "listen": {
+    "fadeIn": 0.3,
+    "fadeOut": 0.3,
+    "up": [0, 0.35],
+    "at": [0.86, -0.58, 0.26],
+    "armRaise": 120,
+    "armSwing": 14,
+    "pawBend": 50,
+    "tilt": -11,
+    "turn": 8,
+    "lean": -0.02,
+    "bobSpeed": 2.4,
+    "bob": 0.01,
+    "ears": -10,
+    "earsRoll": 8,
+    "gaze": 0.03
+  }
+}

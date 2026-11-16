@@ -1,0 +1,12 @@
+{
+  "name": "eigo-friends-smoke",
+  "private": true,
+  "type": "module",
+  "description": "Smoke tests in WebKit, Safari's engine (see smoke.mjs). Its own install, so the app's build never needs Playwright.",
+  "scripts": {
+    "smoke": "node smoke.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.65.1"
+  }
+}

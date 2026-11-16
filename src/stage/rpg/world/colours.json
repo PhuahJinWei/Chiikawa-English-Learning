@@ -1,0 +1,113 @@
+{
+  "sky": {
+    "night": {
+      "top": "#1247A4",
+      "horizon": "#1653A4",
+      "ambient": [0.32, 0.38, 0.64],
+      "light": "#B2C6FF",
+      "lightIntensity": 1.4,
+      "hemiSky": "#3A5296",
+      "hemiGround": "#141A36",
+      "hemiIntensity": 1,
+      "cloud": [0.03, 0.08, 0.3],
+      "sea": [0.14, 0.18, 0.44],
+      "night": 1
+    },
+    "dawn": {
+      "top": "#6E8BCB",
+      "horizon": "#F7C4A4",
+      "ambient": [0.94, 0.84, 0.86],
+      "light": "#FFC9A2",
+      "lightIntensity": 1.7,
+      "hemiSky": "#CBD8F0",
+      "hemiGround": "#E3B391",
+      "hemiIntensity": 1.3,
+      "cloud": [1, 0.86, 0.86],
+      "sea": [0.86, 0.84, 0.92],
+      "night": 0.2
+    },
+    "day": {
+      "top": "#3FA9F2",
+      "horizon": "#BDE6F8",
+      "ambient": [1, 1, 1],
+      "light": "#FFF4E2",
+      "lightIntensity": 2.4,
+      "hemiSky": "#DDF3FF",
+      "hemiGround": "#EBC48F",
+      "hemiIntensity": 1.6,
+      "cloud": [1, 1, 1],
+      "sea": [1, 1, 1],
+      "night": 0
+    },
+    "golden": {
+      "top": "#6EAFDC",
+      "horizon": "#F7D38A",
+      "ambient": [1, 0.88, 0.72],
+      "light": "#FFC774",
+      "lightIntensity": 2.6,
+      "hemiSky": "#F3E2AE",
+      "hemiGround": "#EBC48F",
+      "hemiIntensity": 1.5,
+      "cloud": [1, 0.9, 0.72],
+      "sea": [1, 0.93, 0.82],
+      "night": 0
+    },
+    "dusk": {
+      "top": "#6A6EBE",
+      "horizon": "#F59C70",
+      "ambient": [0.95, 0.76, 0.72],
+      "light": "#FF9F6C",
+      "lightIntensity": 1.7,
+      "hemiSky": "#BBA8D8",
+      "hemiGround": "#D9906C",
+      "hemiIntensity": 1.2,
+      "cloud": [1, 0.78, 0.74],
+      "sea": [0.62, 0.5, 0.62],
+      "night": 0.3
+    },
+    "blue": {
+      "top": "#38559A",
+      "horizon": "#8698C2",
+      "ambient": [0.6, 0.64, 0.86],
+      "light": "#9FB6EA",
+      "lightIntensity": 1,
+      "hemiSky": "#7084BC",
+      "hemiGround": "#2F3A5A",
+      "hemiIntensity": 0.8,
+      "cloud": [0.4, 0.47, 0.72],
+      "sea": [0.42, 0.47, 0.72],
+      "night": 0.6
+    }
+  },
+  "heavens": {
+    "moon": "#F5F1C9",
+    "stars": "#FFFBE8",
+    "clouds": "#FFFFFF",
+    "cloudShade": "#DCE4EC"
+  },
+  "meadow": {
+    "grass": "#A9DB8F",
+    "hedge": "#6FAE6B",
+    "stone": "#B9B9C0",
+    "wood": "#A07A5A",
+    "trees": "#7CC47F",
+    "flowers": "#FFC4D6"
+  },
+  "pen": "#66432F",
+  "puffs": {
+    "body": "#B9A0DC",
+    "horns": "#F6E7B8",
+    "eyes": "#3B2620"
+  },
+  "nuts": "#FFD35A",
+  "marks": {
+    "ink": "#5A3A2E",
+    "bubble": "#FFFFFF",
+    "exclaim": "#FF7A7A",
+    "question": "#7AB8FF",
+    "zzz": "#8FA8FF",
+    "zzzEdge": "#FFFFFF",
+    "note": "#FF8FB1",
+    "heart": "#FF8FB1"
+  }
+}

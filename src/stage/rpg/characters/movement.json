@@ -1,0 +1,52 @@
+{
+  "everyone": {
+    "gravity": 24,
+    "jumpSpeed": 5.8,
+    "holdTime": 0.18,
+    "holdGravity": 0.6,
+    "crouch": 0.07,
+    "jumpEarly": 0.15,
+    "jumpLate": 0.12,
+    "getGoing": 19,
+    "slowDown": 31.6,
+    "airSteer": 3.5,
+    "sprint": 2,
+    "turnMost": 401.07,
+    "turnStep": 34.38
+  },
+  "walk": {
+    "player": 1.7,
+    "chiikawa": 1.9,
+    "hachiware": 2,
+    "usagi": 2.2,
+    "momonga": 2,
+    "kurimanju": 1.8,
+    "rakko": 1.8,
+    "furuhonya": 1.8,
+    "shisa": 2,
+    "hitoha": 1.65,
+    "futaba": 1.83
+  },
+  "run": {
+    "player": 3,
+    "chiikawa": 3.4,
+    "hachiware": 3.6,
+    "usagi": 4,
+    "momonga": 3.7,
+    "kurimanju": 3.2,
+    "rakko": 3.3,
+    "furuhonya": 3.2,
+    "shisa": 3.6,
+    "hitoha": 2.91,
+    "futaba": 3.23
+  },
+  "friends": {
+    "followFrom": 3.2,
+    "followTo": 2,
+    "runFrom": 4,
+    "sprintFrom": 6,
+    "helpWithin": 7,
+    "helpReach": 1.35,
+    "helpSprintFrom": 3
+  }
+}

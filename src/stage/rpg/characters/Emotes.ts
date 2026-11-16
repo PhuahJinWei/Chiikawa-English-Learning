@@ -1,0 +1,401 @@
+import * as THREE from 'three';
+import type { AnchorName } from './Model';
+import { COLOURS } from '../world/Colours';
+import { PEN_METRES } from '../world/Ink';
+
+export type EmoteKind = 'exclaim' | 'question' | 'zzz' | 'note' | 'heart';
+
+/** What the effects need from a character. */
+export interface EmoteHost {
+  readonly facing: number;
+  getAnchor(name: AnchorName, out: THREE.Vector3): THREE.Vector3;
+}
+
+/** Where the marks and words of the one the camera looks out of go, who has no head in view for them to show
+ * over (see Character.setUnseen): onto the screen (Hud.ownMark, Hud.ownWords). */
+export interface OwnView {
+  mark(kind: EmoteKind): void;
+  words(text: string): void;
+}
+
+interface Live {
+  sprite: THREE.Sprite;
+  kind: EmoteKind | 'bubble';
+  host: EmoteHost;
+  age: number;
+  life: number;
+  pos: THREE.Vector3;
+  vel: THREE.Vector3;
+  size: number;
+  aspect: number;
+  seed: number;
+  own?: THREE.Texture;
+}
+
+const LIFE: Record<EmoteKind, number> = {
+  exclaim: 1.3,
+  question: 1.5,
+  zzz: 1.9,
+  note: 1.6,
+  heart: 1.5,
+};
+const SIZE: Record<EmoteKind, number> = {
+  exclaim: 0.3,
+  question: 0.3,
+  zzz: 0.2,
+  note: 0.2,
+  heart: 0.18,
+};
+const BUBBLE_HEIGHT = 0.3;
+/** A bubble keeps its top under this far up the view (its edge being 1): close to someone, out of your own
+ * eyes, it is brought down (and made smaller, at the closest) rather than rising off the screen. */
+const BUBBLE_TOP = 0.9;
+const _ndc = new THREE.Vector3();
+const _eyes = new THREE.Vector3();
+const ON_TOP = new Set<EmoteKind | 'bubble'>(['exclaim', 'question', 'bubble']);
+/** Drawn over the finished picture (see EmoteSystem.overlay), a mark is hidden where the scene lies nearer than it
+ * by more than this (metres): a bubble or a ！ by so much, so that whoever stands just before the one it is over
+ * never cuts it, but a wall between does; anything else (a note, a heart) by a hair, as if it were in the scene. */
+export const SLACK_ON_TOP = 1.2;
+const SLACK = 0.05;
+/** Each mark's own test against the scene's depth (see SLACK), worked into the sprites' shader. */
+const DEPTH_TEST = `
+uniform sampler2D tSceneDepth;
+uniform float uUseDepth;
+uniform float uNear;
+uniform float uFar;
+uniform float uSlack;
+#include <packing>
+void main() {
+  if (uUseDepth > 0.5) {
+    float sceneZ = texture2D(tSceneDepth, gl_FragCoord.xy / vec2(textureSize(tSceneDepth, 0))).x;
+    if (perspectiveDepthToViewZ(sceneZ, uNear, uFar) > perspectiveDepthToViewZ(gl_FragCoord.z, uNear, uFar) + uSlack) discard;
+  }
+`;
+// (The marks' and bubbles' colours, their ink among them, are COLOURS.marks: see recolour.)
+const MARKS = COLOURS.marks;
+export const ROUNDED_FONT =
+  '"Hiragino Maru Gothic ProN","Hiragino Sans","BIZ UDPGothic","Yu Gothic UI","Meiryo","PingFang SC","Microsoft YaHei","Arial Rounded MT Bold",sans-serif';
+
+const smooth = (x: number) => {
+  const t = Math.min(1, Math.max(0, x));
+  return t * t * (3 - 2 * t);
+};
+/**
+ * Line width, in canvas pixels, that draws with the world's pen on a sprite `metres` tall
+ * whose canvas is `canvasPx` tall. Tiny effects cap it so their shape still reads.
+ */
+const inkWidth = (canvasPx: number, metres: number) => Math.min((PEN_METRES / metres) * canvasPx, 0.12 * canvasPx);
+const pop = (age: number) => (age < 0.12 ? (age / 0.12) * 1.2 : age < 0.22 ? 1.2 - ((age - 0.12) / 0.1) * 0.2 : 1);
+
+function canvasTexture(w: number, h: number, draw: (c: CanvasRenderingContext2D) => void): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const c = canvas.getContext('2d');
+  if (!c) throw new Error('2D canvas unavailable');
+  draw(c);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function glyph(text: string, fill: string, metres: number, stroke = MARKS.ink): THREE.CanvasTexture {
+  return canvasTexture(128, 128, (c) => {
+    c.font = `900 100px ${ROUNDED_FONT}`;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.lineJoin = 'round';
+    c.lineWidth = 2 * inkWidth(128, metres); // half of a text stroke hides under the fill
+    c.strokeStyle = stroke;
+    c.strokeText(text, 64, 70);
+    c.fillStyle = fill;
+    c.fillText(text, 64, 70);
+  });
+}
+
+function buildTextures(): Record<EmoteKind, THREE.Texture> {
+  return {
+    exclaim: glyph('!', MARKS.exclaim, SIZE.exclaim),
+    question: glyph('?', MARKS.question, SIZE.question),
+    zzz: glyph('Z', MARKS.zzz, SIZE.zzz, MARKS.zzzEdge),
+    note: glyph('♪', MARKS.note, SIZE.note),
+    heart: canvasTexture(64, 64, (c) => {
+      c.beginPath();
+      c.moveTo(32, 56);
+      c.bezierCurveTo(4, 36, 6, 10, 22, 10);
+      c.bezierCurveTo(28, 10, 32, 16, 32, 20);
+      c.bezierCurveTo(32, 16, 36, 10, 42, 10);
+      c.bezierCurveTo(58, 10, 60, 36, 32, 56);
+      c.closePath();
+      c.fillStyle = MARKS.heart;
+      c.fill();
+      c.lineWidth = inkWidth(64, SIZE.heart);
+      c.lineJoin = 'round';
+      c.strokeStyle = MARKS.ink;
+      c.stroke();
+    }),
+  };
+}
+
+function bubbleTexture(text: string): { texture: THREE.CanvasTexture; aspect: number } {
+  const fontPx = 44;
+  const pad = 22;
+  const tail = 16;
+  const probe = document.createElement('canvas').getContext('2d');
+  let textWidth = fontPx * text.length;
+  if (probe) {
+    probe.font = `700 ${fontPx}px ${ROUNDED_FONT}`;
+    textWidth = probe.measureText(text).width;
+  }
+  const w = Math.ceil(textWidth + pad * 2);
+  const h = Math.ceil(fontPx + pad * 1.4 + tail);
+  const texture = canvasTexture(w, h, (c) => {
+    const bh = h - tail - 4;
+    const r = 24;
+    c.beginPath();
+    c.moveTo(3 + r, 3);
+    c.lineTo(w - 3 - r, 3);
+    c.quadraticCurveTo(w - 3, 3, w - 3, 3 + r);
+    c.lineTo(w - 3, bh - r);
+    c.quadraticCurveTo(w - 3, bh, w - 3 - r, bh);
+    c.lineTo(w / 2 + 12, bh);
+    c.lineTo(w / 2, h - 4);
+    c.lineTo(w / 2 - 12, bh);
+    c.lineTo(3 + r, bh);
+    c.quadraticCurveTo(3, bh, 3, bh - r);
+    c.lineTo(3, 3 + r);
+    c.quadraticCurveTo(3, 3, 3 + r, 3);
+    c.closePath();
+    c.fillStyle = MARKS.bubble;
+    c.fill();
+    c.lineWidth = inkWidth(h, BUBBLE_HEIGHT);
+    c.strokeStyle = MARKS.ink;
+    c.stroke();
+    c.font = `700 ${fontPx}px ${ROUNDED_FONT}`;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillStyle = MARKS.ink;
+    c.fillText(text, w / 2, bh / 2 + 2);
+  });
+  return { texture, aspect: w / h };
+}
+
+/** Pooled billboard effects: symbols and speech bubbles. */
+export class EmoteSystem {
+  /** The camera the bubbles are kept in view of (see BUBBLE_TOP), once the game gives it. */
+  camera: THREE.PerspectiveCamera | null = null;
+  /** Where your own marks and words show out of your own eyes, once the game gives it. */
+  own: OwnView | null = null;
+  /**
+   * The marks and words over heads, drawn over the finished picture after the film look's passes (the user,
+   * 2026-10-24: hazed with the forest behind them, and seen through walls): see Game.draw. Each hides itself
+   * where the scene lies in front of it (SLACK), read from the scene's depth (see beforeOverlay); without it
+   * (no film look) they are drawn as before, the bubbles over everything.
+   */
+  readonly overlay = new THREE.Scene();
+  /** The uniforms every mark's shader shares (see DEPTH_TEST); each has its own uSlack. */
+  private readonly shared = {
+    tSceneDepth: { value: null as THREE.Texture | null },
+    uUseDepth: { value: 0 },
+    uNear: { value: 0.1 },
+    uFar: { value: 1000 },
+  };
+  /** Whose words go elsewhere now (into the text box: see Life.boxed), never in a bubble over their head. */
+  hush: ((host: EmoteHost) => boolean) | null = null;
+  private textures: Record<EmoteKind, THREE.Texture>;
+  private readonly pool: THREE.Sprite[] = [];
+  private readonly live: Live[] = [];
+  private readonly right = new THREE.Vector3();
+
+  constructor() {
+    this.textures = buildTextures();
+  }
+
+  /** Its marks drawn again in their colours as COLOURS has them now (tuned in the testing ground); those showing keep
+   * theirs till they go. (Bubbles are drawn as they are said.) */
+  recolour(): void {
+    this.textures = buildTextures();
+  }
+
+  spawn(kind: EmoteKind, host: EmoteHost, side = 1): void {
+    const sprite = this.take(this.textures[kind], ON_TOP.has(kind));
+    const e: Live = {
+      sprite,
+      kind,
+      host,
+      age: 0,
+      life: LIFE[kind],
+      pos: new THREE.Vector3(),
+      vel: new THREE.Vector3(),
+      size: SIZE[kind],
+      aspect: 1,
+      seed: Math.random(),
+    };
+    this.axes(host);
+    switch (kind) {
+      case 'zzz':
+      case 'note':
+      case 'heart':
+        host.getAnchor('head', e.pos);
+        e.pos.addScaledVector(this.right, side * 0.22);
+        e.vel.copy(this.right).multiplyScalar(side * 0.12);
+        e.vel.y = 0.32;
+        break;
+      default:
+        break;
+    }
+    this.live.push(e);
+    this.place(e, 0);
+  }
+
+  /** Words in a bubble over `host`'s head, for `life` seconds. */
+  say(host: EmoteHost, text: string, life = 1.9): void {
+    if (this.hush?.(host)) return;
+    this.unsay(host);
+    const { texture, aspect } = bubbleTexture(text);
+    const sprite = this.take(texture, true);
+    sprite.center.set(0.5, 0);
+    const e: Live = {
+      sprite,
+      kind: 'bubble',
+      host,
+      age: 0,
+      life,
+      pos: new THREE.Vector3(),
+      vel: new THREE.Vector3(),
+      size: BUBBLE_HEIGHT,
+      aspect,
+      seed: 0,
+      own: texture,
+    };
+    this.live.push(e);
+    this.place(e, 0);
+  }
+
+  /** The words over `host`'s head, if any, gone. */
+  unsay(host: EmoteHost): void {
+    for (const e of this.live) if (e.kind === 'bubble' && e.host === host) e.age = e.life;
+  }
+
+  /** Ready to draw `overlay` over the finished picture, hidden where the scene drawn last (its `depth`, or null
+   * with no film look) lies in front, seen by the camera. */
+  beforeOverlay(depth: THREE.Texture | null): void {
+    const camera = this.camera;
+    this.shared.tSceneDepth.value = depth;
+    this.shared.uUseDepth.value = depth && camera ? 1 : 0;
+    if (camera) {
+      this.shared.uNear.value = camera.near;
+      this.shared.uFar.value = camera.far;
+    }
+  }
+
+  update(dt: number): void {
+    for (let i = this.live.length - 1; i >= 0; i--) {
+      const e = this.live[i];
+      e.age += dt;
+      if (e.age >= e.life) {
+        e.sprite.visible = false;
+        e.own?.dispose();
+        this.pool.push(e.sprite);
+        this.live.splice(i, 1);
+        continue;
+      }
+      this.place(e, dt);
+    }
+  }
+
+  private axes(host: EmoteHost): void {
+    this.right.set(Math.cos(host.facing), 0, -Math.sin(host.facing));
+  }
+
+  /** A sprite's material for `overlay`, drawn as the marks are over the finished picture (see DEPTH_TEST): hidden
+   * where the scene lies nearer than it by more than `slack` metres (its userData.slack, to change). Also the ▽
+   * over what you look at (see Focus). */
+  overlayMaterial(map: THREE.Texture, slack: number): THREE.SpriteMaterial {
+    const material = new THREE.SpriteMaterial({
+      map,
+      transparent: true,
+      depthWrite: false,
+      fog: false,
+      // (Drawn onto the finished picture, its colours as they are.)
+      toneMapped: false,
+    });
+    const uSlack = { value: slack };
+    material.userData.slack = uSlack;
+    material.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, this.shared, { uSlack });
+      shader.fragmentShader = shader.fragmentShader.replace('void main() {', DEPTH_TEST);
+    };
+    return material;
+  }
+
+  private take(texture: THREE.Texture, onTop: boolean): THREE.Sprite {
+    let sprite = this.pool.pop();
+    if (!sprite) {
+      sprite = new THREE.Sprite(this.overlayMaterial(texture, SLACK));
+      this.overlay.add(sprite);
+    }
+    const m = sprite.material;
+    m.map = texture;
+    m.depthTest = !onTop;
+    m.userData.slack.value = onTop ? SLACK_ON_TOP : SLACK;
+    m.opacity = 1;
+    sprite.renderOrder = onTop ? 20 : 10;
+    sprite.center.set(0.5, 0.5);
+    sprite.visible = true;
+    return sprite;
+  }
+
+  private place(e: Live, dt: number): void {
+    const s = e.sprite;
+    const { age } = e;
+    const k = age / e.life;
+    let scale = e.size;
+    let opacity = 1;
+    switch (e.kind) {
+      case 'zzz':
+      case 'note':
+      case 'heart':
+        e.pos.addScaledVector(e.vel, dt);
+        s.position.copy(e.pos);
+        s.position.x += Math.sin(age * 4 + e.seed * 6) * 0.03;
+        scale = e.size * (0.6 + 0.6 * smooth(k * 3));
+        opacity = 1 - smooth((k - 0.65) / 0.35);
+        break;
+      case 'exclaim':
+      case 'question':
+        this.axes(e.host);
+        // Above the very top, so tall ears do not hide it.
+        e.host.getAnchor('top', s.position);
+        s.position.y += 0.2;
+        s.position.addScaledVector(this.right, 0.14);
+        scale = e.size * pop(age);
+        opacity = 1 - smooth((k - 0.75) / 0.25);
+        break;
+      case 'bubble': {
+        e.host.getAnchor('top', s.position);
+        s.position.y += 0.1;
+        scale = e.size * pop(age);
+        opacity = 1 - smooth((k - 0.85) / 0.15);
+        const camera = this.camera;
+        if (camera) {
+          _ndc.copy(s.position).setY(s.position.y + scale).project(camera);
+          if (_ndc.z < 1 && _ndc.y > BUBBLE_TOP) {
+            // Metres it rises too high, where it is: brought down that far, over tall ears if need be, but
+            // no lower than just over their eyes; what still does not fit, made smaller.
+            const across = s.position.distanceTo(camera.position) * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+            const over = (_ndc.y - BUBBLE_TOP) * across;
+            e.host.getAnchor('eyeL', _eyes);
+            const drop = Math.max(0, Math.min(over, s.position.y - (_eyes.y + 0.12)));
+            s.position.y -= drop;
+            if (over > drop) scale = Math.max(scale * 0.55, scale - (over - drop));
+          }
+        }
+        break;
+      }
+    }
+    s.scale.set(scale * e.aspect, scale, 1);
+    s.material.opacity = opacity;
+  }
+}

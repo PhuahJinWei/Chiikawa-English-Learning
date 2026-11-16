@@ -1,0 +1,316 @@
+# えいごフレンズ: review of the first version
+
+Reviewed 2026-11-16, before anything was committed or published. Nothing in the app was changed by this review.
+
+**How it was done.** Four passes: my own walkthrough of the running app at phone size, and three independent reviews (app logic, iPhone behaviour, teaching and Japanese). I re-checked each reviewer's main claims against the code before listing them here.
+
+**Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
+
+## After step E: the content rework (2026-11-16)
+
+You changed the goal: conversation with no deadline, starting talk as well as answering, new sentences built from known ones, and no audio until the content is decided. The content system was reworked for that (PLAN.md section 5): one learning path of steps in `src/content/course`, steps built from earlier ones (checked), drafts that are never taught or voiced, and **`content-sheet.html`** to review everything without the code.
+
+- **Moved unchanged:** the 45 phrases taught so far (part 1). The app teaches exactly what it did, with the same audio; the step ids are new ("hi", "are-you-ok"). The Malaysia-specific phrases ("Hi, Auntie!", "Eat already?") stay: your choice, 2026-11-16.
+- **Drafts for you to review (part 2, 33 steps):** the 19 longer answers, now steps of their own built from the short answer, and 14 new steps: "No problem!", "Me too!", "Sure!", "I'm hungry / tired / happy", asking "How are you?", "Do you like it?", "What is this?", "Let's go!", and the chain "See you tomorrow!" → "See you next year!" → "I'll come again next year!". Their Japanese is not reviewed yet; that happens once the English is decided.
+- **Done in the app (2026-11-16):** the trip is gone: no countdown on 今日, no trip date in 設定, no trip in the first-run tour, and no extra reviews before a trip. Reviews no longer stop at 10 days: a phrase she keeps getting right comes back after 20 days, then every 40, so the daily review stays short as the course grows (this replaces the trip-based fix for 2.9). The 英語度 meter, a share of a planned 108-phrase course, is now 英語レベル: one level per ten phrases learned, which never fills up and never drops (a new fix for 2.8).
+- **Not done yet (app changes, after the content):** a lesson step that shows how a sentence is built from the one she knows, and one that plays what she hears back after starting a conversation; conversation practice (several exchanges in a row).
+
+## Status after steps A to E (2026-11-16)
+
+Step A (menu, notebook, lesson control and the new lesson shape), step B (iPhone hardening), step C (Japanese and readings), step D (her notes) and step E (the first packs around the visit) are built. All were checked at phone size on a PC, and step B also in WebKit, Safari's engine. Each step then had an independent review; the problems it found are fixed (below). Item numbers refer to the tables further down.
+
+| | Items |
+|---|---|
+| **Fixed** | 1.1 to 1.12, 1.14; 2.1, 2.2, 2.4 (with contrast pairs), 2.5, 2.6, 2.8 to 2.12; 3.1 to 3.10 and Appendices A and B; 5.1 to 5.4, 5.6; section 6's tests in Safari's engine and the review page; section 7, her notes |
+| **Built, waiting for her phone** | 4.1 to 4.12. Everything is in place and tested on a PC, but only a self-check report from her iPhone can confirm the iOS behaviour (see "Step B" below) |
+| **Waiting for your ear** | Five readings and the new "Sorry, what?" (see "Step C" below), and the new packs' lines and readings (see "Step E"): listen on `/review.html` |
+| **Waiting for your family** | Her own details for the "About me" pack. The family's ways of talking asked about in step E are all answered (see "Step E") |
+| **Partly** | 1.13 (other phrasings are one-line rows and the main phrase scrolls back into view; very small screens still scroll). 2.13 (the new packs have real sentences, so the highlight now picks out the part that matters: "Want · **some more?**", "**What** · do you · want to · **drink?**"; judge it by ear on the review page). 2.3 (four repetitions, the last two from memory, repeat after the model, three-way rating; the phone still cannot hear her). 5.5 (unit tests cover the lesson's bookkeeping, real audio files, every app word in use, a real review backlog, sound recovery, backups, the service worker, readings and the Japanese style; WebKit smoke tests cover start-up, a lesson, backup, offline use and the start-up panel; the lesson screens' details are still checked by hand) |
+| **Still open** | 2.7 English app words spoken aloud; contrast pairs; readings that show linking across blocks ("Look at this" sounds like ルッカッディス); a clean self-check report from her phone, which now also covers the notes' voice |
+
+Fixed from the second review: a skipped listening check no longer orphans a phrase (it comes back, and old saves heal); "what would you answer?" never marks a fitting reply or "Sorry?" as wrong; a question whose sound failed is never graded; practice is saved and never starts or moves the schedule; skipping every step earns no stamp; the day number is refreshed when a lesson starts; buttons that appear under her finger ignore taps for a moment; the long reply is played and repeated, not just shown; the time estimates are calibrated (a lesson now shows 約5分 on day 1, honestly).
+
+### Step B: what was built
+
+- **Sound that recovers (4.1, 4.3, 4.11).** Every wait has a time limit, and a watchdog checks that each clip really plays. Stuck sound pauses the lesson; 「続ける」 rebuilds the sound system, as does the first tap after returning from another app. A second way of playing (Settings → 音の再生方式 → 予備: an audio element instead of Web Audio) also plays in silent mode on any iOS; two failures in a row switch to it automatically. The clips are now constant bitrate, and their lengths come from the manifest. Confirmed on a PC by forcing a sound system that never resumes: the lesson paused with a hint, and 「続ける」 rebuilt the sound and carried on.
+- **Screen stays on in lessons (4.2)**, released while paused.
+- **Errors in proportion (4.8, 4.9).** After start-up a stray error only shows a small notice; a screen that fails to draw shows an error screen with 「今日」に戻る while the menu keeps working; 3D that keeps failing or loses the GPU for good hands over to the flat stage. A start-up panel in plain old JavaScript shows a message, a reload button and the phone's details if the app has not started after 8 seconds.
+- **Backup (1.14, 4.5).** 記録のバックアップ makes a short text for LINE or Notes (compressed, with a checksum, under LINE's 10,000-character limit even with the whole course learned) and reads it back from a pasted message; starting over needs two confirmations. Today reminds her weekly, after the lesson. The app asks iOS to keep its data at start-up, warns if saving fails, and keeps a copy of a save it cannot read.
+- **A self-check that diagnoses (4.4, 4.7).** Feature probes for the iOS version, screen and safe-area sizes, the sound system's state and history, 3D or flat stage and frame rate, storage, the offline copy against the newest version online, wake lock, and the last errors. Her ears answer four sound rows, including after switching apps and after closing the app completely (the iOS 26.0 and 26.1 bug); her answers survive the close.
+- **Updates (4.6, 4.10, 5.4).** The version comes from the content, so a build that changes nothing is not an update, and an update downloads only the files that changed (checked: 1 of 117). Updates switch in only on the Today screen, with one time limit. Today shows 「✓ ネットなしでも使えます」 once the offline copy is complete; the install guide says the first open needs the internet.
+- **Small things (4.12, 5.6).** Reduce Motion no longer makes indicators flicker; turned sideways, the app asks to be held upright and a lesson pauses; every report has a copy-by-hand fallback; the 3D stage drops to 20 frames a second when nothing is happening; unused code removed.
+- **Found by the WebKit tests:** WebKit on Windows has no Web Audio, and the code threw an error on every tap there. A browser without Web Audio now uses the second way of playing.
+- **Fixed from step B's review** (8 problems and 4 suspicions, all closed): the menu could not leave the error screen; an update in a new install's first session never reloaded; an update that would not take over could show 「アップデート中」 over and over, or reload in the middle of a lesson; a clip stopped while loading came back as broken; the pause sheet's sound note vanished under her finger and moved the buttons; 標準 did nothing after the automatic switch; the start-up panel used CSS that old iPhones ignore; a backup copied by hand was not counted. Also: the service worker now checks every downloaded file against its expected hash, so a server caught mid-deploy cannot leave a wrong file on her phone; a decode cut short by a rebuild is retried; self-check answers expire one by one; a save that could not be read can be sent from the self-check. New tests cover the service worker's install, update and refusal paths.
+
+**What only her phone can tell us:** whether sound survives a call, the lock screen and a full close; whether silent mode mutes the standard way; whether the wake lock works in a home-screen app (iOS 18.4 and later should); and the 3D frame rate. Once the app is published, ask her to run 動作チェック once from the home-screen icon and send you the report.
+
+### Step C: what was done
+
+- **Adult Japanese everywhere (3.1).** Every phrase, note and screen uses ordinary kanji and no spaces between words. ハチワレ speaks casually in his bubbles; settings, guides, notices and reports use plain です・ます. A test now fails if the spaced-out style comes back.
+- **Meanings fixed (3.2, 3.5 to 3.7, Appendix A).** "I don't know." is 「知らない。」, with a note that "Sorry, what?" is for not catching the English; "Hi!" is 「こんにちは！」 with a warning that it sounds like はい; "Yes." and "No." are 「はい。」「いいえ。」; her morning reply is "Good morning!" (「おはようございます！」), and "Morning!" is only something she hears. Every string in Appendix A is fixed.
+- **Readings (3.8, 3.9, Appendix B).** All seventeen are corrected against the voice's own phonemes, and every block of two or more syllables now marks its stressed beat with dots above it (傍点), checked by a test against the phonemes. Readings are larger (16 px, was 13). The tour explains the dots.
+- **"Sorry?" became "Sorry, what?".** Measured, not assumed: the Heart voice never rises at the end of a question ("Sorry?", "Really?" and "OK?" all fall, whatever the punctuation or stress), so its "Sorry?" sounded almost exactly like the apology "Sorry,", while the app taught her to raise the end. Re-pitching that one clip worked on paper (266 → 194 → 317 Hz), but you chose to teach "Sorry, what?", which asks for a repeat however it is said. The note now tells her that "Sorry" alone sounds like an apology, so she says "what?" with it; the replay button reads "Sorry, what?" once she has learned it. `tools/audio/pitch.mjs` still measures every clip's pitch for the review page.
+- **The review page (section 6).** `/review.html` (development only) plays every line and block with its reading, meaning, phonemes and pitch.
+- **Fixed from step C's review** (a native-level read of every string; it confirmed the meaning traps, the bubbles' register and every stress mark): "See you later!" is 「またね！」, not a promise to meet later today; her own lines to the parents are polite (「ありがとうございます！」「大丈夫です！」「知らないです。」「すみません、何て言いました？」); Hachiware says 「こんばんは！」 after dark; the self-check's "close the app" row now says how to really close it (a swipe up only goes home); phrases like "Sorry, what?" are labelled 言い方, not 答え, since they answer nothing; うさぎ no longer speaks in sentences (in the original she never does), so Hachiware talks on the Practice screen; and about thirty smaller fixes to wording, kanji and register.
+
+**For your ear:** the top of `/review.html` lists "Sorry, what?", "Nice to meet you" (ミーチュー or ミート ユー?), "Got it?" (ガーディッ or ガーリッ?), "understand" (ステァ or スタ?), "any idea" and "thank you".
+
+### Step D: what was built
+
+- **Her notes, the notebook's second shelf** (ノート → メモ, section 7). A note holds English (pasted from your LINE message; the paste button and the tidying of quote marks and line breaks are for that), her own Japanese, and ▶. A note can be Japanese only, a 「英語で何て言う？」 question for you. Closing the editor keeps what she wrote; deleting takes one confirmation. Notes are part of her saved progress, so backups carry them.
+- **The voice.** A note whose English matches any Heart clip (a lesson line, a word block, or one you voiced) plays in Heart. Anything else is read by the iPhone's own English voice, at natural speed, labelled 「iPhoneの声」 so she knows it is different (you confirmed this exception to "Heart only", 2026-11-16). It never reads English with a Japanese voice: a phone with no English voice gets a message saying where to add one in the iPhone's settings (this PC has only Japanese voices, which is how that case was found and checked).
+- **Getting notes the Heart voice.** 「メモを送る」 sends you every note, and ends with the English that has no Heart voice yet. Add those lines to `src/content/notes.ts`, run the audio tool, and after the update they play in Heart (README, "Giving her notes the Heart voice").
+- **From the notebook:** a learned phrase's sheet has 「メモに追加」. **The self-check** has a row for the notes' voice, and its report names the phone's English voices.
+- **Checked:** unit tests for notes, the Heart lookup and the phone's voice (including a voice that never finishes and a phone without English voices); a WebKit check that writes, changes and deletes a note on two phone sizes; and the screens at phone size.
+- **Fixed from step D's review** (12 problems, all closed, plus four suspicions): a note she was writing was lost if she left by the menu bar or iOS closed the app while she was copying from LINE (it is now kept however she leaves); pasting with nothing copied wiped a note's English; a note "Ready." played the question "Ready?"; a "now playing" mark could stay on after its sound stopped; restoring an older backup dropped newer notes (they are now merged, and starting over keeps notes); a full notebook could trap her in the editor; messages scrolled out of view; text boxes were small enough for iPhone to zoom; and the iPhone's copy and paste menu, a paused voice after the background, and a slow first voice are handled.
+
+### Step E: what was built
+
+- **Three packs around the visit (2.12),** 27 new phrases, so everything in 2.12 except her name is now taught. **Pack 2 ごはんの時間** (Kurimanju on stage): "Want some more?" → "Yes, please." / "No, thank you."; "Have you eaten?" / "Eat already?" → "Yes." / "Not yet."; "How is it?" → "It's good!"; spicy, full, a drink, "Try this!", "Let's eat!", and "Thank you! It was delicious!" for ごちそうさま. **Pack 3 友だちの家族と** (Shisa): "Welcome!", "Nice to meet you!" → "You too!", "Hi, Auntie!" / "Hi, Uncle!" for her friend's parents, "This is for you." for her おみやげ, "How are you?" → "Good, thank you.", "Where are you from?" → "Japan.", "Tired?", "Thank you!" → "You're welcome.", "Sorry!" → "It's OK.". **Pack 4 おうちで** (Rakko): understand "Come in.", "Sit down.", "Wait.", "Let's go!", "No need!"; say "Where is the toilet?", "I don't understand.", "Can I help?", "Excuse me.".
+- **Only Hachiware talks,** as in the original; each pack's friend acts on stage between him and Chiikawa. Three friends fit at phone size (checked).
+- **The teaching order (2.12):** the family essentials come first ("Want some more?" on day 3, "Nice to meet you!" day 4, "How are you?" day 5); each new reply is paired with something lighter; the app's teacher talk ("Listen", "Say it", "Next") comes last. At two a day the 45 phrases take 23 days.
+- **Contrast pairs (2.4):** in "what does it mean?", one wrong choice now sounds like what she heard ("Sorry!" against "Sorry, what?", "Time to eat!" against "Time to go!", "Are you OK?" against "Are you tired?"), so one familiar word is not enough.
+- **Replies that also fit** were updated across the old packs, so a new reply that is a fine answer (for example "Not yet." to "Ready?") is never marked wrong.
+- **The voice's own mistake:** its pronunciation dictionary read "Excuse me" with the noun's s (エクスキュース). The audio tool now respells such words for the voice only, so it says the verb's z; the screen still shows "Excuse me.".
+- **Checked:** tests (new ones for the contrast choices), the three new casts and the quiz at phone size, the build and the WebKit smoke test, and an independent review of the new Japanese. It found 10 problems, all fixed. The worst: the "You're welcome" note told her to say it while handing over her gift; Auntie/Uncle was explained as for anyone older (it is for her friend's parents' generation; calling someone a few years older "Auntie" makes them feel old); "Nice to see you!" (for people you have met before) was taught as a first-meeting line; and "No, thank you." was glossed 結構です, which sounds cold to a host. The review also showed "This is for you." was only a line she hears, so it is now one she says.
+- **The rest of the course** is re-planned in PLAN.md section 5: About me (needs her details), Feelings, Choosing, I like / I want, Going out, Reactions, Describing and asking back, then the rehearsal.
+- **Your answers about the family (2026-11-16):** they say "Eat already?" and "Full already?" (kept beside a standard phrasing); they ask "Is it tasty?" (it replaced "Is it nice?"); plain "Auntie"/"Uncle" is right; they answer "Thank you" with "Welcome!", which the "Welcome!" phrase and word now also explain as どういたしまして (not a second quiz item: both meanings have the same sound, so the quiz would have two right answers); and they say "No need!" when she offers to help, now a phrase she hears in Pack 4, taught the same day as "Can I help?".
+- **Needs you:** her name, home town, job, likes, what she cannot eat and length of stay, for "About me"; and a listen to the new lines on `/review.html`.
+
+## Verdict
+
+It is not ready for her. It shows the idea working, but it has five structural problems:
+
+1. **She has no control and no map.** No menu, no pause, no way back, no list of what she has learned.
+2. **There is far too little to do, and it trains the wrong thing.** The content lasts five days, and the exercises can be passed by matching meanings without listening or speaking.
+3. **It will probably freeze or go silent on a real iPhone**, and it cannot tell us why.
+4. **The Japanese reads like a children's book**, and a few lines teach a wrong meaning.
+5. **Safety checks the plan promised were never done** before I called the first version built.
+
+Worth keeping as it is:
+
+- The 3D friends and their look.
+- Hearing a phrase twice before any text appears.
+- The replay button that turns into "Sorry?".
+- Misses that are never punished on screen.
+- Saving after every step, and the review-schedule maths (a test of 24,864 simulated sessions with random misses, quits and skipped days found no corrupted progress).
+- Offline use and the update check.
+
+## 1. Control and navigation
+
+All confirmed by using the app.
+
+| # | Problem | What she experiences | Fix |
+|---|---|---|---|
+| 1.1 | No map | The home screen has two controls: start and settings. Half the panel is empty. | A menu bar with four places (see the proposal below). |
+| 1.2 | No pause | Every step runs on timers. A Meet step plays for 10 to 20 seconds with no way to hold it. | A pause button in every lesson step. |
+| 1.3 | No way back | She cannot return to the previous step or hear an explanation again. Hachiware's "when to use it" line is replaced after 5 to 7 seconds and cannot be brought back. | A back button; the explanation stays on the card. |
+| 1.4 | Quitting loses her place | ✕ exits at once with no question. I quit halfway through the first exchange and the home screen greeted me as a new user and replayed it from the start. | Ask before quitting, save the position, and offer つづきから on the home screen. |
+| 1.5 | Leaving the app mid-step | The script carries on without her. The clip that was cut is never replayed, and Catch can enable its choices with the question unheard. | Pause automatically when the app leaves the screen; resume the step from its start. |
+| 1.6 | No revising by choice | Nothing lists what she has learned. There is no way to pick a phrase and practise it. | A notebook of every learned phrase (below). |
+| 1.7 | Extra practice is the same six every time | もっと れんしゅう always picks the same six items until a daily review reorders them. In a simulated month the first six app words came up on 22 to 25 of 30 days, and "Thank you!" on 2. | Let her choose what to practise; rotate fairly. |
+| 1.8 | One shared replay button | It replays only the line that played last. The main phrase cannot be replayed once a variant has played, and tapping a card does nothing. During the script, a tap on it fights the script's own clips. | Every line plays when tapped. |
+| 1.9 | A mislabelled button | After answering, the red button says もう一回 but does not repeat anything. It marks the answer as failed and moves on. | Label it 言えなかった, and add a real replay of the model answer. |
+| 1.10 | Grading buttons appear under her finger | The two grading buttons appear, already live, where the button she just tapped was. A double tap grades the answer before she has heard the model. | Keep them disabled until the model answer has played. |
+| 1.11 | The start button does not say what it starts | It reads いいよ！. Nothing says what today holds or how long it takes. | Show reviews, new items and minutes; label the button plainly. |
+| 1.12 | No introduction | 「あいて」「おてほん」「ちいかわの答え」 are never explained. There is no sound check before lesson one, so a muted phone gives a silent lesson with no warning. | A one-minute first-run tour with a sound check. |
+| 1.13 | Important text scrolls out of view | New cards scroll the list to the bottom, so the main phrase and its reading slide under Hachiware's bubble while a minor variant stays in full view. On a small iPhone (375 × 667) about 113 px is left for cards that need about 180 px. | Keep the main phrase pinned; shrink the stage on short screens. |
+| 1.14 | No backup, restore or reset | Progress is one item of saved data inside the home-screen app. Removing the icon or changing phone loses everything. | Export and import in settings. |
+
+### Proposed structure
+
+Keep the friends and the conversational feel inside lessons. Put a conventional shell around them.
+
+**A menu bar at the bottom, visible everywhere except inside a lesson:**
+
+| Place | What is there | Host friend |
+|---|---|---|
+| 今日 (Today) | Today's lesson with what it contains and how long it takes, a はじめる or つづきから button, and the stamp card. | Hachiware |
+| ノート (Notebook) | Every phrase she has learned, grouped by situation. Tap a row to hear it. Open a phrase to see all its versions, the replies and when to use it, then もう一度習う (learn it again) or 練習する (practise it). A second shelf holds her own notes (section 7). | Furuhonya |
+| 練習 (Practice) | Practice she chooses: weak phrases, everything mixed, or one pack; listening only or speaking only. | Usagi |
+| 設定 (Settings) | Settings, backup and restore, the self-check, the install guide. | none |
+
+**Inside a lesson:**
+
+- **Pause** stops the sound and the timers. From the pause sheet: つづける, このステップを最初から, 前のステップへ, やめる.
+- **Automatic pause** when the app leaves the screen or the sound is interrupted, so nothing plays to an empty room.
+- **Back** returns to the previous step. Results already recorded stay.
+- **Every line and card plays when tapped.**
+- **Quit asks first**, and the position is saved so つづきから resumes at the same step.
+
+## 2. Teaching design
+
+Confirmed by running the real session code through simulated weeks, unless marked.
+
+| # | Problem | Evidence | Fix |
+|---|---|---|---|
+| 2.1 | Far too little to do | At the default four new items a day, all 18 exchanges are used up on day 5. Days 6 to 12 are one to two minutes. Days 13 to 15 and 21 to 31 have nothing due, and on those days no stamp can be earned. Two weeks total about 23 minutes against a budget of 140 to 210. | About two new items a day, each practised far more. Fill the session to ten minutes with mixed practice. Stamp practice days. |
+| 2.2 | The app's pace does not fit the content plan | The setting allows 21 to 35 new items a week. The plan supplies about 10. | Match them: fewer new items a day, or larger packs. |
+| 2.3 | Speaking is trained least and never checked | Each reply gets three repetitions and one self-graded answer, then one answer per review: about ten times in the whole course. Day 1 has no speaking at all. 言えた！ can be tapped in silence. | More repetitions with the text hidden for the last ones; say it again after the model; a three-way rating; your ear on the weekly call as the real check. |
+| 2.4 | The listening step can be passed without listening | On a new item, Catch offers the meaning she read seconds earlier. In review it is a one-in-three guess, and the choices are on screen before the sound plays. Most of the 18 are also loanwords she already knows. | Show the choices after the sound. Add items answered by choosing the reply. Contrast phrases that sound alike. |
+| 2.5 | The longer replies are never taught | "Nice to meet you.", "One more time, please." and "Good morning!" have audio, but no lesson step shows them. | Teach them once the short reply is solid, as the plan said. |
+| 2.6 | The first days go to app words | Her first spoken word is "OK!" on day 2. "Hi!", "Sorry?" and "Thank you!" arrive on day 3. Seven of the 21 app words (Listen, Say it, Your turn, Look, Yes, No, Thank you) are taught and then never used by the app. | Day 1 is Hi!, Thank you!, Sorry? and Are you OK?. Spread the useful app words through the first week, and use every one that is taught. |
+| 2.7 | The English that appears is shown but never spoken | The plan said switched words would also be played aloud. They are not, and the friends' instructions stay Japanese. | Play switched words; switch the short instructions too. |
+| 2.8 | The 英語度 meter is finished in the first week | It reaches 100% on day 6. One missed review flips a button back to Japanese at once; in a run with misses it fell from 100% to 76% on day 9. | Tie it to the whole course, and never switch a word back. |
+| 2.9 | The review schedule ignores the trip date | "Sorry?" learned on day 3 comes back on days 4, 6, 10, 18, 34 and 66: once in the last six weeks. | Cap the gap at about ten days, and add a pre-trip review period. |
+| 2.10 | The daily limit on new items is not daily | Quit after three of today's four new items, start again, and four more are offered. | Count items first met today. |
+| 2.11 | A lesson left open overnight is filed under the next day | Yesterday gets no stamp, and today's real session cannot be started. | Rebuild the plan when the day has changed. |
+| 2.12 | Home-stay essentials are missing | Not in the first 18: Yes, please / No, thank you; I'm (name); How are you?; I don't understand; Sorry (apology); Eat already?; Come, sit, eat, wait; Toilet?; You're welcome. "Listen", "Say it", "Next" and "Once more" are teacher talk the family will not use. | Reorder the first packs around the visit. |
+| 2.13 | The highlighting is untested | 31 of the 41 lines she hears are a single block, so the whole line is highlighted and it says nothing. | Judge it on Pack 2, which has real sentences. |
+
+## 3. Japanese and readings
+
+| # | Problem | Fix |
+|---|---|---|
+| 3.1 | **Written for a small child.** 136 strings are almost all hiragana with spaces between words. The Chiikawa manga itself uses ordinary kanji and kana. It is also inconsistent: 準備中 beside じゅんび, 開く beside ひらく. | Normal adult Japanese: kanji for everyday words, no spaces, short sentences. Hachiware stays casual in bubbles; settings and guides use plain です・ます. |
+| 3.2 | **"I don't know." is glossed 「わからない」**, which also means "I don't understand". She would say "I don't know" when she has not understood. | 「知らない」, with a line explaining that "Sorry?" is for not catching the English. |
+| 3.3 | **"Good night!" is used as the evening hello** between 21:00 and 04:00 once learned. English only says it when parting. | Use "Hi!" in the evening; keep "Good night!" for the goodbye. |
+| 3.4 | **"Done!" is glossed 「言えた！」** on the grading button, while the lesson teaches Done = おわり. | Keep the grading buttons Japanese. |
+| 3.5 | **「やあ！」 for Hi!** is dated, male speech, and is given as her own greeting. | 「こんにちは！」. Also warn that "Hi" sounds like はい. |
+| 3.6 | **Yes. / No. are 「うん。」「ううん。」**, one character apart, and too casual for her friend's parents. | 「はい。」「いいえ。」 |
+| 3.7 | **Her required morning reply is "Morning!"**, with "Good morning!" hidden as the optional one. | Swap them. |
+| 3.8 | **Seventeen katakana readings mislead** or break the file's own rules (table in Appendix B). Several need your ear to settle. | Fix them; mark the rise on "Sorry?". |
+| 3.9 | **The reading is the smallest text on the card**: 12 px under 23 px English, though it is the only part she can read. | Make readings larger. |
+| 3.10 | **Hachiware's mouth moves into the English audio.** For 13 of 18 exchanges his mouth is still moving for 0.07 to 0.46 seconds after the clip starts, which breaks your rule that the voice is never a friend's voice. | Stop the mouth when a clip starts. |
+
+Every other Japanese line was translated back to English blind and matched. The full list of string fixes is in Appendix A.
+
+## 4. iPhone risks
+
+Nothing here can be confirmed without an iPhone. The code facts behind each item are confirmed; the iPhone behaviour is predicted from WebKit bug reports and Apple's release notes (sources at the end).
+
+| # | Risk | What she would experience | Fix |
+|---|---|---|---|
+| 4.1 | **Sound dies after any interruption** (lock, app switch, call, Siri, alarm). The audio code waits forever for the sound system to resume, and every step unlocks its buttons only when its sound finishes. | The lesson freezes with greyed buttons until she force-quits the app. | Time limits on every wait, the known suspend-then-resume workaround, a "tap to continue" layer, and rebuilding the sound system if it stays dead. |
+| 4.2 | **The screen locks during a lesson.** iPhone auto-lock is often 30 seconds, and a Meet step runs about 20 seconds without a touch. | The phone dims and locks while she listens, which then triggers 4.1. | Keep the screen awake during lessons. |
+| 4.3 | **Silent mode rests on one setting with no fallback.** Phones in Japan usually sit in silent mode. | If that setting does not work inside a home-screen app, she hears nothing. | Prepare a second way of playing sound, and have the self-check tell us which works. |
+| 4.4 | **iOS 26.0 and 26.1 had a bug: sound in home-screen apps worked only on the first run.** Fixed in 26.2. | First lesson fine, every later one silent. | A self-check row for it; if it fails, she updates iOS. |
+| 4.5 | **Progress is one saved item inside the home-screen app.** Safari and the home-screen app do not share it, and the app asks iOS to protect it only if she opens the self-check. | Deleting the icon, or a new phone, starts from zero. | Ask for protection at start-up; add export and import before she has a week of progress. |
+| 4.6 | **The first open from the home screen needs the internet** and re-downloads everything, with nothing to show when offline use is ready. | Opened offline the first time, she gets Safari's error page. | Say so in the install guide; show "preparing" until ready. |
+| 4.7 | **The self-check cannot tell us what we need.** Recent iOS versions report a frozen version number, so 26.1 and 27.1 both read as 18.x. It also cannot say whether the 3D or the flat stage is running, so its 3D row can pass on the flat stage. | Every diagnosis by LINE takes extra rounds. | Report feature probes, the stage in use, the sound system's state, screen sizes and cache versions. |
+| 4.8 | **Any stray error ends the lesson.** Every uncaught error goes to the error screen, including a failed update check on a shaky connection. If the 3D code fails every frame, reloading returns to the same error although the flat stage would have worked. | 「ごめんね、うまく うごかなかった…」 on an app that is fine, or an app that cannot be used. | Keep the lesson on screen for non-fatal errors; catch 3D errors and fall back to the flat stage. |
+| 4.9 | **A blank screen with no way to report.** The build needs iOS 16.4 or later; an older iPhone cannot read it at all. | A cream screen and nothing else. | A tiny start-up check that shows a Japanese message if the app has not started in eight seconds. |
+| 4.10 | **One update path can leave アップデート中 up for good**; an update can also reload the self-check while she is answering it. | A covered screen on every launch. | One time limit for both paths; apply updates only on the home screen. |
+| 4.11 | **The sound files lack a length header.** Safari has misread such files' lengths before. | Long dead air after clips, or clipped endings. | Re-encode with the header; pass the known length when playing. |
+| 4.12 | **Small things:** "Reduce Motion" would make the listening indicators flicker; landscape pushes the buttons off-screen; the copy fallback for reports fails silently; the 3D scene never pauses when idle, though the plan said it would. | Minor, but each is a support message. | Listed for the hardening pass. |
+
+## 5. Code defects not listed above
+
+| # | Problem | Fix |
+|---|---|---|
+| 5.1 | Two sounds can overlap, and a clip from a step she has left can play on the next screen. | Number each play request and drop stale ones. |
+| 5.2 | A clip that fails to load is skipped silently, and a silent Catch still records a result. | Show a notice; do not grade unheard items. |
+| 5.3 | After a wrong answer on "Sorry?" or "Slowly, please.", Hachiware says "listen to the key part", then there are 2.4 seconds of silence. | Skip that line when there is no key part. |
+| 5.4 | Every build counts as a new version even when nothing changed, so each push forces a full re-download. | Take the version from the content. |
+| 5.5 | The automated tests miss most of this. The audio test checks a list, not that the files exist; the review-cap test passes with the cap removed; nothing tests the lesson flow, sound or updates. | Test real files and the lesson flow. |
+| 5.6 | Unused code: seven app words, the longer replies, the stage pause, and several small helpers. | Use or remove. |
+
+## 6. Promised in the plan, not done
+
+- **Tests in Safari's engine on your PC.** Never set up, so no part of the app has run in anything but Chrome.
+- **The review page** for you to hear each line with its highlights. Not built, so you have not checked Packs 0 and 1 by ear.
+- **The back-translation check** of my Japanese. First done now, by this review.
+- **Backup, the partner page for your weekly call, and tap-to-explain.** Planned for the second phase; listed here because the review shows the first two are needed sooner.
+- **A clean self-check report from her phone.** The plan made this the condition for calling the foundations done. It has not happened.
+
+## 7. Your notes idea
+
+Yes, it is worth having, as the second shelf of the notebook.
+
+- **What a note holds:** an English word or sentence, her own Japanese note, and a play button.
+- **How notes get in:** typed, pasted, or starred from a lesson. She cannot spell English, so the realistic source is you: you send a phrase on LINE, she copies it and pastes it in. She can also write a Japanese-only "how do I say…?" note to ask you on the call.
+- **The voice is the trade-off.** Lesson audio is made in advance on your PC, so free text cannot use Heart. A note would be read by the iPhone's own built-in English voice. It works offline but sounds different and more robotic, and it needs checking on her phone.
+- **No katakana reading** for notes at first; a reliable one cannot be generated on the phone.
+- **Promotion:** notes she marks can be shared with you, and I can turn them into proper lesson items with Heart audio in the next pack.
+- **When:** after the menu and notebook exist, because it lives inside them.
+
+## 8. Suggested order of work
+
+| Step | What | Why this order |
+|---|---|---|
+| A | **Structure and lesson redesign together:** the menu, the notebook, pause, back, resume, tappable lines, and the new shape of a daily session (sections 1 and 2). | Navigation and teaching both reshape the same screens, so doing them separately means building them twice. |
+| B | **iPhone hardening:** sound recovery, screen stays awake, proportionate errors, backup, a self-check that can diagnose, tests in Safari's engine (sections 4 and 5). | Independent of A; can run alongside. |
+| C | **Japanese rewrite and readings** (section 3 and the appendices). | Independent of A and B; some readings need your ear. |
+| D | **Notes** (section 7). | Lives in the notebook from A. |
+| E | **Content:** Pack 2 onward, reordered around the visit. | Last, so new packs are written for the fixed exercises. |
+
+Her start date should move rather than give her this version.
+
+## 9. What to ask her now
+
+These settle several iPhone risks before any code is written: her iPhone model, iOS version, Auto-Lock setting, whether Low Power Mode, Reduce Motion and rotation lock are on, and her default browser.
+
+## Appendix A: string fixes
+
+| Location | Current | Problem | Suggested |
+|---|---|---|---|
+| pack1.ts p1-dunno | 「わからない。」「ごめん、わからない。」 | Also means "I don't understand". | 「知らない。」「ごめん、知らないんだ。」 when: 「答えを知らないときはこれ。英語が聞き取れなかったときは "Sorry?" だよ。」 |
+| Home.svelte, 21:00–04:00 | "Good night!" as the hello | Teaches Good night = こんばんは. | Use "Hi!" at night; "Good night!" on the finish button at night. |
+| ui.ts done | "Done!" with 「言えた！」 | The lesson says Done = おわり. | 「できた！」, or keep the rating buttons Japanese (「言えた」「まだ」). |
+| pack1.ts p1-hi; ui.ts hi | 「やあ！」 | Dated, male. | Hi! / Hello! 「こんにちは！」, Hey! 「やっほー！」 when: 「朝でも夜でも使える気軽なあいさつ。音は日本語の「はい」と同じだけど、意味は「こんにちは」！」 |
+| pack1.ts p1-understand | 「うん。」「ううん。」 | One character apart; too casual. | 「はい。」「いいえ。」 |
+| pack1.ts p1-dunno heard | "Any idea?" 「なにか 知ってる？」 | Loose. | 「何か心当たりある？」 |
+| pack0.ts p0-say when | 「あなたが 話す番だよ、という合図。」 | Fits "Say it." only. | 「"Say it." は「言ってみて」。"Your turn!" は順番が来たとき全般に使うよ。」 |
+| pack0.ts p0-done when | 「…食べおわった時にも きくよ。」 | きくよ reads as "I will ask". | 「終わったときのことば。食事のあとに "Finished?"（食べ終わった？）と聞かれることも多いよ。」 Add "Finished?" → "Yes." / "Not yet." |
+| pack0.ts p0-good when | 「旅行中 たくさん きけるはず！」 | きける reads as "can ask". | 「旅行中もよく耳にするはず！」 |
+| Home.svelte | 「いまは おさらいだけ！ あたらしい ことばは もうすぐ とどくよ。」 | Shown when nothing is due. | 「今日の復習はなし！ 新しいフレーズはもうすぐ届くよ。」 |
+| Home.svelte | 「きょうは ふくしゅう 12こと あたらしい ことば 4こだよ。」 | 「12こと」 reads as こと. | 「今日は復習が12個、新しいフレーズが4つだよ。」 |
+| Catch.svelte | 「おしい！ だいじな ところだけ きいてみよう」 | False for the 31 single-block lines. | 「おしい！ もう一回、よく聞いてみよう」 |
+| Catch.svelte | 「もう一回 ぜんぶ きくよ」 | Subject unclear. | 「今度は全部通して聞いてみよう」 |
+| Meet.svelte | 「こたえは このどれか！」 | Only ever two choices. | 「答えは、このどちらか！」 |
+| Answer.svelte | 「…言えたら こたえを きこう」; button 「こたえを きく」 | こたえ is both her answer and the model. | 「声に出して答えてね。言えたら、お手本を聞こう」; 「お手本を聞く」 |
+| Shadow.svelte | 「いっしょに 声に出して 言ってみよう！」 | Nobody can speak together with a 0.7-second clip. | 「お手本のあとに続けて、声に出して言ってみよう！」 |
+| Shadow.svelte | 「いいかんじ！ 声に出すと おぼえるよ」 | Praise for something unheard. | 「おつかれさま！ 声に出すと覚えやすいよ」 |
+| blocks.ts You, note | 「"Are you" を はぶいた言い方。」 | "You OK?" drops only "Are". | 「"Are" をはぶいた言い方。」 |
+| InstallGuide.svelte | 「LINEの 中では ホーム画面に 追加できないの。」 | 〜の。 is a child's or mother's ending. | 「LINEの中では、ホーム画面に追加できません。」 |
+| InstallGuide.svelte | 「ホーム画面から ひらくと、記録が しっかり 残るよ（Safariとは 記録が べつに なります）」 | Casual and polite mixed. | 「ホーム画面から開くと、記録がしっかり残ります（Safariで開いたときの記録とは別になります）。」 |
+| Settings.svelte | 「日本語に ぜんぶ もどす」 | Word order. | 「表示をすべて日本語に戻す」 |
+| Settings.svelte | 「よみがなを ずっと 出す」 | よみがな means furigana on kanji. | 「カタカナの読みをずっと表示する」 |
+| Settings.svelte | 「1日の あたらしい ことば」 | Not clearly a number. | 「1日に習う新しいフレーズの数」 |
+| Settings.svelte, report | 「であった ことば」「おぼえた」「しっかり」 | であった reads as "was"; しっかり is not a label. | 「出会ったフレーズ」「覚えた」「定着した」 |
+| pack1.ts p1-bye | 「わかれる時」 | Misread beside わかる. | 「別れるとき」「さよならのあいさつ。手を振って "Bye!"」 |
+| pack1.ts p1-slowly | 「はやすぎたら」「はやすぎて わからない…！」 | 早い or 速い; blurs not catching with not knowing. | 「速すぎるとき」「速すぎて聞き取れない…！」 |
+| pack1.ts p1-sorry when | 「わからない時は…すぐ "Sorry?" って きこう。しり上がりに…」 | きこう is ask or listen. | 「聞き取れなかったら、わかったふりをしないで、すぐ "Sorry?" と聞き返そう。語尾を上げて言うのがコツ！」 |
+| pack0.ts p0-next | "Next one!" 「つぎの！」 | Unfinished. | 「次、いこう！」 |
+| pack1.ts p1-night | "Sleep well!" 「よく寝てね！」 | Literal. | 「ぐっすり寝てね！」 |
+| Finish.svelte | 「よく がんばったね！」 | Teacher to child. | 「今日もおつかれさま！」 |
+| SelfCheck.svelte | 「消えにくい 保存」「ふつうの 保存」 | Odd phrases. | 「保存（保護あり）」「保存（通常）」 |
+| SpeakerCard and badges | 「あいて」「おてほん」「ちいかわの答え」 | Kana labels; the badge is never explained. | 「相手」「お手本」「短い答え」 |
+
+## Appendix B: readings
+
+Phonemes are what the generated voice says, from the audio list. Rows marked "ear" need you to listen.
+
+| Block | Current | Phonemes | Problem | Better |
+|---|---|---|---|---|
+| see you | シー ユー | sˈiː juː | シ is "she". | スィー ユー |
+| one more time | ワン モア タイム | wˈʌn mˈoːɹ tˈaɪm | Loanword モア. | ワン モー タイム |
+| once more | ワンス モア | wˈʌns mˈoːɹ | Same. | ワンス モー |
+| don't | ドン | dˈoʊnt | Vowel glide lost. | ドウン |
+| yes | イエス | jˈɛs | Three beats. | イェス |
+| next | ネクスト | nˈɛkst | Four beats for one. | ネクスッ |
+| good | グッド | ɡˈʊd | Adds "do". | グッ |
+| look | ルック | lˈʊk | Loanword. | ルッ |
+| finished | フィニッシュト | fˈɪnɪʃt | Extra beat. | フィニシュト |
+| understand | アンダスタンド | ˌʌndɚstˈænd | Loanword. | アンダステァン(ド) (ear) |
+| any idea | エニ アイディア | ˌɛni aɪdˈiə | Stress on "di". | エニ アイディーア |
+| got it | ガーティッ | ɡˈɑːt ɪt | Breaks the file's own rule. | ガーディッ or ガーリッ (ear) |
+| nice to meet you | ナイス トゥ ミート ユー | nˈaɪs tə mˈiːt juː | Strong "to". | ナイス タ ミーチュー (ear) |
+| this is | ディス イズ | ðɪs ɪz | Said as one piece. | ディスィズ |
+| good job | グッ ジャブ | ɡˈʊd dʒˈɑːb | Long vowel. | グッ ジャーブ |
+| Sorry? | サーリー | sˈɑːɹi | Same as "Sorry,"; the rise is the point. | サーリー↗ (ear: does the clip rise?) |
+| hi | ハイ | hˈaɪ | Accurate, but it is the word はい. | Keep; warn in the when-line. |
+
+Also: readings never show linking across blocks ("Look at this!"), and no stress is marked although the audio list carries it.
+
+## Sources for section 4
+
+- [WebKit bug 281566: AudioContext.resume() never resolves after backgrounding](https://bugs.webkit.org/show_bug.cgi?id=281566) (I re-read this one; status open, workaround confirmed)
+- [WebKit bug 276016](https://bugs.webkit.org/show_bug.cgi?id=276016), [263627](https://bugs.webkit.org/show_bug.cgi?id=263627), [283419](https://bugs.webkit.org/show_bug.cgi?id=283419), [291892](https://bugs.webkit.org/show_bug.cgi?id=291892), [295518](https://bugs.webkit.org/show_bug.cgi?id=295518), [237322](https://bugs.webkit.org/show_bug.cgi?id=237322), [298260](https://bugs.webkit.org/show_bug.cgi?id=298260), [244812](https://bugs.webkit.org/show_bug.cgi?id=244812), [181849](https://bugs.webkit.org/show_bug.cgi?id=181849)
+- Safari release notes: [18.4](https://developer.apple.com/documentation/safari-release-notes/safari-18_4-release-notes), [26.0](https://developer.apple.com/documentation/safari-release-notes/safari-26-release-notes), [26.2](https://developer.apple.com/documentation/safari-release-notes/safari-26_2-release-notes)
+- [WebKit: Updates to Storage Policy](https://webkit.org/blog/14403/updates-to-storage-policy/)
+- [firt.dev: iOS web app compatibility](https://firt.dev/notes/pwa-ios/)
+- [LINE URL scheme documentation](https://developers.line.biz/ja/docs/line-login/using-line-url-scheme/)
+- [SpeechSynthesis in browsers and OSes](https://readium.org/speech/docs/WebSpeech.html), [Apple forum: voices missing in Safari since iOS 18](https://developer.apple.com/forums/thread/764438) (for section 7)
+
+Apart from bug 281566, these were read by the iPhone reviewer, not by me.

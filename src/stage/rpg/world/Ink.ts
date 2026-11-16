@@ -1,0 +1,349 @@
+import * as THREE from 'three';
+import { BAYER_GLSL, sharedUniforms } from '../characters/CharacterMaterial';
+import { COLOURS } from './Colours';
+import { FILM, INK, PEN_MARK } from './Look';
+
+/**
+ * The world's pen. Thick brown strokes are Chiikawa's look, so every line in the world,
+ * from a character's outline to the clouds and the horizon, is drawn with one pen: a line
+ * 2% of a cast member's height (1.8 cm), the same on everything at the same distance, so
+ * nearer things get bolder lines and further ones lighter, never under half the pen where
+ * the camera is looking. The backdrop (sky, clouds, horizon) uses the pen where the camera
+ * is looking.
+ */
+export { INK };
+
+/** Height whose 2% sets the pen: a cast member. */
+const PEN_REFERENCE_HEIGHT = 0.9;
+/** The pen in metres, for line work drawn into textures at a known world size. */
+export const PEN_METRES = 0.02 * PEN_REFERENCE_HEIGHT;
+
+export const inkUniforms = {
+  /** Pen width in drawing-buffer pixels where the camera is looking, never under 1.5 pixels
+   * (the backdrop's lines are drawn with it). */
+  uPen: { value: 3 },
+  /** The pen's true width, in drawing-buffer pixels, for something a metre in front of the
+   * camera: things further off take it divided by their distance. */
+  uPenMetre: { value: 21 },
+  /** Widest line, in drawing-buffer pixels, for things right in front of the camera. */
+  uPenMax: { value: 11 },
+  uInk: { value: new THREE.Color(INK) },
+};
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+
+/** Sets the pen for this frame from the camera and the distance to what it looks at. */
+export function updatePen(camera: THREE.PerspectiveCamera, focusDistance: number, viewHeight: number, pixelRatio: number): void {
+  const vfov = THREE.MathUtils.degToRad(camera.fov) / camera.zoom;
+  const pixelsPerMetreAway = viewHeight / (2 * Math.tan(vfov / 2));
+  const pixelsPerMetre = pixelsPerMetreAway / Math.max(focusDistance, 0.1);
+  inkUniforms.uPen.value = clamp(PEN_METRES * pixelsPerMetre, 1.5, 11) * pixelRatio;
+  // (Its colour, as tuned: see COLOURS.)
+  inkUniforms.uInk.value.set(COLOURS.pen);
+  inkUniforms.uPenMetre.value = PEN_METRES * pixelsPerMetreAway * pixelRatio;
+  inkUniforms.uPenMax.value = 14 * pixelRatio;
+}
+
+/**
+ * Pen width in drawing-buffer pixels for something `depth` metres in front of the camera: the
+ * pen's true width there, never under half the pen where the camera is looking. (Scaled from the
+ * pen where it looks, which is held at 1.5 pixels or more, a camera looking far off would draw
+ * everything near it many times too bold.)
+ */
+export function penAt(depth: number): number {
+  const u = inkUniforms;
+  return Math.min(Math.max(u.uPenMetre.value / Math.max(depth, 1e-3), 0.5 * u.uPen.value), u.uPenMax.value);
+}
+
+/** GLSL twin of penAt, for shaders that include inkUniforms. */
+export const PEN_GLSL = /* glsl */ `
+uniform float uPen;
+uniform float uPenMetre;
+uniform float uPenMax;
+float penAt(float depth) {
+  return min(max(uPenMetre / max(depth, 1e-3), 0.5 * uPen), uPenMax);
+}
+`;
+
+/** The wind's clock, shared by everything that sways. */
+export const windUniforms = { uTime: { value: 0 } };
+
+/**
+ * GLSL: how far the wind moves a point of a plant, by its sway weight (0 where it is rooted, 1 at
+ * its tips). Slow and soft, a little different from plant to plant.
+ */
+export const SWAY_GLSL = /* glsl */ `
+uniform float uTime;
+vec3 sway(vec3 p, float weight) {
+  float ph = dot(p.xz, vec2(0.13, 0.09));
+  return weight * vec3(
+    0.09 * sin(uTime * 1.3 + ph) + 0.035 * sin(uTime * 2.9 + ph * 2.1),
+    0.0,
+    0.06 * sin(uTime * 1.1 + ph * 1.4));
+}
+`;
+
+/**
+ * GLSL: a butterfly's wings beating. Every vertex further than 6 mm from the body's middle (along
+ * x) is wing, and turns up and down about the body; each instance beats at its own phase.
+ */
+export const FLAP_GLSL = /* glsl */ `
+uniform float uTime;
+float flapAngle(float id) {
+  return 0.2 + 0.9 * sin(uTime * 15.0 + id * 2.3);
+}
+vec3 flapTurn(vec3 v, float side, float a) {
+  return vec3(v.x * cos(a) - side * v.y * sin(a), side * v.x * sin(a) + v.y * cos(a), v.z);
+}
+`;
+
+/**
+ * GLSL for the fragment shader of something seen through (see SeeThrough.ts): how far it is faded out, from its
+ * vertices' aFade (passed on as vFade), and the characters' pattern, which SEEN_DISCARD, first in its main(), leaves
+ * that much of it out by.
+ */
+export const SEEN_PARS = /* glsl */ `
+varying float vFade;
+${BAYER_GLSL}`;
+export const SEEN_DISCARD = /* glsl */ `
+  if (vFade > 0.0 && fadeBayer4(gl_FragCoord.xy) < vFade) discard;`;
+
+const OUTLINE_VERT = /* glsl */ `
+#include <common>
+#include <fog_pars_vertex>
+uniform vec2 uResolution;
+#ifdef WORLD
+varying vec3 vWorld;
+#endif
+#ifdef FADE
+attribute float aFade;
+varying float vFade;
+#endif
+${PEN_GLSL}
+#ifdef SWAY
+attribute float aSway;
+${SWAY_GLSL}
+#endif
+#ifdef FLAP
+${FLAP_GLSL}
+#endif
+#ifdef USE_INSTANCING_COLOR
+// Each copy's own colour, for the fragment shader: its shade, for things lying about drawn at once (see
+// Props' lyingMaterials).
+flat varying vec3 vShade;
+#endif
+void main() {
+  vec3 p = position;
+  vec3 n = normal;
+#ifdef FADE
+  vFade = aFade;
+#endif
+#ifdef SWAY
+  p += sway(p, aSway);
+#endif
+#ifdef FLAP
+  if (abs(p.x) > 0.006) {
+    float a = flapAngle(float(gl_InstanceID));
+    float side = sign(p.x);
+    p = flapTurn(p, side, a);
+    n = flapTurn(n, side, a);
+  }
+#endif
+#ifdef USE_INSTANCING
+  p = (instanceMatrix * vec4(p, 1.0)).xyz;
+  n = mat3(instanceMatrix) * n;
+#endif
+#ifdef USE_INSTANCING_COLOR
+  vShade = instanceColor;
+#endif
+#ifdef WORLD
+  vWorld = (modelMatrix * vec4(p, 1.0)).xyz;
+#endif
+  vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+  vec3 nV = normalize(normalMatrix * n);
+  vec4 clip = projectionMatrix * mvPosition;
+  // Inverted hull pushed out in screen space, so the line is the pen's width at any size.
+  vec2 dir = (projectionMatrix * vec4(nV, 0.0)).xy * uResolution;
+  float len = length(dir);
+  dir = len > 1e-5 ? dir / len : vec2(0.0);
+  // Surfaces facing the camera stay put: pushed out, their triangles can fold over at inward
+  // corners (a starfish's arms, a frond's teeth) and show through as hairlines. The
+  // silhouette, where the surface turns away, carries the outline. A box's silhouette runs along
+  // edges whose corners (their normals averaged over the faces meeting there) still half face the
+  // camera, so for things of flat faces (HARD) only what is nearly square on stays put.
+  float facing = dot(nV, normalize(-mvPosition.xyz));
+#ifdef HARD
+  float push = 1.0 - smoothstep(0.75, 0.95, facing);
+#else
+  float push = 1.0 - smoothstep(0.3, 0.6, facing);
+#endif
+  // A corner behind the camera (a hut's floor, a deck you stand on) takes the pen at its distance on
+  // either side: its push weighed by its depth below nought flipped the push the other way and to the
+  // widest pen, and the face, clipped where it crosses the camera, came up through what lies over it (a
+  // floor board's underside, 1 cm down, as a brown square on the room's floor round you; the user,
+  // 2026-10-25).
+  float depth = abs(clip.w);
+  clip.xy += dir * penAt(depth) * push * 2.0 / uResolution * depth;
+  gl_Position = clip;
+  #include <fog_vertex>
+}
+`;
+
+const OUTLINE_FRAG = /* glsl */ `
+#include <common>
+#include <fog_pars_fragment>
+uniform vec3 uInk;
+uniform vec3 uAmbient;
+#ifdef FADE
+${SEEN_PARS}
+#endif
+void main() {
+#ifdef FADE
+${SEEN_DISCARD}
+#endif
+  gl_FragColor = vec4(uInk * uAmbient, 1.0);
+  #ifdef FILM_MASK
+  gl_FragColor.a = ${PEN_MARK.toFixed(2)};
+  #endif
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+  #include <fog_fragment>
+}
+`;
+
+/** How a hull moves with what it outlines: not at all, in the wind (plants), or beating (wings). */
+export type OutlineMotion = 'still' | 'sway' | 'flap';
+
+const outlineMaterials = new Map<string, THREE.ShaderMaterial>();
+
+/**
+ * The pen's outline material for solid objects (props, held items): an inverted hull. A swaying
+ * hull moves in the wind with the plant it outlines (by its aSway weights); a flapping one beats
+ * with a butterfly's wings. In the film look the line marks itself in the picture's alpha, as the
+ * characters' lines do (see CharacterMaterial), so the scenery's brushwork leaves it as drawn.
+ * `fade`: for the outline of something seen through, which fades with it (see SeeThrough.ts).
+ */
+export function inkOutlineMaterial(motion: OutlineMotion = 'still', hard = false, fade = false): THREE.ShaderMaterial {
+  const key = `${motion}${hard ? ':hard' : ''}${fade ? ':fade' : ''}`;
+  let material = outlineMaterials.get(key);
+  if (!material) {
+    material = new THREE.ShaderMaterial({
+      uniforms: {
+        ...THREE.UniformsUtils.clone(THREE.UniformsLib.fog),
+        ...inkUniforms,
+        ...(motion === 'still' ? {} : windUniforms),
+        uResolution: sharedUniforms.uResolution,
+        uAmbient: sharedUniforms.uAmbient,
+      },
+      defines: {
+        ...(motion === 'sway' ? { SWAY: '' } : motion === 'flap' ? { FLAP: '' } : {}),
+        ...(FILM ? { FILM_MASK: '' } : {}),
+        ...(hard ? { HARD: '' } : {}),
+        ...(fade ? { FADE: '' } : {}),
+      },
+      vertexShader: OUTLINE_VERT,
+      fragmentShader: OUTLINE_FRAG,
+      side: THREE.BackSide,
+      fog: true,
+    });
+    // (What it is, for its twin that fades: see SeeThrough.ts.)
+    material.userData.outline = { motion, hard };
+    outlineMaterials.set(key, material);
+  }
+  return material;
+}
+
+/**
+ * The pen's outline material for something not lit by the hour's light as the rest of the world is
+ * (what is in the forbidden cave, by the cave's own; what a character holds, as they are): an inverted
+ * hull as inkOutlineMaterial's, coloured by `fragmentShader`, which has vWorld (where the line is) and
+ * `uniforms` besides the pen's (uInk). `fog` if what it outlines takes the scene's fog.
+ */
+export function inkOutlineMaterialLit(
+  uniforms: Record<string, THREE.IUniform>,
+  fragmentShader: string,
+  fog = false,
+): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      ...(fog ? THREE.UniformsUtils.clone(THREE.UniformsLib.fog) : {}),
+      ...inkUniforms,
+      uResolution: sharedUniforms.uResolution,
+      ...uniforms,
+    },
+    defines: { WORLD: '', ...(FILM ? { FILM_MASK: '' } : {}) },
+    vertexShader: OUTLINE_VERT,
+    fragmentShader,
+    side: THREE.BackSide,
+    fog,
+  });
+}
+
+const hullGeometries = new WeakMap<THREE.BufferGeometry, THREE.BufferGeometry>();
+
+/**
+ * A copy of a geometry for its outline hull, with normals averaged over vertices that share
+ * a position. Where faces meet at a hard edge (a log's side and its cut end) each face keeps
+ * its own normal, and a hull pushed along those normals would crack open at the corner.
+ */
+export function outlineGeometry(geometry: THREE.BufferGeometry): THREE.BufferGeometry {
+  const cached = hullGeometries.get(geometry);
+  if (cached) return cached;
+  const pos = geometry.getAttribute('position');
+  const nrm = geometry.getAttribute('normal');
+  const hull = new THREE.BufferGeometry();
+  hull.setAttribute('position', pos);
+  const swayWeights = geometry.getAttribute('aSway');
+  if (swayWeights) hull.setAttribute('aSway', swayWeights);
+  if (geometry.index) hull.setIndex(geometry.index);
+  const key = (i: number) =>
+    `${Math.round(pos.getX(i) * 1e4)},${Math.round(pos.getY(i) * 1e4)},${Math.round(pos.getZ(i) * 1e4)}`;
+  const sums = new Map<string, THREE.Vector3>();
+  for (let i = 0; i < pos.count; i++) {
+    const k = key(i);
+    let sum = sums.get(k);
+    if (!sum) sums.set(k, (sum = new THREE.Vector3()));
+    sum.x += nrm.getX(i);
+    sum.y += nrm.getY(i);
+    sum.z += nrm.getZ(i);
+  }
+  const normals = new Float32Array(pos.count * 3);
+  const n = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    n.copy(sums.get(key(i)) as THREE.Vector3).normalize();
+    normals.set([n.x, n.y, n.z], i * 3);
+  }
+  hull.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+  hull.computeBoundingSphere();
+  hullGeometries.set(geometry, hull);
+  return hull;
+}
+
+/**
+ * Gives a solid mesh its outline: a hull sharing its shape (and, for instanced meshes, its
+ * instances), drawn with the pen's material (or `material`, for one lit otherwise: see
+ * inkOutlineMaterialLit). Returns the hull, which is also the mesh's userData.outline.
+ *
+ * The hull is the mesh's child, so it goes wherever the mesh goes, however it is moved, turned,
+ * scaled, shown or hidden afterwards, and whether or not it is in the scene yet. (It was put beside
+ * the mesh as a copy of where it was then, and stayed there: a ramp tilted after it, a log laid down,
+ * a nut bobbing, each kept an outline where it had been.)
+ */
+export function addOutline(mesh: THREE.Mesh, motion?: OutlineMotion, hard = false, material?: THREE.Material): THREE.Mesh {
+  let hull: THREE.Mesh;
+  const geometry = outlineGeometry(mesh.geometry);
+  material ??= inkOutlineMaterial(motion ?? (geometry.getAttribute('aSway') !== undefined ? 'sway' : 'still'), hard);
+  if ((mesh as THREE.InstancedMesh).isInstancedMesh) {
+    const src = mesh as THREE.InstancedMesh;
+    const inst = new THREE.InstancedMesh(geometry, material, src.count);
+    inst.instanceMatrix = src.instanceMatrix;
+    hull = inst;
+  } else {
+    hull = new THREE.Mesh(geometry, material);
+  }
+  hull.frustumCulled = mesh.frustumCulled;
+  mesh.add(hull);
+  // (Found here, for it to fade with the mesh: see SeeThrough.ts.)
+  mesh.userData.outline = hull;
+  return hull;
+}

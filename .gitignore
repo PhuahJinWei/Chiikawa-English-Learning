@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Local editor and assistant settings.
+.claude/
+
+# Audio tool: its own install (including the downloaded ~330 MB speech model) and the voice-test samples.
+tools/audio/node_modules/
+tools/audio/samples/
