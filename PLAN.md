@@ -35,13 +35,15 @@ How it should feel:
 | Friend | Job in the app | Teaches |
 |---|---|---|
 | ハチワレ Hachiware | Host and main teacher: greets, explains, runs the daily lesson. The only friend who talks | Starter pack App words, Pack 1 Survival kit, Pack 11 Asking back |
-| ちいかわ Chiikawa | Study buddy: learns beside the learner and shows the short answer | Pack 6 Feelings |
-| うさぎ Usagi | Quick-fire rounds and celebrations | Pack 10 Reactions |
+| ちいかわ Chiikawa | Study buddy: learns beside the learner and shows the short answer. Since 2026-11-17 the first of three partners who take turns, one a day (below) | Pack 6 Feelings |
+| うさぎ Usagi | Her partner from English level 2, taking turns with Chiikawa; quick-fire rounds and celebrations | Pack 10 Reactions |
 | くりまんじゅう Kurimanju | Meal-table scenes | Pack 2 At the table |
 | シーサー Shisa | First meetings and polite phrases | Pack 3 Meeting the family, Pack 5 About me |
-| モモンガ Momonga | Demands things, so the learner practises choosing and refusing | Pack 7 Choosing, Pack 8 I like / I want |
+| モモンガ Momonga | Her partner from English level 3; demands things, so the learner practises choosing and refusing | Pack 7 Choosing, Pack 8 I like / I want |
 | ラッコ Rakko | Level tests and conversations at natural speed | Pack 4 Around the house, Pack 9 Going out, rehearsals |
 | 古本屋 Furuhonya | Keeps the notebook of everything learned, replayable any time | Pack 11 Describing |
+
+**Her partner takes turns (your idea, 2026-11-17).** Hachiware does all the talking; beside him is her study partner, who learns with her (worried at a miss, happy at a right answer, acting out what she says). Chiikawa first; うさぎ joins at English level 2 and モモンガ at level 3, and then they take turns, one a day. A friend's first day as her partner starts with 「今日から○○も一緒だよ！」, the lesson that reaches the level shows who has joined, and Today's level meter names the friend who joins next. Each partner reacts in character, and none of them talks.
 
 **Two answer levels, named after the friends.** Chiikawa says little and Hachiware talks a lot, which is the same split as our short and longer replies:
 
@@ -91,6 +93,8 @@ The app starts in Japanese and turns English piece by piece, only ever using Eng
 1. **Meet:** the friend acts it out. The audio plays twice before any text appears. Then the phrase appears as word blocks with the Japanese meaning, the friend gives one line on when to use it, and it plays once more. Other ways of saying it, and for an exchange she answers the reply (heard before it is shown), each get a page of their own inside the step, so every page fits the screen (2026-11-17); 次へ and ← 前へ move between them. The friend asks her to say it out loud, in her own time: every card replays as often as she likes. All audio is at natural speed: no slow versions (your decision, 2026-11-16). If she already knows the phrase, 「もう知ってる」 (a small link on the phrase's card, in the daily lesson only) counts it as learned: today's steps for it are dropped, and it comes back for a first check in about four days. A miss then sends it back to be learned as usual (2026-11-17).
 2. **Catch:** hear a line and choose what it means. No text is shown. This is checked by the app.
 3. **Answer:** the question plays from the speaker card with no text, while the friend listens with her. The learner answers aloud (the card says the English appears after checking, and not knowing is fine), taps 「答え合わせ」 to hear and see the model answer, says it again if she likes, then taps 言えた, 迷った or 言えなかった. The phone does not score speech.
+
+**Putting phrases together: 会話してみよう (2026-11-17, your choice after the learning review).** Each phrase above is practised on its own, always after the same cue. A short conversation strings learned phrases into a scene (Hi! → How are you? → Good, thank you. → See you later! → Bye!), so she practises keeping a conversation going and starting one. It builds up like a chat: the other person's lines play with no text; on her turn she sees in Japanese what she wants to say, says it in English, then checks against the model. Conversations are made only of lines from the path (src/content/talks.ts), so they need no new audio. One comes up in each day's lesson once she has learned every phrase it uses (and said her own lines once), the one done longest ago first, and 練習 has a 会話 choice. They are practice: nothing is graded and the review schedule does not move. You review them in the content sheet (C1, C2, ...).
 
 There used to be a timed repeat-after-me step (Shadow, 「まねして言う」) between Meet and Catch. You dropped it on 2026-11-17: she already says the phrase herself in Meet, and a timer telling her when to speak was more in the way than useful. Answer lost its timed "say it once more" pause for the same reason.
 

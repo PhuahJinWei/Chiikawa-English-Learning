@@ -1,7 +1,15 @@
 import type { Exchange } from '../content/types.ts';
 import type { Progress, SavedSession } from './progress.ts';
 import type { Grade } from './schedule.ts';
-import { recordDayDone, recordKnown, recordMissedLine, recordPracticed, recordResult, type Step } from './session.ts';
+import {
+  recordDayDone,
+  recordKnown,
+  recordMissedLine,
+  recordPracticed,
+  recordResult,
+  recordTalked,
+  type Step,
+} from './session.ts';
 
 /**
  * The bookkeeping of a running lesson, kept apart from the screen so it can be tested: moving between steps,
@@ -59,9 +67,16 @@ export const practiceRun = (steps: Step[], day: number): Run => ({
   counts: { fresh: 0, reviews: 0, practice: steps.length },
 });
 
-/** Records what she did on the current step (if it is a Catch or Answer with a grade, and not recorded before). */
+/**
+ * Records what she did on the current step: a Catch or Answer with a grade (once), or a conversation she went
+ * through (it only notes when, so the next one comes round first).
+ */
 export function finishStep(r: Run, p: Progress, find: (id: string) => Exchange | undefined, res: StepResult, now: number): void {
   const s = r.steps[r.index];
+  if (s?.kind === 'talk') {
+    recordTalked(p, s.talkId, now);
+    return;
+  }
   const e = s && find(s.exId);
   if (!s || !e || (s.kind !== 'catch' && s.kind !== 'answer') || !res.grade || r.recorded.includes(r.index)) return;
   r.recorded.push(r.index);
@@ -82,7 +97,8 @@ export function finishStep(r: Run, p: Progress, find: (id: string) => Exchange |
 export function skipKnown(r: Run, p: Progress, e: Exchange): void {
   if (!r.daily) return;
   recordKnown(p, e, r.day);
-  const keep = r.steps.map((s, i) => i <= r.index || s.exId !== e.id);
+  // A conversation stays: she knows the phrase, and the conversation is about using it.
+  const keep = r.steps.map((s, i) => i <= r.index || s.kind === 'talk' || s.exId !== e.id);
   const dropped = keep.filter((k) => !k).length;
   const moved = (i: number) => keep.slice(0, i).filter(Boolean).length;
   r.recorded = r.recorded.filter((i) => keep[i]).map(moved);

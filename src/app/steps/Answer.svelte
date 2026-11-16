@@ -8,7 +8,7 @@
   import SpeakerCard from '../components/SpeakerCard.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
-  import { act, calm, pick } from '../scene.ts';
+  import { act, calm, partnerOnStage, pick } from '../scene.ts';
   import { lifetime } from '../script.svelte.ts';
   import { sfx } from '../sfx.ts';
   import { stage } from '../stage.ts';
@@ -43,10 +43,10 @@
       calm(cast);
       if (question) {
         say = '「相手」が話しかけてくるよ';
-        void stage.play('chiikawa', 'listen');
+        void stage.play(partnerOnStage(), 'listen');
         await s.wait(1100);
         const r = await s.play(audioPath(question.en), 'other');
-        stage.stop('chiikawa');
+        stage.stop(partnerOnStage());
         if (r === 'failed') {
           phase = 'failed';
           say = '音が出なかったみたい。もう一度ためすか、このステップをとばしてね';

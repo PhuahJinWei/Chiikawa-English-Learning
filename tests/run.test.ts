@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { ORDERED, exchangeById } from '../src/content/index.ts';
 import { emptyProgress } from '../src/learn/progress.ts';
 import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown } from '../src/learn/run.ts';
-import { buildSession, newSaved, resumable } from '../src/learn/session.ts';
+import { buildSession, newSaved, resumable, stepTarget, type Step } from '../src/learn/session.ts';
 
 const find = (id: string) => exchangeById(id);
-const exists = (id: string) => !!exchangeById(id);
+const exists = (s: Step) => !!exchangeById(stepTarget(s));
 
 function startDay(p = emptyProgress(), day = 10) {
   const r = fromSaved(newSaved(buildSession(p, ORDERED, day), day));
@@ -28,13 +28,13 @@ describe('lesson bookkeeping', () => {
     const { p, r, day } = startDay();
     expect(r.steps[0]).toMatchObject({ kind: 'meet', exId: 'hi' });
     const before = r.steps.length;
-    const later = r.steps.filter((s, i) => i > 0 && s.exId === 'hi').length;
+    const later = r.steps.filter((s, i) => i > 0 && stepTarget(s) === 'hi').length;
     const practice = r.counts.practice;
     skipKnown(r, p, find('hi')!);
     move(r, p, 1);
     expect(p.ex['hi']).toMatchObject({ met: day, hear: { box: 3, due: day + 4 }, say: { box: 3, due: day + 4 } });
     // Only the Meet she was on is left of it; its own two checks and its practice are gone.
-    expect(r.steps.filter((s) => s.exId === 'hi')).toHaveLength(1);
+    expect(r.steps.filter((s) => stepTarget(s) === 'hi')).toHaveLength(1);
     expect(r.steps).toHaveLength(before - later);
     expect(r.counts.practice).toBe(practice - (later - 2));
     expect(r.steps[r.index]).toMatchObject({ kind: 'meet', exId: 'sorry-what' });
@@ -42,8 +42,8 @@ describe('lesson bookkeeping', () => {
     playAll(p, r, () => 'answer');
     expect(p.days).toEqual([day]);
     // No review of it until its first check, four days on.
-    expect(buildSession(p, ORDERED, day + 3).steps.some((s) => s.exId === 'hi' && 'review' in s && s.review)).toBe(false);
-    expect(buildSession(p, ORDERED, day + 4).steps.some((s) => s.exId === 'hi' && 'review' in s && s.review)).toBe(true);
+    expect(buildSession(p, ORDERED, day + 3).steps.some((s) => stepTarget(s) === 'hi' && 'review' in s && s.review)).toBe(false);
+    expect(buildSession(p, ORDERED, day + 4).steps.some((s) => stepTarget(s) === 'hi' && 'review' in s && s.review)).toBe(true);
   });
 
   it('practice ignores もう知ってる', () => {

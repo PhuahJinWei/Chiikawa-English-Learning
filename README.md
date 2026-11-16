@@ -46,7 +46,8 @@ tested. Sound on her iPhone is the self-check's job (Settings → 動作チェ�
 
 Open **`content-sheet.html`** (double-click it): every step of the learning path in teaching order, with what she
 hears, what she says, what she hears back, the step it is built from, the words that are new, and the Japanese. Filter
-to **Drafts** to see what is waiting for you, and give feedback by the **#** number. `content-sheet.csv` is the same
+to **Drafts** to see what is waiting for you, and give feedback by the **#** number. Below the path, the short
+conversations (**C1**, **C2**, ...) show each line and which steps it needs. `content-sheet.csv` is the same
 table for Excel. Both are made from `src/content`, so don't edit them: run `npm run sheet` after any content change
 (a test fails while they are out of date).
 
@@ -89,9 +90,9 @@ your side: `src/app/reading.ts`.)
 | Path | What |
 | --- | --- |
 | `content-sheet.html`, `.csv` | The content for review (made by `npm run sheet`; don't edit) |
-| `src/content/` | The learning path (`course/`), word blocks with readings (`blocks.ts`) and the voice's phonemes for them (`phonemes.json`), topics, the app's own words (Japanese and English), the English you voiced from her notes (`notes.ts`); `index.ts` turns the path into what the app uses |
-| `src/learn/` | Review schedule, daily lesson builder, practice, saved progress (including the lesson in progress and her notes), notes, backups, the Japanese → English shift, sound-alike wrong choices for the listening quiz (`contrast.ts`), katakana readings from the voice's sounds (`reading.ts`) |
-| `src/app/` | Screens (Svelte): Today, Notebook, Practice, Settings, Backup and the lesson (Meet, Catch, Answer, Finish); sound with two ways of playing and self-recovery (`audio.svelte.ts`), pause and tap priority (`script.svelte.ts`); screen wake lock; errors (`errors.ts`); updates and offline status (`updates.ts`); readings for her notes, with the pronunciation engine loaded when a note needs it (`reading.ts`); install guide, self-check, first-run tour |
+| `src/content/` | The learning path (`course/`), short conversations made of its lines (`talks.ts`), word blocks with readings (`blocks.ts`) and the voice's phonemes for them (`phonemes.json`), topics, the app's own words (Japanese and English), the English you voiced from her notes (`notes.ts`); `index.ts` turns the path into what the app uses |
+| `src/learn/` | Review schedule, daily lesson builder, practice, saved progress (including the lesson in progress and her notes), notes, backups, the Japanese → English shift, sound-alike wrong choices for the listening quiz (`contrast.ts`), katakana readings from the voice's sounds (`reading.ts`), her study partner of the day (`partners.ts`) |
+| `src/app/` | Screens (Svelte): Today, Notebook, Practice, Settings, Backup and the lesson (Meet, Catch, Answer, Talk, Finish); sound with two ways of playing and self-recovery (`audio.svelte.ts`), pause and tap priority (`script.svelte.ts`); screen wake lock; errors (`errors.ts`); updates and offline status (`updates.ts`); readings for her notes, with the pronunciation engine loaded when a note needs it (`reading.ts`); install guide, self-check, first-run tour |
 | `src/stage/` | The 3D friends, copied from the Chiikawa RPG (`rpg/`) behind a small interface (`types.ts`), and the meadow they stand in (`Backdrop.ts`) |
 | `public/audio/` | Generated English clips: one per line and per block, Heart voice, natural speed only |
 | `art/` | Source art: the star portrait the icons are made from |
@@ -100,7 +101,7 @@ your side: `src/app/reading.ts`.)
 | `tools/sketch/` | Draws the hand-drawn outlines into `src/app/sketch.css` (don't edit that file: change the tool, then `npm run sketch`; a test fails while it is out of date) |
 | `tools/build/` | Service worker (content versions; unchanged files are reused on update) and dev-only save helper |
 | `tools/smoke/` | WebKit smoke tests (Playwright, its own install) |
-| `tests/` | Unit tests: content rules (how steps link up, highlights, quiz meanings, readings, audio), the content sheet, the hand-drawn outlines, schedule and lessons, lesson bookkeeping, sound recovery, backups, note readings (held to the hand-made ones) |
+| `tests/` | Unit tests: content rules (how steps link up, highlights, quiz meanings, readings, audio), the content sheet, the hand-drawn outlines, schedule and lessons, lesson bookkeeping, conversations, sound recovery, backups, note readings (held to the hand-made ones) |
 
 ## Licence
 

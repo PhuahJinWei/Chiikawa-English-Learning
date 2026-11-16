@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { ORDERED, UI, exchangeById } from '../../content/index.ts';
+  import { ORDERED, TALKS, UI, exchangeById, talkById } from '../../content/index.ts';
   import { dayNumber } from '../../learn/schedule.ts';
-  import { buildSession, estimateMinutes, resumable } from '../../learn/session.ts';
+  import { buildSession, estimateMinutes, resumable, type Step } from '../../learn/session.ts';
+  import { nextToJoin } from '../../learn/partners.ts';
   import { englishLevel } from '../../learn/shift.ts';
   import Bubble from '../components/Bubble.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
-  import { act, calm } from '../scene.ts';
+  import { FRIENDS } from '../friends.ts';
+  import { act, calm, choosePartner, withPartner } from '../scene.ts';
   import { lifetime } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
   import { app, go, startDaily } from '../state.svelte.ts';
@@ -18,26 +20,31 @@
   const life = lifetime();
   // The app may have stayed open past 4 a.m.
   app.today = dayNumber();
-  const exists = (id: string) => !!exchangeById(id);
+  // Hachiware and today's partner (src/learn/partners.ts): a friend's first day as her partner gets a welcome.
+  const partner = choosePartner();
+  const cast = withPartner(['hachiware', 'chiikawa']);
+  const exists = (s: Step) => (s.kind === 'talk' ? !!talkById(s.talkId) : !!exchangeById(s.exId));
 
   const going = $derived(resumable(app.progress, app.today, exists));
-  const plan = $derived(going ? null : buildSession(app.progress, ORDERED, app.today));
+  const plan = $derived(going ? null : buildSession(app.progress, ORDERED, app.today, TALKS));
   const doneToday = $derived(app.progress.days.includes(app.today));
   const first = $derived(app.progress.started === null);
   const left = $derived(going ? going.steps.slice(going.index) : (plan?.steps ?? []));
   const mins = $derived(estimateMinutes(left));
-  const newTitles = $derived(
-    left.filter((s) => s.kind === 'meet').map((s) => exchangeById(s.exId)?.title ?? ''),
-  );
+  const meets = $derived(left.filter((s): s is Extract<Step, { kind: 'meet' }> => s.kind === 'meet'));
+  const newTitles = $derived(meets.map((s) => exchangeById(s.exId)?.title ?? ''));
   const reviews = $derived(left.filter((s) => (s.kind === 'catch' || s.kind === 'answer') && s.review).length);
   // Checks of today's new phrases belong to learning them; only the rest is practice.
-  const learning = $derived(new Set(left.filter((s) => s.kind === 'meet').map((s) => s.exId)));
+  const learning = $derived(new Set(meets.map((s) => s.exId)));
   const practice = $derived(
     left.filter((s) => (s.kind === 'catch' || s.kind === 'answer') && !s.review && !learning.has(s.exId)).length,
   );
+  /** Today's conversation (会話してみよう), once she has learned enough phrases for one. */
+  const talks = $derived(left.filter((s) => s.kind === 'talk').length);
   // The days she has studied (one stamp each), not the days since she started: a day she skipped does not count.
   const studied = $derived(app.progress.days.length);
   const lv = $derived(englishLevel(app.progress));
+  const joinsNext = $derived(nextToJoin(lv.level));
   const week = $derived(
     Array.from({ length: 7 }, (_, i) => {
       const d = app.today - 6 + i;
@@ -62,6 +69,7 @@
   const say = $derived.by(() => {
     if (going) return '続きからやろう！';
     if (first) return 'ハチワレだよ。一緒に英語を話そう！';
+    if (partner.first && !doneToday) return `今日から${FRIENDS[partner.id].name}も一緒だよ！`;
     if (doneToday) return '今日はおしまい！ また明日ね。';
     if (!left.length) return '今日はお休み。「練習」で復習しよう！';
     return '今日のレッスン、準備できてるよ！';
@@ -74,12 +82,13 @@
   }
 
   life.run(async (s) => {
-    await stage.setCast(['hachiware', 'chiikawa']);
-    calm(['hachiware', 'chiikawa']);
+    await stage.setCast(cast);
+    calm(cast);
     await s.wait(300);
     act([{ who: 'hachiware', gesture: 'wave', face: 'smile' }]);
     await s.wait(1800);
-    act([{ who: 'chiikawa', gesture: 'hop', face: 'happy' }]);
+    // Her partner (ちいかわ's part, played by today's partner: src/app/scene.ts); a new one gets a heart.
+    act([{ who: 'chiikawa', gesture: 'hop', face: 'happy', ...(partner.first ? { mark: 'heart' as const } : {}) }]);
   });
 </script>
 
@@ -115,9 +124,9 @@
             <b>新しいフレーズ</b>：{#each newTitles as t, i (i)}<span class="nobreak">「{t}」</span>{/each}
           </p>
         {/if}
-        {#if reviews || practice}
+        {#if reviews || practice || talks}
           <p class="line">
-            {#if reviews}<b>復習</b>：{reviews}問{/if}{#if reviews && practice}・{/if}{#if practice}<b>練習</b>：{practice}問{/if}
+            {#if reviews}<b>復習</b>：{reviews}問{/if}{#if reviews && practice}・{/if}{#if practice}<b>練習</b>：{practice}問{/if}{#if talks && (reviews || practice)}・{/if}{#if talks}<b>会話</b>：{talks}{/if}
           </p>
         {/if}
       {:else}
@@ -128,7 +137,10 @@
     <div class="level" aria-label="英語レベル{lv.level}。次のレベルまで、あと{lv.toNext}フレーズ">
       <span class="level-name">英語レベル<b>{lv.level}</b></span>
       <span class="track"><span class="fill" style="width:{Math.max(lv.fill * 100, 3)}%"></span></span>
-      <span class="next">あと{lv.toNext}フレーズでレベル{lv.level + 1}</span>
+      <!-- The next level's friend, while one is still to join: something to look forward to (src/learn/partners.ts). -->
+      <span class="next"
+        >あと{lv.toNext}フレーズでレベル{lv.level + 1}{#if joinsNext?.level === lv.level + 1}（{FRIENDS[joinsNext.id].name}が仲間に！）{/if}</span
+      >
     </div>
 
     <div class="week-box">

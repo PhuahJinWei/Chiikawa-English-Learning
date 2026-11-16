@@ -1,18 +1,26 @@
-import type { Exchange } from '../content/types.ts';
+import type { Exchange, Talk } from '../content/types.ts';
 import type { Progress, SavedSession } from './progress.ts';
-import { isDue, known, learned, reviewed, type Grade } from './schedule.ts';
+import { everLearned, isDue, known, learned, reviewed, type Grade } from './schedule.ts';
 
 /**
  * One step of a lesson. A new exchange goes Meet → Catch → Answer (an 'understand' exchange only Meet → Catch);
  * Meet also introduces the reply, which she repeats out loud in her own time (there is no timed repeat-after-me step
  * since 2026-11-17). A review or practice item is one Catch (understanding) or Answer (saying the reply).
  * `review` steps move the schedule; practice steps never do. A Catch asks either what the line means, or (for an
- * exchange with a reply) which reply fits.
+ * exchange with a reply) which reply fits. A Talk is a short conversation made of learned phrases
+ * (src/content/talks.ts): practice that never moves the schedule.
  */
 export type Step =
   | { kind: 'meet'; exId: string }
   | { kind: 'catch'; exId: string; review: boolean; ask?: 'meaning' | 'reply' }
-  | { kind: 'answer'; exId: string; review: boolean };
+  | { kind: 'answer'; exId: string; review: boolean }
+  | { kind: 'talk'; talkId: string };
+
+/** A step about one exchange (every kind but a conversation). */
+export type ExchangeStep = Exclude<Step, { kind: 'talk' }>;
+export const isExchangeStep = (s: Step): s is ExchangeStep => s.kind !== 'talk';
+/** What a step is about: its exchange, or its conversation. */
+export const stepTarget = (s: Step): string => (s.kind === 'talk' ? s.talkId : s.exId);
 
 export interface Plan {
   steps: Step[];
@@ -24,10 +32,23 @@ export interface Plan {
 /** Seconds per step for her: each step's own script (from the clip lengths) plus her listening, thinking and
  * speaking. Calibrated in the second review (Meet then grew by the reply's introduction); the minutes on the Today
  * screen come from these. */
-export const STEP_SECONDS: Record<Step['kind'], number> = { meet: 40, catch: 12, answer: 16 };
+export const STEP_SECONDS: Record<Step['kind'], number> = { meet: 40, catch: 12, answer: 16, talk: 60 };
 
 /** Every kind of step there is: a saved lesson can hold kinds that no longer exist (progress.ts drops them). */
-export const STEP_KINDS: readonly Step['kind'][] = ['meet', 'catch', 'answer'];
+export const STEP_KINDS: readonly Step['kind'][] = ['meet', 'catch', 'answer', 'talk'];
+
+/**
+ * A conversation is ready once she has learned every step it is made of (understood the day after meeting it, or
+ * known already) and said each of her own lines at least once.
+ */
+export const talkReady = (p: Progress, t: Talk): boolean =>
+  t.steps.every((id) => everLearned(p.ex[id]?.hear)) && t.saySteps.every((id) => !!p.ex[id]?.say);
+
+/** Ready conversations, the one done longest ago (or never) first; in the order they are written otherwise. */
+export function readyTalks(p: Progress, talks: readonly Talk[]): Talk[] {
+  const done = (t: Talk) => p.talked[t.id] ?? 0;
+  return talks.filter((t) => talkReady(p, t)).sort((a, b) => done(a) - done(b));
+}
 /** A daily lesson aims at about ten minutes (PLAN.md section 4), topped up with practice (REVIEW 2.1). */
 export const TARGET_SECONDS = 9 * 60;
 export const MAX_REVIEWS = 30;
@@ -98,9 +119,10 @@ const practiceStep = (e: Exchange, n: number, flip = false): Step =>
     ? { kind: 'catch', exId: e.id, review: false, ask: catchAsk(e, n >> 1) }
     : { kind: 'answer', exId: e.id, review: false };
 
-/** Today's lesson: due reviews (oldest first), anything left part-way, new exchanges, then practice (today's new
- * phrases first, then the weakest learned ones) until it is about ten minutes long. */
-export function buildSession(p: Progress, ordered: readonly Exchange[], today: number): Plan {
+/** Today's lesson: due reviews (oldest first), anything left part-way, new exchanges, one conversation once any is
+ * ready (the one done longest ago), then practice (today's new phrases first, then the weakest learned ones) until it
+ * is about ten minutes long. */
+export function buildSession(p: Progress, ordered: readonly Exchange[], today: number, talks: readonly Talk[] = []): Plan {
   const reviews = reviewSteps(p, ordered, today);
   // Left part-way: understood but never answered (the Answer shows the reply once she has tried), or (after a
   // skipped Catch) answered but never checked.
@@ -112,11 +134,12 @@ export function buildSession(p: Progress, ordered: readonly Exchange[], today: n
     return [];
   });
   const fresh = unmet(p, ordered).slice(0, newAllowance(p, today, reviews.length));
-  const steps = [...reviews, ...unfinished, ...stepsForNew(fresh)];
-  const inLesson = new Set(steps.map((s) => s.exId));
+  const talk = readyTalks(p, talks)[0];
+  const steps: Step[] = [...reviews, ...unfinished, ...stepsForNew(fresh), ...(talk ? [{ kind: 'talk' as const, talkId: talk.id }] : [])];
+  const inLesson = new Set(steps.filter(isExchangeStep).map((s) => s.exId));
   const pool = [...fresh, ...byWeakness(p, ordered).filter((e) => !inLesson.has(e.id))];
   // Up to three passes over the pool, alternating saying and understanding, until about ten minutes.
-  let practice = 0;
+  let practice = talk ? 1 : 0;
   fill: for (const flip of [false, true, false]) {
     for (const [i, e] of pool.entries()) {
       if (estimateSeconds(steps) >= TARGET_SECONDS || practice >= MAX_PRACTICE) break fill;
@@ -128,10 +151,24 @@ export function buildSession(p: Progress, ordered: readonly Exchange[], today: n
   return { steps, reviews: reviews.length, fresh: fresh.length, practice };
 }
 
-export type PracticeKind = 'weak' | 'mixed' | 'listen' | 'speak';
+export type PracticeKind = 'weak' | 'mixed' | 'listen' | 'speak' | 'talk';
+
+/** Conversations in one 会話 practice. */
+export const TALKS_PER_PRACTICE = 3;
 
 /** Practice she chooses herself (the 練習 tab). Never moves the schedule; rotates by least recently practised. */
-export function buildPractice(p: Progress, ordered: readonly Exchange[], kind: PracticeKind, count = 8): Step[] {
+export function buildPractice(
+  p: Progress,
+  ordered: readonly Exchange[],
+  kind: PracticeKind,
+  count = 8,
+  talks: readonly Talk[] = [],
+): Step[] {
+  if (kind === 'talk') {
+    return readyTalks(p, talks)
+      .slice(0, TALKS_PER_PRACTICE)
+      .map((t): Step => ({ kind: 'talk', talkId: t.id }));
+  }
   const learnedEx = ordered.filter((e) => p.ex[e.id]?.hear);
   const stale = [...learnedEx].sort((a, b) => (p.practiced[a.id] ?? 0) - (p.practiced[b.id] ?? 0));
   if (kind === 'weak') {
@@ -183,6 +220,11 @@ export function recordPracticed(p: Progress, exId: string, now: number): void {
   p.practiced[exId] = now;
 }
 
+/** A conversation she went through, so the next one comes round first. */
+export function recordTalked(p: Progress, talkId: string, now: number): void {
+  p.talked[talkId] = now;
+}
+
 export function recordMissedLine(p: Progress, en: string): void {
   p.missedLines[en] = (p.missedLines[en] ?? 0) + 1;
 }
@@ -192,10 +234,10 @@ export function recordDayDone(p: Progress, today: number): void {
 }
 
 /** The saved lesson for today, if there is one to continue. A lesson from an earlier day is dropped (REVIEW 2.11). */
-export function resumable(p: Progress, today: number, exists: (id: string) => boolean): SavedSession | null {
+export function resumable(p: Progress, today: number, exists: (step: Step) => boolean): SavedSession | null {
   const s = p.session;
   if (!s || s.day !== today || s.index >= s.steps.length) return null;
-  return s.steps.every((st) => exists(st.exId)) ? s : null;
+  return s.steps.every(exists) ? s : null;
 }
 
 export const newSaved = (plan: Plan, today: number): SavedSession => ({

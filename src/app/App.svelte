@@ -8,6 +8,7 @@
   import TabBar from './components/TabBar.svelte';
   import Tour from './components/Tour.svelte';
   import { isIOS, isStandalone } from './platform.ts';
+  import { choosePartner, withPartner } from './scene.ts';
   import ErrorScreen from './screens/ErrorScreen.svelte';
   import InstallGuide from './screens/InstallGuide.svelte';
   import Lesson from './screens/Lesson.svelte';
@@ -60,9 +61,12 @@
 
   onMount(() => {
     if (stageEl) {
+      // Hachiware and today's partner (src/learn/partners.ts).
+      choosePartner();
+      const cast = withPartner(['hachiware', 'chiikawa']);
       void stage
         .mount(stageEl)
-        .then(() => stage.setCast(['hachiware', 'chiikawa']))
+        .then(() => stage.setCast(cast))
         .then(() => stage.followPointer(true));
     }
     let later = false;

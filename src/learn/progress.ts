@@ -1,4 +1,5 @@
 import { STEP_KINDS, type Step } from './session.ts';
+import { isPartner, type PartnerId } from './partners.ts';
 import type { SkillState } from './schedule.ts';
 
 /** Everything saved on the phone. Nothing is sent anywhere. */
@@ -13,12 +14,18 @@ export interface Progress {
   missedLines: Record<string, number>;
   /** When each exchange was last practised outside the schedule (ms since 1970), so practice rotates fairly. */
   practiced: Record<string, number>;
+  /** When she last went through each conversation (ms since 1970), so they come round in turn. */
+  talked: Record<string, number>;
   /** Today's lesson while it is in progress, so ✕, a reload or a phone call never loses her place. */
   session: SavedSession | null;
   /** Day number of the last backup she made (or restored from); null = never. The Today screen reminds her. */
   backedUp: number | null;
   /** Her own notes, newest first (src/learn/notes.ts). */
   notes: Note[];
+  /** Her study partner on stage today, chosen once a day (src/learn/partners.ts); `first`: their first day. */
+  partner: { id: PartnerId; day: number; first: boolean } | null;
+  /** The partners she has had so far, in the order they first came. */
+  partnered: PartnerId[];
   settings: Settings;
 }
 
@@ -80,9 +87,12 @@ export function emptyProgress(): Progress {
     ex: {},
     missedLines: {},
     practiced: {},
+    talked: {},
     session: null,
     backedUp: null,
     notes: [],
+    partner: null,
+    partnered: [],
     settings: {
       allJapanese: false,
       keepReadings: false,
@@ -110,7 +120,10 @@ function normalizeSkill(s: unknown): SkillState | undefined {
 
 function normalizeSession(s: unknown): SavedSession | null {
   if (!isObj(s) || typeof s.day !== 'number' || typeof s.index !== 'number' || !Array.isArray(s.steps)) return null;
-  const all = s.steps.filter((x): x is Step => isObj(x) && typeof x.kind === 'string' && typeof x.exId === 'string');
+  const all = s.steps.filter(
+    (x): x is Step =>
+      isObj(x) && typeof x.kind === 'string' && (typeof x.exId === 'string' || (x.kind === 'talk' && typeof x.talkId === 'string')),
+  );
   if (all.length !== s.steps.length) return null;
   // A lesson saved by an older version can hold steps the app no longer has (the repeat-after-me step, removed
   // 2026-11-17): they are dropped, and her place and the recorded steps move with the steps that stay.
@@ -170,9 +183,17 @@ export function normalize(raw: unknown): Progress {
     ex,
     missedLines: isObj(raw.missedLines) ? (raw.missedLines as Record<string, number>) : {},
     practiced: isObj(raw.practiced) ? (raw.practiced as Record<string, number>) : {},
+    talked: isObj(raw.talked)
+      ? Object.fromEntries(Object.entries(raw.talked).filter((x): x is [string, number] => typeof x[1] === 'number'))
+      : {},
     session: normalizeSession(raw.session),
     backedUp: typeof raw.backedUp === 'number' ? raw.backedUp : null,
     notes: normalizeNotes(raw.notes),
+    partner:
+      isObj(raw.partner) && isPartner(raw.partner.id) && typeof raw.partner.day === 'number'
+        ? { id: raw.partner.id, day: raw.partner.day, first: raw.partner.first === true }
+        : null,
+    partnered: Array.isArray(raw.partnered) ? [...new Set(raw.partnered.filter(isPartner))] : [],
     settings: {
       allJapanese: st.allJapanese === true,
       keepReadings: st.keepReadings === true,

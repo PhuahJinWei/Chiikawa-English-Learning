@@ -4,20 +4,23 @@
 
 <script lang="ts">
   import { onDestroy, untrack } from 'svelte';
-  import { ORDERED, exchangeById } from '../../content/index.ts';
+  import { ORDERED, TALKS, exchangeById, talkById } from '../../content/index.ts';
+  import { joinedBetween } from '../../learn/partners.ts';
   import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown, type Run, type StepResult } from '../../learn/run.ts';
   import { buildSession, newSaved, resumable, type Step } from '../../learn/session.ts';
+  import { englishLevel } from '../../learn/shift.ts';
   import { onInterruption } from '../audio.svelte.ts';
   import LessonBar from '../components/LessonBar.svelte';
   import PauseSheet from '../components/PauseSheet.svelte';
   import { accentStyle } from '../friends.ts';
-  import { calm } from '../scene.ts';
+  import { calm, withPartner } from '../scene.ts';
   import { sfx } from '../sfx.ts';
   import { lesson, pauseLesson, resumeLesson } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
   import { app, go, save } from '../state.svelte.ts';
   import { STEP_NAMES } from '../step-kinds.ts';
   import Answer from '../steps/Answer.svelte';
+  import Talk from '../steps/Talk.svelte';
   import Catch from '../steps/Catch.svelte';
   import Finish from '../steps/Finish.svelte';
   import Meet from '../steps/Meet.svelte';
@@ -31,14 +34,14 @@
    */
   const cfg = untrack(() => app.lesson);
   const daily = cfg.mode === 'daily';
-  const exists = (id: string) => !!exchangeById(id);
+  const exists = (s: Step) => (s.kind === 'talk' ? !!talkById(s.talkId) : !!exchangeById(s.exId));
 
   const run: Run = $state(
     untrack(() => {
       if (!daily) return practiceRun(cfg.steps, app.today);
       const going = resumable(app.progress, app.today, exists);
       if (going) return fromSaved($state.snapshot(going));
-      const planned = newSaved(buildSession(app.progress, ORDERED, app.today), app.today);
+      const planned = newSaved(buildSession(app.progress, ORDERED, app.today, TALKS), app.today);
       app.progress.session = planned;
       save();
       return fromSaved($state.snapshot(planned));
@@ -48,14 +51,25 @@
   let restart = $state(0);
 
   const step = $derived(run.steps[run.index] as Step | undefined);
-  const ex = $derived(step ? exchangeById(step.exId) : undefined);
+  const ex = $derived(step && step.kind !== 'talk' ? exchangeById(step.exId) : undefined);
+  const talk = $derived(step?.kind === 'talk' ? talkById(step.talkId) : undefined);
   /** The step's name in the top bar: what she is doing now. */
   const label = $derived(
     !step ? '' : step.kind === 'answer' && ex?.kind === 'say' ? '言ってみよう' : STEP_NAMES[step.kind],
   );
   const tag = $derived(!daily ? '練習' : step && 'review' in step && step.review ? '復習' : '');
-  const cast = $derived(ex ? ex.cast : (['hachiware', 'chiikawa'] as const));
   const stamped = $derived(daily && app.progress.days.includes(run.day));
+  // Her level when the lesson began, and where it ended: a level that went up is celebrated at the end, together
+  // with a friend who joins at that level (src/learn/partners.ts).
+  const levelBefore = untrack(() => englishLevel(app.progress).level);
+  const finished = $derived(run.index >= run.steps.length);
+  const levelUp = $derived(finished && englishLevel(app.progress).level > levelBefore ? englishLevel(app.progress).level : null);
+  const joining = $derived(levelUp ? (joinedBetween(levelBefore, levelUp).at(-1) ?? null) : null);
+  // ちいかわ's part is played by today's partner; a friend who has just joined comes on stage for the celebration.
+  const cast = $derived([
+    ...withPartner(ex?.cast ?? talk?.cast ?? ['hachiware', 'chiikawa']),
+    ...(joining && finished ? [joining] : []),
+  ]);
 
   resumeLesson();
 
@@ -70,7 +84,7 @@
 
   // A step whose exchange no longer exists (content changed) is passed over.
   $effect(() => {
-    if (step && !ex) untrack(() => go_(1));
+    if (step && !ex && !talk) untrack(() => go_(1));
   });
 
   // Leaving the app or a sound interruption pauses the lesson; coming back on a new day starts that day's lesson
@@ -139,22 +153,24 @@
 </script>
 
 <div class="lesson" style={accentStyle(ex?.host ?? 'hachiware')}>
-  {#if step && ex}
+  {#if step && (ex || talk)}
     <LessonBar index={run.index} total={run.steps.length} kind={step.kind} {label} {tag} onPause={pauseLesson} />
     {#key `${run.index}:${restart}`}
       <div class="slot">
-        {#if step.kind === 'meet'}
+        {#if talk}
+          <Talk {talk} onDone={() => next()} onBack={run.index > 0 ? back : null} />
+        {:else if ex && step.kind === 'meet'}
           <Meet {ex} onDone={() => next()} onBack={run.index > 0 ? back : null} onKnown={daily ? known : null} />
-        {:else if step.kind === 'catch'}
+        {:else if ex && step.kind === 'catch'}
           <Catch {ex} {step} onDone={next} onBack={run.index > 0 ? back : null} />
-        {:else}
+        {:else if ex}
           <Answer {ex} onDone={next} onBack={run.index > 0 ? back : null} />
         {/if}
       </div>
     {/key}
   {:else if run.index >= run.steps.length}
     <div class="slot">
-      <Finish {daily} {stamped} counts={run.counts} onClose={leave} onMore={() => go('practice')} />
+      <Finish {daily} {stamped} {levelUp} joined={joining} counts={run.counts} onClose={leave} onMore={() => go('practice')} />
     </div>
   {/if}
 

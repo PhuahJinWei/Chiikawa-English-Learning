@@ -12,7 +12,7 @@
   import SpeakerCard from '../components/SpeakerCard.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
-  import { act, calm, pick, shuffle } from '../scene.ts';
+  import { act, calm, partnerOnStage, pick, shuffle } from '../scene.ts';
   import { lifetime } from '../script.svelte.ts';
   import { sfx } from '../sfx.ts';
   import { stage } from '../stage.ts';
@@ -138,8 +138,8 @@
     wrong = [...wrong, i];
     sfx.boing();
     busy = true;
-    stage.setFace('chiikawa', 'worried');
-    stage.mark('chiikawa', 'question');
+    // Her partner worries with her (each in character: src/app/scene.ts).
+    act([{ who: 'chiikawa', face: 'worried', mark: 'question' }]);
     const key = line.parts.length > 1 ? line.parts.filter((p) => p.hi) : [];
     life.run(async (s) => {
       if (key.length) {
@@ -156,7 +156,7 @@
         await s.wait(1400);
       }
       await s.play(audioPath(line.en), 'other');
-      stage.setFace('chiikawa', null);
+      stage.setFace(partnerOnStage(), null);
       say = 'どれかな？';
       busy = false;
     });

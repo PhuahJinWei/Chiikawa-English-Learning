@@ -128,6 +128,46 @@ export interface StepDef {
   scene?: Scene;
 }
 
+/** One line of a conversation: a line she hears (`them`) or says (`me`) in a step of the path, found by its English. */
+export interface TalkTurn {
+  who: 'them' | 'me';
+  /** The id of the step the line comes from. */
+  step: string;
+  /** The line's English, exactly as written in that step. */
+  en: string;
+}
+
+/** A short conversation strung from phrases she has learned (src/content/talks.ts). */
+export interface TalkDef {
+  /** Lower-case words joined by "-", unique. */
+  id: string;
+  /** Who is on stage: the topic's friend is the other person. */
+  topic: TopicId;
+  status?: StepStatus;
+  /** Short Japanese title. */
+  title: string;
+  /** The situation, in Japanese. */
+  cue: string;
+  turns: TalkTurn[];
+}
+
+/** A conversation as the app uses it (compiled by src/content/index.ts). */
+export interface Talk {
+  id: string;
+  topic: TopicId;
+  status?: StepStatus;
+  title: string;
+  cue: string;
+  /** Who stands on stage. */
+  cast: FriendId[];
+  /** Each line, as it is in its step, with what the friends do while it plays. */
+  turns: { who: 'them' | 'me'; step: string; line: Line; acts: Act[] }[];
+  /** The steps it is made of: it comes up once she has learned all of them. */
+  steps: string[];
+  /** The steps her own lines come from: she must have said each of them before. */
+  saySteps: string[];
+}
+
 /** A step as the app uses it (compiled from a StepDef by src/content/index.ts). */
 export interface Exchange {
   id: string;

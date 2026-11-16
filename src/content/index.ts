@@ -3,9 +3,10 @@ import { audioSlug } from './audio.ts';
 import { keyOf } from './blocks.ts';
 import { PART1 } from './course/part1.ts';
 import { PART2 } from './course/part2.ts';
+import { TALK_DEFS } from './talks.ts';
 import { TOPICS } from './topics.ts';
 import { UI } from './ui.ts';
-import type { Act, Exchange, ExchangeKind, Line, StepDef, Topic } from './types.ts';
+import type { Act, Exchange, ExchangeKind, Line, StepDef, Talk, TalkDef, Topic } from './types.ts';
 
 /**
  * The course is one learning path, in teaching order: src/content/course/part1.ts, then part2.ts. Each step is one
@@ -136,6 +137,47 @@ export function stepById(id: string): Exchange | undefined {
 export const SHELVES: readonly { topic: Topic; exchanges: Exchange[] }[] = Object.values(TOPICS)
   .map((topic) => ({ topic, exchanges: ORDERED.filter((e) => e.topic === topic.id) }))
   .filter((s) => s.exchanges.length > 0);
+
+/**
+ * A conversation's lines, found in their steps (`them` among the lines she hears, `me` among those she says), with
+ * what the friends do: the other person's lines are acted by the topic's friend (or Hachiware), hers by her partner.
+ * Null when a line is not where the conversation says it is (tests/talks.test.ts names it).
+ */
+function compileTalk(t: TalkDef): Talk | null {
+  const cast = TOPICS[t.topic].cast;
+  const speaker = cast.length > 2 ? cast[1] : 'hachiware';
+  const turns: Talk['turns'] = [];
+  for (const turn of t.turns) {
+    const e = COURSE_BY_ID.get(turn.step);
+    if (!e) return null;
+    const pool = turn.who === 'me' ? e.short : [...e.heard, ...e.then, ...(e.kind === 'say' ? e.short : [])];
+    const line = pool.find((l) => l.en === turn.en);
+    if (!line) return null;
+    const acts =
+      turn.who === 'me'
+        ? (e.scene.replies?.[e.short.indexOf(line)] ?? [CALM_REPLY])
+        : (e.scene.heard ?? []).map((a) => (a.who === 'chiikawa' ? a : { ...a, who: speaker }));
+    turns.push({ who: turn.who, step: e.id, line, acts });
+  }
+  const steps = [...new Set(turns.map((x) => x.step))];
+  const saySteps = [...new Set(turns.filter((x) => x.who === 'me').map((x) => x.step))];
+  return { id: t.id, topic: t.topic, status: t.status, title: t.title, cue: t.cue, cast, turns, steps, saySteps };
+}
+
+/** Every conversation as written, null where a line cannot be found (for the checks and the content sheet). */
+export const TALKS_WRITTEN: readonly { def: TalkDef; talk: Talk | null }[] = TALK_DEFS.map((def) => ({ def, talk: compileTalk(def) }));
+
+/** The conversations the app uses: not drafts, every line found, and made only of steps the app teaches. */
+export const TALKS: readonly Talk[] = TALKS_WRITTEN.flatMap(({ talk }) =>
+  talk && talk.status !== 'draft' && talk.steps.every((id) => BY_ID.has(id)) ? [talk] : [],
+);
+
+const TALK_BY_ID = new Map(TALKS.map((t) => [t.id, t] as const));
+
+/** A conversation the app uses. */
+export function talkById(id: string): Talk | undefined {
+  return TALK_BY_ID.get(id);
+}
 
 /** What to call what she says: an answer (答え) to what she heard, or for a 'say' phrase ("Sorry, what?") a way to
  * say it (言い方), since it answers nothing. */

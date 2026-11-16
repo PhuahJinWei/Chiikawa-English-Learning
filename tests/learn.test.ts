@@ -12,6 +12,7 @@ import {
   recordResult,
   resumable,
   TARGET_SECONDS,
+  stepTarget,
   type Step,
 } from '../src/learn/session.ts';
 import { LEVEL_SIZE, englishLevel, shiftStage } from '../src/learn/shift.ts';
@@ -19,6 +20,7 @@ import { LEVEL_SIZE, englishLevel, shiftStage } from '../src/learn/shift.ts';
 /** Plays a whole lesson perfectly, as the app would record it. */
 function playLesson(p: Progress, steps: Step[], today: number) {
   for (const s of steps) {
+    if (s.kind === 'talk') continue;
     const e = exchangeById(s.exId)!;
     if (s.kind === 'catch') recordResult(p, e, 'hear', 'good', s.review, today);
     if (s.kind === 'answer') recordResult(p, e, 'say', 'good', s.review, today);
@@ -57,7 +59,7 @@ describe('daily lessons', () => {
   it('day 1 teaches "Hi!" and "Sorry, what?", each checked a little after it was taught', () => {
     const plan = buildSession(emptyProgress(), ORDERED, 10);
     expect(plan.fresh).toBe(2);
-    expect(plan.steps.slice(0, 6).map((s) => `${s.kind}:${s.exId}`)).toEqual([
+    expect(plan.steps.slice(0, 6).map((s) => `${s.kind}:${stepTarget(s)}`)).toEqual([
       'meet:hi', 'meet:sorry-what',
       'catch:hi', 'catch:sorry-what', 'answer:hi', 'answer:sorry-what',
     ]);
@@ -104,7 +106,7 @@ describe('daily lessons', () => {
     expect(plan.reviews).toBe(0);
     expect(plan.practice).toBeGreaterThan(0);
     expect(estimateSeconds(plan.steps)).toBeGreaterThanOrEqual(Math.min(TARGET_SECONDS, 6 * 60));
-    expect(plan.steps.every((s) => s.kind === 'meet' || !s.review)).toBe(true);
+    expect(plan.steps.every((s) => s.kind === 'meet' || s.kind === 'talk' || !s.review)).toBe(true);
   });
 
   it('a big backlog is capped and new phrases wait', () => {
@@ -124,7 +126,7 @@ describe('daily lessons', () => {
     const saved = newSaved(buildSession(p, ORDERED, 10), 10);
     saved.index = 3;
     p.session = saved;
-    const exists = (id: string) => !!exchangeById(id);
+    const exists = (s: Step) => !!exchangeById(stepTarget(s));
     expect(resumable(p, 10, exists)?.index).toBe(3);
     expect(resumable(p, 11, exists)).toBeNull();
     p.session = { ...saved, index: saved.steps.length };
@@ -136,11 +138,11 @@ describe('daily lessons', () => {
     for (let day = 10; day < 14; day++) playLesson(p, buildSession(p, ORDERED, day).steps, day);
     const before = structuredClone(p.ex);
     const first = buildPractice(p, ORDERED, 'mixed', 4);
-    for (const s of first) recordResult(p, exchangeById(s.exId)!, s.kind === 'catch' ? 'hear' : 'say', 'again', false, 14);
+    for (const s of first) if (s.kind !== 'talk') recordResult(p, exchangeById(s.exId)!, s.kind === 'catch' ? 'hear' : 'say', 'again', false, 14);
     expect(p.ex).toEqual(before);
-    for (const s of first) p.practiced[s.exId] = Date.now();
+    for (const s of first) p.practiced[stepTarget(s)] = Date.now();
     const second = buildPractice(p, ORDERED, 'mixed', 4);
-    expect(second.some((s) => first.some((f) => f.exId === s.exId))).toBe(false);
+    expect(second.some((s) => first.some((f) => stepTarget(f) === stepTarget(s)))).toBe(false);
     expect(buildPractice(p, ORDERED, 'speak').every((s) => s.kind === 'answer')).toBe(true);
     expect(buildPractice(p, ORDERED, 'listen').every((s) => s.kind === 'catch')).toBe(true);
   });
@@ -211,7 +213,7 @@ describe('saved progress', () => {
     ];
     // She had done both Meets and both repeat-after-mes, and was about to start the Catch.
     const p = normalize({ v: 1, session: { day: 5, index: 4, steps, recorded: [0, 2, 4], retried: [], counts: {} } });
-    expect(p.session?.steps.map((s) => `${s.kind}:${s.exId}`)).toEqual(['meet:hi', 'meet:sorry-what', 'catch:hi', 'answer:hi']);
+    expect(p.session?.steps.map((s) => `${s.kind}:${stepTarget(s)}`)).toEqual(['meet:hi', 'meet:sorry-what', 'catch:hi', 'answer:hi']);
     expect(p.session?.index).toBe(2);
     expect(p.session?.recorded).toEqual([0, 1, 2]);
     // Standing on a removed step, she goes on with the next step that is left.

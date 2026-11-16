@@ -6,6 +6,62 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Short conversations: 会話してみよう (2026-11-17)
+
+From the review of the learning process: every phrase was practised alone, always after the same cue, and no step had a second turn, so she never practised keeping a conversation going or starting one. You chose to add short conversations first.
+
+- **What she does:**
+  - A new step, 会話してみよう, with a two-bubble icon. Hachiware says 「覚えたフレーズで、会話してみよう！」 and the situation is shown (こんなとき).
+  - The conversation builds up like a LINE chat: the other person on the left, her on the right.
+  - Their lines play with no text (♪). On her turn she sees what she wants to say in Japanese (「ありがとうございます！」 with ？？？ for the English), says it in English out loud, and taps 答え合わせ: the model plays, and her line and the line she answered show their English. 「もう一回聞く」 replays what she is answering, and she goes on with 続ける.
+  - Some conversations start with her (「こんにちは、おばさん！」), and some have two of her lines in a row.
+  - At the end: 「会話できたね！」 and ▶ 通して聞く, which plays the whole conversation again.
+  - On stage, the topic's friend plays the other person (シーサー for the family, くりまんじゅう at the table, ラッコ at home; Hachiware for the basics), and her partner acts out her lines.
+- **When:**
+  - A conversation comes up once she has learned every phrase it uses (understood the day after meeting it) and said her own lines once.
+  - One in each day's lesson, after the new phrases, the one done longest ago (or never) first. Today shows it as 「会話：1」.
+  - 練習 has a new choice, 会話, with up to three. Until one is ready it says 「フレーズをもう少し覚えると、できるようになります」.
+  - It is practice: nothing is graded, and the review schedule does not move.
+  - The first tour now mentions it in one sentence.
+- **Your content to review:** 11 conversations, made only of lines already in the path, so no new audio was made or is needed. They are in the content sheet under the phrases, as C1 to C11, with the steps each needs ("Ready after"), and at the end of the CSV:
+  - C1 はい、どうぞ (from about day 3): Hey! → Hi! → This is for you. → Thank you!
+  - C2 道で会ったら (day 6): Hello! → Hi! → How are you? → Good, thank you. → See you later! → Bye!
+  - C3 おうちに着いたら (day 13): Welcome! → Thank you! → Come in! → This is for you. → Thank you so much! → You're welcome. → Have a seat.
+  - C4 朝ごはん (day 13): Morning! → Good morning! → Eat already? → Not yet. → Time to eat!
+  - C5 いただきます (day 15): Try this! → Thank you! → Is it tasty? → It's good! → Want some more? → Yes, please.
+  - C6 ゆっくり話してもらう (day 18): Where are you from? → Slowly, please. → Where from? → Japan.
+  - C7 おやすみ (day 19): Are you tired? → A little. → Good night! → Good night! → Sleep well!
+  - C8 はじめまして (day 20): Hi, Auntie! → Hello! Nice to meet you! → You too! → Where are you from? → Japan. → Welcome to Malaysia! → Thank you!
+  - C9 ごちそうさま (day 21): Are you full? → I'm full. → Thank you! It was delicious! → Welcome!
+  - C10 飲み物 (day 22): Want a drink? → Sorry, what? → What do you want to drink? → Water, please.
+  - C11 お手伝い (day 23): Can I help? → No need! → Thank you!
+  - The days assume two new phrases a day. They are in the app now, since they need no audio; tell me by C number which to keep, change or drop, and what to add as the course grows.
+- **Checked:**
+  - Tests: every line is in its step and said by the right person; ids, titles and situations; Japanese written as adults write it; the order they become ready; ready only once learned and said; one a day, the one done longest ago first; 会話 practice; nothing recorded but the time; a saved lesson with a conversation in it.
+  - In the browser at iPhone 13 and SE size: おうちに着いたら through to the end and its replay (each line's clip requested in order), はじめまして (she speaks first), and ごちそうさま (two of her lines in a row).
+  - The tests (114), the type check, the build and the WebKit smoke test (26 of 26).
+
+## Partners who take turns (2026-11-17)
+
+Your idea: Hachiware does all the talking, so the friend beside him could change. Until now that was always Chiikawa on Today, at the start and at the end of a lesson. うさぎ and モモンガ never appeared: their topics have no finished phrases yet. Now:
+
+- **Who:** her study partner is ちいかわ at first. うさぎ joins at English level 2 (10 phrases learned) and モモンガ at level 3 (20 learned). From then on they take turns, one partner a day, chosen when she first opens the app that day and kept all day. A friend who has just joined comes first.
+- **What a partner does:** everything Chiikawa did. They hop on Today, listen in 答えてみよう, worry at a miss and cheer at a right answer in the quiz, act out what she says in the scenes, and celebrate at the end. In the lessons' stage directions ちいかわ now stands for whoever is her partner that day, so no lesson content had to change.
+- **In character, never talking:**
+  - うさぎ is never down for long: where Chiikawa looks worried, うさぎ looks startled, and a nod is a hop.
+  - モモンガ makes the most of every feeling: worry comes out as tears, and a hop as a cheer.
+  - This is my reading of the characters; tell me where it is off (the table is in `src/app/scene.ts`).
+- **Joining:**
+  - Today's level meter names who joins next: 「あと3フレーズでレベル2（うさぎが仲間に！）」.
+  - The lesson that reaches the level ends with 「英語レベル2になりました！ うさぎが仲間になりました。」, the new friend cheering on stage with the others, and Hachiware's goodbye 「明日からうさぎも一緒だよ。また明日ね！」.
+  - On their first day, Hachiware greets her with 「今日からうさぎも一緒だよ！」 and the friend hops with a heart.
+- **No one twice:** when a phrase from うさぎ's or モモンガ's own topic arrives later (they are the person she meets there), Chiikawa is her partner for that phrase.
+- **Saved:** today's partner and who has been her partner so far are kept with her progress and in backups. A backup from before this change simply starts with Chiikawa.
+- **Checked:**
+  - Tests: who joins at which level, one partner a day, a new friend first, then turns; a restored backup with a lower level; no one on stage twice; saving and older saves.
+  - In the browser: うさぎ's and モモンガ's first days on Today, うさぎ in a lesson (the "?" on a miss lands on her), and the lesson that reaches level 3, with モモンガ joining and the goodbye line.
+  - The tests (104), the type check, the build and the WebKit smoke test (26 of 26).
+
 ## Calmer lesson screens (2026-11-17)
 
 You found the app overwhelming at times. Today, the notebook, practice and settings were calm; the lesson steps were crowded. At iPhone 13 size the cards got about 306px of the 812, and 新しいフレーズ for "Hi!" had 722px of cards in that window. Every element also had the same thick outline, so nothing said where to look first. Five changes, all at your go-ahead:

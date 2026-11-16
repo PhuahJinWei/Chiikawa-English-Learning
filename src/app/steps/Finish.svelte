@@ -4,6 +4,8 @@
   import Bubble from '../components/Bubble.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
+  import type { PartnerId } from '../../learn/partners.ts';
+  import { FRIENDS } from '../friends.ts';
   import { act } from '../scene.ts';
   import { sfx } from '../sfx.ts';
   import { app } from '../state.svelte.ts';
@@ -16,6 +18,8 @@
   let {
     daily,
     stamped,
+    levelUp = null,
+    joined = null,
     counts,
     onClose,
     onMore,
@@ -23,10 +27,15 @@
     daily: boolean;
     /** False when she skipped every step: no answer, no stamp. */
     stamped: boolean;
+    /** Her new English level, when it went up in this lesson. */
+    levelUp?: number | null;
+    /** The friend who joined at that level (src/learn/partners.ts): on stage now, her partner from tomorrow. */
+    joined?: PartnerId | null;
     counts: { fresh: number; reviews: number; practice: number };
     onClose: () => void;
     onMore: () => void;
   } = $props();
+  const newFriend = untrack(() => (joined ? FRIENDS[joined].name : ''));
 
   // Decided once when the screen opens.
   let phase = $state<'stamp' | 'bye'>(untrack(() => (daily && !stamped ? 'bye' : 'stamp')));
@@ -45,6 +54,12 @@
     { who: 'hachiware', gesture: 'cheer', face: 'happy' },
     { who: 'chiikawa', gesture: 'hop', face: 'happy', mark: 'heart' },
   ]);
+  // A friend who has just joined arrives a moment later, to cheer with them.
+  const welcome = untrack(() => joined);
+  if (welcome) {
+    const t = setTimeout(() => act([{ who: welcome, gesture: 'cheer', face: 'happy', mark: 'heart' }]), 1200);
+    onDestroy(() => clearTimeout(t));
+  }
 
   function thanks() {
     if (!daily) {
@@ -59,13 +74,21 @@
 <StepLayout>
   {#snippet top()}
     {#if phase === 'stamp'}
-      <Bubble who="hachiware" text={daily ? '今日のスタンプだよ。おつかれさま！' : '練習おつかれさま！'}>
+      <Bubble who="hachiware" named={false} text={daily ? '今日のスタンプだよ。おつかれさま！' : '練習おつかれさま！'}>
         {#snippet before()}
           <span class="lead"><UiWord t={daily ? UI.hereYouGo : UI.allDone} size="bubble" /></span>
         {/snippet}
       </Bubble>
     {:else}
-      <Bubble who="hachiware" text={stamped || !daily ? 'また明日ね！' : '今日は答えた問題がなかったから、スタンプはおあずけ。また来てね！'}>
+      <Bubble
+        who="hachiware"
+        named={false}
+        text={!stamped && daily
+          ? '今日は答えた問題がなかったから、スタンプはおあずけ。また来てね！'
+          : newFriend
+            ? `明日から${newFriend}も一緒だよ。また明日ね！`
+            : 'また明日ね！'}
+      >
         {#snippet before()}
           <span class="lead"><UiWord t={UI.seeYou} size="bubble" /></span>
         {/snippet}
@@ -88,6 +111,13 @@
         {#if daily && !stamped}<div><dt>がんばった日</dt><dd>{app.progress.days.length}</dd></div>{/if}
       </dl>
     </div>
+    {#if levelUp}
+      <!-- Her level went up in this lesson; at levels 2 and 3 a friend joins (src/learn/partners.ts). -->
+      <div class="card soft level-up" role="status">
+        <span><b>英語レベル{levelUp}</b>になりました！</span>
+        {#if newFriend}<span class="joined"><b>{newFriend}</b>が仲間になりました。</span>{/if}
+      </div>
+    {/if}
   {/snippet}
   {#snippet primary()}
     {#if phase === 'stamp'}
@@ -168,5 +198,17 @@
   .stats dd {
     margin: 0;
     font-size: 18px;
+  }
+  .level-up {
+    display: grid;
+    gap: 2px;
+    padding: 10px 14px;
+    background: var(--sun);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .joined {
+    font-size: 14px;
   }
 </style>
