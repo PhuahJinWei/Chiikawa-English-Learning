@@ -2,6 +2,7 @@
   "name": "eigo-friends",
   "private": true,
   "version": "0.1.0",
+  "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,6 +15,7 @@
     "sketch": "node tools/sketch/make-sketch.mjs"
   },
   "dependencies": {
+    "phonemizer": "1.2.1",
     "three": "0.186.1"
   },
   "devDependencies": {

@@ -14,7 +14,7 @@
   let page = $state(0);
   let heard = $state<'unknown' | 'yes' | 'no'>('unknown');
   const last = 2;
-  const KINDS: Step['kind'][] = ['meet', 'shadow', 'catch', 'answer'];
+  const KINDS: Step['kind'][] = ['meet', 'catch', 'answer'];
 
   function test() {
     void play(audioPath('Hi!'), 'other');
@@ -30,7 +30,7 @@
       <p>文法や書く練習はありません。1日10分くらいで大丈夫です。</p>
     {:else if page === 1}
       <h2 id="tour-title">レッスンの流れ</h2>
-      <p>新しいフレーズは、この4つのステップで覚えます。いまどのステップかは、画面の上に出ます。</p>
+      <p>新しいフレーズは、この3つのステップで覚えます。いまどのステップかは、画面の上に出ます。</p>
       <ol class="steps">
         {#each KINDS as k (k)}
           <li>

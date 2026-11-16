@@ -6,6 +6,89 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## GPL licence (2026-11-17)
+
+The pronunciation engine behind note readings, eSpeak NG, is under GPL-3.0-or-later. You chose to license the app the same way rather than swap the engine.
+
+- **LICENSE:** the GPL's own text, version 3, as published by the FSF (checked against two other copies of it).
+- **package.json:** `"license": "GPL-3.0-or-later"`.
+- **In the app:** the GPL asks an app people use to say who holds the copyright, that it comes with no warranty, and where its licence is. The bottom of 設定 now says 「© 2026 PhuahJinWei」 and 「GPL-3.0ライセンスのフリーソフトウェアです（無保証）。」, with a link 「ライセンスとソースコード」 to this repository.
+- **README, Licence:** Chiikawa and its characters belong to their creator, ナガノ, and are not covered by it.
+- **Checked:** the notice in 設定 in the browser, the tests (97), the type check, the build and the WebKit smoke test (26 of 26).
+
+## Katakana readings for notes (2026-11-17)
+
+You asked whether readings could be made automatically for the English in her notes. They now are (section 7 said they could not; that has changed).
+
+- **Where she sees them:**
+  - In the notebook's メモ list, under each note's English.
+  - In the note editor, under 読み方. The reading follows what she types or pastes, with 「自動でつけた読み方です。目安にしてください。」 under it.
+  - Strong beats are marked as in the lessons. English that is a lesson line keeps its hand-made reading, with her own punctuation.
+- **How:**
+  - A pronunciation engine runs on the phone: eSpeak NG, the same one Kokoro uses to turn text into sounds before it speaks.
+  - A converter (`src/learn/reading.ts`) turns those sounds into katakana by the rules of the hand-made readings: ッ for a t that is not let go, ダ行 for the soft t of "water", ディ for th, エァ for the a of "happy". It also runs words together where the voice does ("can I" キャナイ, "thank you" センキュー, "look at" ルッカッ).
+- **Against the hand-made readings:**
+  - The rules give the same reading for 126 of the 134 word blocks.
+  - The other 8 are places where the hand-made reading chose differently, for example "no need" ノウ [ニーッ] by hand, ノウ [ニード] by the rules (as "food" フード), and "excuse me" エクス[キュー]ズ ミー against エク[スキューズ] ミー.
+  - The full list, each with the reason, is in `tests/reading.test.ts`. Making them agree is a content decision for your next review; no lesson reading was changed.
+- **Cost:**
+  - The engine is a file of its own: 1.3 MB, about 0.7 MB to download.
+  - It is loaded only when a note needs a reading, never in lessons.
+  - It is kept offline with the rest of the app: 4.96 MB instead of 3.69 MB. It is downloaded once and reused by later updates unless the engine itself changes.
+- **Limits:** a reading made on the phone is a fair guide, not a checked one. Malay words are read as if they were English (teh tarik テイ [ター]リック), and names may come out wrong.
+- **Licence:** the engine's wrapper (phonemizer) is Apache-2.0, but eSpeak NG inside it is GPL-3.0-or-later, so the app is now GPL-3.0-or-later too (GPL licence, above).
+- **Checked:**
+  - Tests: the rules against the hand-made readings, sentences, punctuation, and readings through the engine and from lesson lines.
+  - In the browser at 800 and 320 px wide: long readings wrap between words.
+  - The tests (97), the type check, the build and the WebKit smoke test (26 of 26). The smoke test now also writes a note and waits for its reading, online and offline.
+
+## 答えてみよう explains itself (2026-11-17)
+
+You asked what the 答えてみよう screen does and what she is meant to do: the screen did not say clearly enough. She hears someone speak (sound only), answers out loud in English, checks, says the model once more, and rates herself. Three changes:
+
+- **The hidden card:** under its ♪ marks it says 「英語は答え合わせのあとに出ます」, so a card with no text no longer looks broken or still loading.
+- **Bubble, not a row:** the 「あなたの番！」 row is gone (the same kind of vague icon row as 言ってみて). Hachiware's bubble says what to do: 「英語で、声に出して答えてみてね。わからなくても大丈夫、答え合わせしよう」 (言ってみてね for a phrase she says without being asked).
+- **The button:** 「お手本を聞く」 is now 「答え合わせ」, the familiar word for checking an answer: the next step whether she could answer or not.
+- **App words:** あなたの番！ is no longer an app word (18 now). The turn row's component is removed.
+- **Checked:**
+  - The screen in the browser, through to the rating.
+  - The tests (91), the type check, the build and the WebKit smoke test (26 of 26).
+
+## もう知ってる (2026-11-17)
+
+You asked about a skip button for words she already knows. A general skip already exists (the pause menu's このステップをとばす), and one beside 次へ on every step would make skipping the hard parts too easy; it would also record nothing, so the phrase would come back as new. Instead, the 新しいフレーズ step has 「もう知ってる」 beside 次へ:
+
+- **When:** in today's lesson only, not in practice. It is enabled once the phrase has been heard and shown.
+- **What it does:**
+  - The phrase counts as learned at once, but further along the review schedule (box 3), so its first check comes in about four days instead of tomorrow.
+  - Today's quiz, answer and practice steps for it are dropped (day one went from 12 steps to 7 when "Hi!" was known), and she goes on with the next step.
+  - A miss at that first check sends it back to box 1, to be learned as usual, so a tap by mistake costs nothing for long.
+- **Layout:** on a narrow phone, beside ← 前へ, the label goes on two lines (もう / 知ってる), so 次へ stays the widest button.
+- **Checked:**
+  - Tests: the known phrase, its first check four days on, its steps dropped, the day still stamped, and practice ignoring it.
+  - In the browser at 375 and 320 px wide.
+  - The tests (91), the type check, the build and the WebKit smoke test (26 of 26).
+
+## No repeat-after-me step (2026-11-17)
+
+You decided 「まねして言う」 should go: she already says the new phrase out loud herself in 「新しいフレーズ」, and 「言ってみて」 should not run on a timer.
+
+- **Lessons:**
+  - A new phrase now goes 新しいフレーズ → 聞き取りクイズ → 答えてみよう. Day one is 12 steps instead of 14.
+  - The lesson is still topped up with practice to about ten minutes.
+  - A phrase she understood but never answered comes back as just 答えてみよう, which shows the model once she has tried.
+- **新しいフレーズ:**
+  - For a phrase she answers, it now also introduces the reply (under 答え方, heard before it is shown), which まねして言う used to do.
+  - It ends with Hachiware asking her to say it out loud, in her own time.
+- **答えてみよう:** the timed 「言ってみて」 pause after the model is gone. Hachiware asks her to say the model once more, and the rating buttons come straight away (after the usual moment that guards against a double tap).
+- **Saved lessons:** a lesson saved part-way by the older version drops its leftover まねして言う steps and resumes at the same place (tested).
+- **App words:** five are no longer shown anywhere, so they are no longer app words: 準備できた？, いいよ！, 終わり！, もう一回 and 言ってみて.
+- **Content to look at in your next review:** the course still teaches "Ready?", "Say it.", "Done!" and "One more time." as phrases. They were partly there because the removed step used them, so keep them only if they are worth learning for their own sake.
+- **Checked:**
+  - A lesson in the browser: the reply introduced in 新しいフレーズ, and the new 答えてみよう ending.
+  - The tests (89), the type check, the build and the WebKit smoke test (26 of 26).
+  - The content sheet, now counting 19 app words.
+
 ## Study days, not days since the start (2026-11-16)
 
 - **Before:** 「はじめて{n}日目」 on Today counted calendar days since her first lesson, skipped days included, and so did the number on the lesson's stamp. Her 8th lesson could get a stamp saying 20日目.
@@ -326,7 +409,7 @@ Yes, it is worth having, as the second shelf of the notebook.
 - **What a note holds:** an English word or sentence, her own Japanese note, and a play button.
 - **How notes get in:** typed, pasted, or starred from a lesson. She cannot spell English, so the realistic source is you: you send a phrase on LINE, she copies it and pastes it in. She can also write a Japanese-only "how do I say…?" note to ask you on the call.
 - **The voice is the trade-off.** Lesson audio is made in advance on your PC, so free text cannot use Heart. A note would be read by the iPhone's own built-in English voice. It works offline but sounds different and more robotic, and it needs checking on her phone.
-- **No katakana reading** for notes at first; a reliable one cannot be generated on the phone.
+- **No katakana reading** for notes at first; a reliable one cannot be generated on the phone. *Changed 2026-11-17:* readings are now made on the phone (see Katakana readings for notes, at the top).
 - **Promotion:** notes she marks can be shared with you, and I can turn them into proper lesson items with Heart audio in the next pack.
 - **When:** after the menu and notebook exist, because it lives inside them.
 

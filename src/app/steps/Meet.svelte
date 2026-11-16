@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
+  import { tick, untrack } from 'svelte';
   import { UI, replyWord } from '../../content/index.ts';
   import type { Exchange, Line } from '../../content/types.ts';
   import type { Channel } from '../audio.svelte.ts';
@@ -14,10 +14,23 @@
 
   /**
    * Meet: ears first. The phrase plays twice before any text appears; then the card shows it with its meaning and
-   * when it is used (which stays on the card), and it plays once more. Other ways of saying it follow. Every card
-   * can be replayed and every block tapped. The reply is introduced in the next step (Shadow).
+   * when it is used (which stays on the card), and it plays once more. Other ways of saying it follow. For an
+   * exchange she answers, the reply comes next, again heard before it is shown (REVIEW 2.3). Every card can be
+   * replayed and every block tapped, and Hachiware asks her to say what she will say out loud, in her own time: there
+   * is no timed repeat-after-me (removed 2026-11-17, your decision).
    */
-  let { ex: exProp, onDone, onBack }: { ex: Exchange; onDone: () => void; onBack: (() => void) | null } = $props();
+  let {
+    ex: exProp,
+    onDone,
+    onBack,
+    onKnown = null,
+  }: {
+    ex: Exchange;
+    onDone: () => void;
+    onBack: (() => void) | null;
+    /** もう知ってる: she already knows this phrase (today's lesson only; never in practice). */
+    onKnown?: (() => void) | null;
+  } = $props();
   const ex = untrack(() => exProp);
 
   const life = lifetime();
@@ -26,6 +39,7 @@
   const main: Line = isSay ? ex.short[0] : ex.heard[0];
   const channel: Channel = isSay ? 'model' : 'other';
   const others = isSay ? [] : ex.heard.slice(1);
+  const replies = ex.kind === 'reply' ? ex.short : [];
 
   let say = $state('');
   let look = $state(false);
@@ -33,6 +47,9 @@
   let showMain = $state(false);
   let reveal = $state(false);
   let shownOthers = $state<Line[]>([]);
+  /** Reply cards on screen, and how many of them show their text yet. */
+  let shownReplies = $state(0);
+  let revealedReplies = $state(0);
   let canGo = $state(false);
   let layout: StepLayout | undefined = $state();
 
@@ -58,7 +75,8 @@
     await s.play(audioPath(main.en), channel);
     await s.wait(500);
     reveal = true;
-    canGo = true;
+    // With a reply still to come, she goes on only once she has met it.
+    canGo = !replies.length;
     look = true;
     sfx.pop();
     say = '意味と使い方は、カードに書いてあるよ';
@@ -69,7 +87,30 @@
       shownOthers = [...shownOthers, l];
       await s.play(audioPath(l.en), 'other');
     }
-    say = others.length ? 'どれも同じ場面で使うよ。タップで何度でも聞けるよ' : 'タップで何度でも聞けるよ';
+    if (replies.length) {
+      if (others.length) {
+        say = 'どれも同じ場面で使うよ';
+        await s.wait(1600);
+      }
+      say = 'こう言われたら、こう答えよう。まずは聞いてね';
+      for (const [i, line] of replies.entries()) {
+        shownReplies = i + 1;
+        await s.wait(900);
+        act(ex.scene.replies?.[i]);
+        await s.play(audioPath(line.en), 'model');
+        revealedReplies = i + 1;
+        sfx.pop();
+        await tick();
+        layout?.toEnd();
+        await s.wait(600);
+        await s.play(audioPath(line.en), 'model');
+      }
+      canGo = true;
+      say = '答えをまねして、声に出して言ってみよう。タップで何度でも聞けるよ';
+      return;
+    }
+    if (isSay) say = 'まねして、声に出して言ってみよう。タップで何度でも聞けるよ';
+    else say = others.length ? 'どれも同じ場面で使うよ。タップで何度でも聞けるよ' : 'タップで何度でも聞けるよ';
     layout?.toTop();
   });
 </script>
@@ -96,9 +137,22 @@
     {#each shownOthers as l (l.en)}
       <SpeakerCard kind="other" line={l} compact />
     {/each}
+    {#if shownReplies}<p class="others-title">答え方</p>{/if}
+    {#each replies.slice(0, shownReplies) as line, i (line.en)}
+      <SpeakerCard kind="model" {line} reveal={i < revealedReplies} badge={replyWord(ex)} />
+    {/each}
   {/snippet}
   {#snippet primary()}
-    <button class="btn primary" disabled={!canGo} onclick={onDone}><UiWord t={UI.next} /></button>
+    {#if onKnown}
+      <!-- Once she has heard and seen the phrase, she can say she knows it already: it comes back for a check in a
+           few days instead of being taught today. -->
+      <div class="pair">
+        <button class="btn soft known keep" disabled={!reveal} onclick={onKnown}>もう<wbr />知ってる</button>
+        <button class="btn primary" disabled={!canGo} onclick={onDone}><UiWord t={UI.next} /></button>
+      </div>
+    {:else}
+      <button class="btn primary" disabled={!canGo} onclick={onDone}><UiWord t={UI.next} /></button>
+    {/if}
   {/snippet}
 </StepLayout>
 
@@ -119,6 +173,21 @@
     margin: 8px 0 0;
     font-size: 19px;
     font-weight: 800;
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+  }
+  .known {
+    width: auto;
+    padding: 8px 12px;
+  }
+  /* On a narrow phone, beside ← 前へ, the label goes on two lines (もう / 知ってる) so 次へ stays the widest button. */
+  @media (max-width: 359px) {
+    .known {
+      max-width: 90px;
+    }
   }
   .others-title {
     margin: 4px 0 -4px;

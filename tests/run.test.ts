@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { ORDERED, exchangeById } from '../src/content/index.ts';
 import { emptyProgress } from '../src/learn/progress.ts';
-import { finishStep, fromSaved, leaveRun, move, practiceRun } from '../src/learn/run.ts';
+import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown } from '../src/learn/run.ts';
 import { buildSession, newSaved, resumable } from '../src/learn/session.ts';
 
 const find = (id: string) => exchangeById(id);
@@ -24,6 +24,36 @@ function playAll(p: ReturnType<typeof emptyProgress>, r: ReturnType<typeof pract
 }
 
 describe('lesson bookkeeping', () => {
+  it('もう知ってる on a new phrase: known at once, first checked in four days, and its steps today dropped', () => {
+    const { p, r, day } = startDay();
+    expect(r.steps[0]).toMatchObject({ kind: 'meet', exId: 'hi' });
+    const before = r.steps.length;
+    const later = r.steps.filter((s, i) => i > 0 && s.exId === 'hi').length;
+    const practice = r.counts.practice;
+    skipKnown(r, p, find('hi')!);
+    move(r, p, 1);
+    expect(p.ex['hi']).toMatchObject({ met: day, hear: { box: 3, due: day + 4 }, say: { box: 3, due: day + 4 } });
+    // Only the Meet she was on is left of it; its own two checks and its practice are gone.
+    expect(r.steps.filter((s) => s.exId === 'hi')).toHaveLength(1);
+    expect(r.steps).toHaveLength(before - later);
+    expect(r.counts.practice).toBe(practice - (later - 2));
+    expect(r.steps[r.index]).toMatchObject({ kind: 'meet', exId: 'sorry-what' });
+    // The rest of the lesson goes on as usual, and earns the day's stamp.
+    playAll(p, r, () => 'answer');
+    expect(p.days).toEqual([day]);
+    // No review of it until its first check, four days on.
+    expect(buildSession(p, ORDERED, day + 3).steps.some((s) => s.exId === 'hi' && 'review' in s && s.review)).toBe(false);
+    expect(buildSession(p, ORDERED, day + 4).steps.some((s) => s.exId === 'hi' && 'review' in s && s.review)).toBe(true);
+  });
+
+  it('practice ignores もう知ってる', () => {
+    const p = emptyProgress();
+    const run = practiceRun([{ kind: 'meet', exId: 'hi' }, { kind: 'catch', exId: 'hi', review: false }], 10);
+    skipKnown(run, p, find('hi')!);
+    expect(p.ex).toEqual({});
+    expect(run.steps).toHaveLength(2);
+  });
+
   it('a new phrase whose listening check was skipped comes back the next day (and is not lost)', () => {
     const { p, r } = startDay();
     // Skip every listening check of "Sorry, what?" (the first one and the extra practice ones).

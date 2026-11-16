@@ -20,6 +20,7 @@
     hideEnglish = false,
     badge = '',
     note = '',
+    hiddenNote = '',
     compact = false,
     children,
   }: {
@@ -29,6 +30,8 @@
     hideEnglish?: boolean;
     badge?: string;
     note?: string;
+    /** Said under the ♪ marks while the English is hidden, so a card with no text never looks broken. */
+    hiddenNote?: string;
     compact?: boolean;
     children?: Snippet;
   } = $props();
@@ -92,6 +95,7 @@
     <div class="hidden" aria-label="聞いてね">
       <span class="note-mark">♪</span><span class="note-mark">♪</span><span class="note-mark">♪</span>
     </div>
+    {#if hiddenNote}<p class="hidden-note">{hiddenNote}</p>{/if}
   {/if}
   {@render children?.()}
 </div>
@@ -237,6 +241,13 @@
     padding: 8px 0 4px;
     font-size: 26px;
     color: var(--ink-3);
+  }
+  .hidden-note {
+    margin: 2px 0 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-2);
+    text-align: center;
   }
   .busy .hidden .note-mark {
     color: var(--ink);

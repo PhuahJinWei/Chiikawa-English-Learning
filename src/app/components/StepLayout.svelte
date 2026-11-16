@@ -29,6 +29,11 @@
     scroller?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /** Brings the last card wholly into view (for example a reply that has just grown to show its text). */
+  export function toEnd(): void {
+    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+  }
+
   // While a card is cut off at the bottom, the bottom fades out: on a small phone the buttons can cut the last card,
   // and the fade shows that the page scrolls, instead of looking broken. Only cards count, not the empty space below.
   let more = $state(false);

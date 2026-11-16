@@ -85,7 +85,8 @@ const LIST: (BlockDef & { key?: string })[] = [
   { en: 'great', kana: 'グレイッ', kind: 'content', ja: 'すごい' },
   { en: 'done', kana: 'ダン', kind: 'content', ja: '終わり' },
   { en: 'finished', kana: '[フィ]ニシュト', kind: 'content', ja: '終わった' },
-  { en: 'look', kana: 'ルッ', kind: 'content', ja: '見て' },
+  // The k of "Look!" is heard (released at the end), unlike a final t or d.
+  { en: 'look', kana: 'ルック', kind: 'content', ja: '見て' },
   { en: 'for you', kana: 'フォー [ユー]', kind: 'content', ja: 'あなたに' },
   { en: 'know', kana: 'ノウ', kind: 'content', ja: '知っている' },
   { en: 'any idea', kana: 'エニ アイ[ディー]ア', kind: 'content', ja: '心当たりある？' },
@@ -177,7 +178,8 @@ const LIST: (BlockDef & { key?: string })[] = [
   { en: 'sleep well', kana: 'スリープ [ウェル]', kind: 'fixed', ja: 'ぐっすり寝てね' },
   // At the table (Pack 2).
   { en: "let's eat", kana: 'レッツ [イーッ]', kind: 'fixed', ja: '食べよう' },
-  { en: 'time to eat', kana: 'タイム タ [イーッ]', kind: 'fixed', ja: 'ごはんの時間' },
+  // "to" before a vowel is トゥ (the voice: tʊ); before a consonant it stays タ ("time to go").
+  { en: 'time to eat', kana: 'タイム トゥ [イーッ]', kind: 'fixed', ja: 'ごはんの時間' },
   { en: 'not yet', kana: 'ナーッ [イェッ]', kind: 'fixed', ja: 'まだ',
     note: '「まだ」。"Not yet." だけで「まだです」になるよ。' },
   // Meeting the family (Pack 3).

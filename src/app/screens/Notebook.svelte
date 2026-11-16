@@ -7,6 +7,7 @@
   import { TOP_BOX } from '../../learn/schedule.ts';
   import { play } from '../audio.svelte.ts';
   import { audioPath, heartPath } from '../clips.ts';
+  import NoteReading from '../components/NoteReading.svelte';
   import NoteSheet from '../components/NoteSheet.svelte';
   import PhraseSheet from '../components/PhraseSheet.svelte';
   import StepLayout from '../components/StepLayout.svelte';
@@ -114,6 +115,7 @@
                   <span class="text">
                     {#if n.en}
                       <span class="note-en" lang="en">{n.en}</span>
+                      <NoteReading en={n.en} />
                     {:else}
                       <span class="ask-label">英語で何て言う？</span>
                     {/if}

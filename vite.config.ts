@@ -16,9 +16,10 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   build: {
-    // three.js and the app make one chunk of about 1 MB; it is downloaded once and then kept offline, so splitting it
-    // buys nothing.
-    chunkSizeWarningLimit: 1100,
+    // three.js and the app make one chunk of about 1 MB, and the pronunciation engine for note readings
+    // (src/app/reading.ts) one of 1.3 MB, loaded only when a note needs it. Both are downloaded once and then kept
+    // offline, so splitting them buys nothing.
+    chunkSizeWarningLimit: 1400,
   },
   server: {
     // The RPG uses 5173; this keeps both runnable at once.

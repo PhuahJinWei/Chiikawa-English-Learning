@@ -41,6 +41,14 @@ export function learned(today: number): SkillState {
   return { box: 1, best: 1, due: today + gap(1), last: today, reviews: 0, misses: 0 };
 }
 
+/** Where a new phrase starts when she says she already knows it (もう知ってる): box 3, first checked in 4 days. */
+export const KNOWN_BOX = 3;
+
+/** The state of a new phrase she already knew. A miss at its first check sends it back to box 1, learned as usual. */
+export function known(today: number): SkillState {
+  return { box: KNOWN_BOX, best: KNOWN_BOX, due: today + gap(KNOWN_BOX), last: today, reviews: 0, misses: 0 };
+}
+
 export function isDue(s: SkillState | undefined, today: number): boolean {
   return !!s && s.due <= today;
 }

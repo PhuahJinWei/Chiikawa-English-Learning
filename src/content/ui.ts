@@ -17,21 +17,10 @@ const ui = (src: string, ja: string, needs: string[]): UiText => ({ ja, line: sa
 export const UI = {
   /** Before a clip plays (Meet, Catch, Answer). */
   listen: ui('Listen.', '聞いてね', ['listen']),
-  /** Her turn to repeat (Shadow, Answer). */
-  sayIt: ui('Say it.', '言ってみて', ['say-it']),
-  /** Her turn to answer (Answer). */
-  yourTurn: ui('Your turn!', 'あなたの番！', ['say-it']),
-  /** Restart buttons. */
-  again: ui('One more time.', 'もう一回', ['again']),
   next: ui('Next!', '次へ', ['next']),
-  /** Before the repetitions in Shadow: Hachiware asks, she answers with the button. */
-  ready: ui('Ready?', '準備できた？', ['ready']),
-  ok: ui('OK!', 'いいよ！', ['ready']),
   good: ui('Good!', 'いいね！', ['good']),
   great: ui('Great!', 'すごい！', ['good']),
   goodJob: ui('Good job!', 'よくできたね！', ['good']),
-  /** End of the repetitions in Shadow. */
-  done: ui('Done!', '終わり！', ['done']),
   allDone: ui('All|done!', '全部終わり！', ['done']),
   /** When a new phrase is shown in Meet. */
   look: ui('Look!', '見て！', ['look']),

@@ -75,7 +75,8 @@ like "OK!" or "Yes.", are never offered as wrong answers; add `fits` only for ot
 ## Giving her notes the Heart voice
 
 Her notes (ノート → メモ) play in Heart when their English matches a lesson line; anything else is read by the
-iPhone's own English voice until you voice it:
+iPhone's own English voice until you voice it. (Every note gets a katakana reading on the phone, with nothing to do on
+your side: `src/app/reading.ts`.)
 
 1. She sends you her notes (ノート → メモ → メモを送る). The message ends with the English that has no Heart voice yet,
    under `--- for the app: no Heart voice yet ---`.
@@ -89,8 +90,8 @@ iPhone's own English voice until you voice it:
 | --- | --- |
 | `content-sheet.html`, `.csv` | The content for review (made by `npm run sheet`; don't edit) |
 | `src/content/` | The learning path (`course/`), word blocks with readings (`blocks.ts`) and the voice's phonemes for them (`phonemes.json`), topics, the app's own words (Japanese and English), the English you voiced from her notes (`notes.ts`); `index.ts` turns the path into what the app uses |
-| `src/learn/` | Review schedule, daily lesson builder, practice, saved progress (including the lesson in progress and her notes), notes, backups, the Japanese → English shift, sound-alike wrong choices for the listening quiz (`contrast.ts`) |
-| `src/app/` | Screens (Svelte): Today, Notebook, Practice, Settings, Backup and the lesson (Meet, Shadow, Catch, Answer, Finish); sound with two ways of playing and self-recovery (`audio.svelte.ts`), pause and tap priority (`script.svelte.ts`); screen wake lock; errors (`errors.ts`); updates and offline status (`updates.ts`); install guide, self-check, first-run tour |
+| `src/learn/` | Review schedule, daily lesson builder, practice, saved progress (including the lesson in progress and her notes), notes, backups, the Japanese → English shift, sound-alike wrong choices for the listening quiz (`contrast.ts`), katakana readings from the voice's sounds (`reading.ts`) |
+| `src/app/` | Screens (Svelte): Today, Notebook, Practice, Settings, Backup and the lesson (Meet, Catch, Answer, Finish); sound with two ways of playing and self-recovery (`audio.svelte.ts`), pause and tap priority (`script.svelte.ts`); screen wake lock; errors (`errors.ts`); updates and offline status (`updates.ts`); readings for her notes, with the pronunciation engine loaded when a note needs it (`reading.ts`); install guide, self-check, first-run tour |
 | `src/stage/` | The 3D friends, copied from the Chiikawa RPG (`rpg/`) behind a small interface (`types.ts`), and the meadow they stand in (`Backdrop.ts`) |
 | `public/audio/` | Generated English clips: one per line and per block, Heart voice, natural speed only |
 | `art/` | Source art: the star portrait the icons are made from |
@@ -99,4 +100,27 @@ iPhone's own English voice until you voice it:
 | `tools/sketch/` | Draws the hand-drawn outlines into `src/app/sketch.css` (don't edit that file: change the tool, then `npm run sketch`; a test fails while it is out of date) |
 | `tools/build/` | Service worker (content versions; unchanged files are reused on update) and dev-only save helper |
 | `tools/smoke/` | WebKit smoke tests (Playwright, its own install) |
-| `tests/` | Unit tests: content rules (how steps link up, highlights, quiz meanings, readings, audio), the content sheet, the hand-drawn outlines, schedule and lessons, lesson bookkeeping, sound recovery, backups |
+| `tests/` | Unit tests: content rules (how steps link up, highlights, quiz meanings, readings, audio), the content sheet, the hand-drawn outlines, schedule and lessons, lesson bookkeeping, sound recovery, backups, note readings (held to the hand-made ones) |
+
+## Licence
+
+えいごフレンズ is free software under the GNU General Public License, version 3 or later (GPL-3.0-or-later): see
+[LICENSE](LICENSE). Anyone may use, share and change it under that licence, which comes with no warranty. The app says
+so at the bottom of 設定, with a link to this repository. Chiikawa and its characters belong to their creator, ナガノ
+(Nagano), and are not covered by the licence.
+
+## Third-party code
+
+What the published app contains besides its own code:
+
+| Code | Licence | Where |
+| --- | --- | --- |
+| three.js | MIT | the 3D friends |
+| Svelte | MIT | the screens (compiled into the app) |
+| phonemizer.js (Xenova) | Apache-2.0 | note readings: loaded only when a note needs one (`src/app/reading.ts`) |
+| eSpeak NG, inside phonemizer.js | GPL-3.0-or-later | the same |
+
+eSpeak NG is the pronunciation engine for note readings. It is under GPL-3.0-or-later, which is why the app is too: a
+program that includes GPL code is shared under the GPL, with its source. Its source is at
+https://github.com/espeak-ng/espeak-ng, and the build the app uses at https://github.com/xenova/phonemizer.js. The
+Heart voice (Kokoro) is used only on your PC to make the audio files; it is not part of the app.

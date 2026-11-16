@@ -31,7 +31,7 @@
   );
   const reviews = $derived(left.filter((s) => (s.kind === 'catch' || s.kind === 'answer') && s.review).length);
   // Checks of today's new phrases belong to learning them; only the rest is practice.
-  const learning = $derived(new Set(left.filter((s) => s.kind === 'meet' || s.kind === 'shadow').map((s) => s.exId)));
+  const learning = $derived(new Set(left.filter((s) => s.kind === 'meet').map((s) => s.exId)));
   const practice = $derived(
     left.filter((s) => (s.kind === 'catch' || s.kind === 'answer') && !s.review && !learning.has(s.exId)).length,
   );

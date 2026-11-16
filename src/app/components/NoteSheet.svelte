@@ -5,6 +5,7 @@
   import { heartPath } from '../clips.ts';
   import { hearNote } from '../note-voice.ts';
   import { app, save } from '../state.svelte.ts';
+  import NoteReading from './NoteReading.svelte';
   import SheetHead from './SheetHead.svelte';
 
   /**
@@ -107,6 +108,7 @@
       </button>
     </div>
     {#if english}
+      <NoteReading en={english} boxed />
       <p class="voice">{heart ? 'レッスンと同じ声で読みます。' : 'iPhoneの声で読みます（レッスンとは違う声です）。'}</p>
     {/if}
     {#if voiceProblem}<p class="warn">{voiceProblem}</p>{/if}

@@ -57,12 +57,12 @@ describe('daily lessons', () => {
   it('day 1 teaches "Hi!" and "Sorry, what?", each checked a little after it was taught', () => {
     const plan = buildSession(emptyProgress(), ORDERED, 10);
     expect(plan.fresh).toBe(2);
-    expect(plan.steps.slice(0, 8).map((s) => `${s.kind}:${s.exId}`)).toEqual([
-      'meet:hi', 'shadow:hi', 'meet:sorry-what', 'shadow:sorry-what',
+    expect(plan.steps.slice(0, 6).map((s) => `${s.kind}:${s.exId}`)).toEqual([
+      'meet:hi', 'meet:sorry-what',
       'catch:hi', 'catch:sorry-what', 'answer:hi', 'answer:sorry-what',
     ]);
     // Then extra practice of the two new phrases, which never moves the schedule.
-    const extra = plan.steps.slice(8);
+    const extra = plan.steps.slice(6);
     expect(extra.length).toBeGreaterThan(0);
     expect(extra.every((s) => (s.kind === 'catch' || s.kind === 'answer') && !s.review && ['hi', 'sorry-what'].includes(s.exId))).toBe(true);
   });
@@ -104,7 +104,7 @@ describe('daily lessons', () => {
     expect(plan.reviews).toBe(0);
     expect(plan.practice).toBeGreaterThan(0);
     expect(estimateSeconds(plan.steps)).toBeGreaterThanOrEqual(Math.min(TARGET_SECONDS, 6 * 60));
-    expect(plan.steps.every((s) => s.kind === 'meet' || s.kind === 'shadow' || !s.review)).toBe(true);
+    expect(plan.steps.every((s) => s.kind === 'meet' || !s.review)).toBe(true);
   });
 
   it('a big backlog is capped and new phrases wait', () => {
@@ -198,5 +198,24 @@ describe('saved progress', () => {
     expect(p.ex['hi'].hear).toMatchObject({ box: 3, best: 3, reviews: 0 });
     expect(p.session).toBeNull();
     expect(normalize('nonsense')).toEqual(emptyProgress());
+  });
+
+  it('a lesson saved with the old repeat-after-me steps resumes at the same place without them', () => {
+    const steps = [
+      { kind: 'meet', exId: 'hi' },
+      { kind: 'shadow', exId: 'hi' },
+      { kind: 'meet', exId: 'sorry-what' },
+      { kind: 'shadow', exId: 'sorry-what' },
+      { kind: 'catch', exId: 'hi', review: false },
+      { kind: 'answer', exId: 'hi', review: false },
+    ];
+    // She had done both Meets and both repeat-after-mes, and was about to start the Catch.
+    const p = normalize({ v: 1, session: { day: 5, index: 4, steps, recorded: [0, 2, 4], retried: [], counts: {} } });
+    expect(p.session?.steps.map((s) => `${s.kind}:${s.exId}`)).toEqual(['meet:hi', 'meet:sorry-what', 'catch:hi', 'answer:hi']);
+    expect(p.session?.index).toBe(2);
+    expect(p.session?.recorded).toEqual([0, 1, 2]);
+    // Standing on a removed step, she goes on with the next step that is left.
+    const onShadow = normalize({ v: 1, session: { day: 5, index: 3, steps, recorded: [], retried: [], counts: {} } });
+    expect(onShadow.session?.steps[onShadow.session.index]).toMatchObject({ kind: 'catch', exId: 'hi' });
   });
 });

@@ -88,10 +88,11 @@ The app starts in Japanese and turns English piece by piece, only ever using Eng
 
 **Learning a new exchange** (a friend leads each step):
 
-1. **Meet:** the friend acts it out. The audio plays twice before any text appears. Then the phrase appears as word blocks with the Japanese meaning, the friend gives one line on when to use it, and it plays once more. All audio is at natural speed: no slow versions (your decision, 2026-11-16).
-2. **Shadow:** say it along with the audio three times. Recording and comparing is optional and comes later.
-3. **Catch:** hear a line and choose what it means. No text is shown. This is checked by the app.
-4. **Answer:** the question plays from the speaker card with no text, while the friend listens with her. The learner answers aloud, hears the model answer, then taps 言えた or もう一回. The phone does not score speech.
+1. **Meet:** the friend acts it out. The audio plays twice before any text appears. Then the phrase appears as word blocks with the Japanese meaning, the friend gives one line on when to use it, and it plays once more. For an exchange she answers, the reply follows the same way (heard before it is shown). The friend asks her to say it out loud, in her own time: every card replays as often as she likes. All audio is at natural speed: no slow versions (your decision, 2026-11-16). If she already knows the phrase, 「もう知ってる」 (beside 次へ, in the daily lesson only) counts it as learned: today's steps for it are dropped, and it comes back for a first check in about four days. A miss then sends it back to be learned as usual (2026-11-17).
+2. **Catch:** hear a line and choose what it means. No text is shown. This is checked by the app.
+3. **Answer:** the question plays from the speaker card with no text, while the friend listens with her. The learner answers aloud (the card says the English appears after checking, and not knowing is fine), taps 「答え合わせ」 to hear and see the model answer, says it again if she likes, then taps 言えた, 迷った or 言えなかった. The phone does not score speech.
+
+There used to be a timed repeat-after-me step (Shadow, 「まねして言う」) between Meet and Catch. You dropped it on 2026-11-17: she already says the phrase herself in Meet, and a timer telling her when to speak was more in the way than useful. Answer lost its timed "say it once more" pause for the same reason.
 
 ### Word blocks
 
@@ -138,7 +139,7 @@ This replaces underlining. Grammar is never marked; the blocks worth catching ar
 - **No grammar terms.** An opener is explained as a pattern, for example 「"Do you ～?" は『～する？』ってきく時のはじまりだよ」.
 - **After a miss in Catch:** the friend replays only the highlighted blocks ("…more?") and then the whole line, so she hears what she should have caught.
 - **Tap, not hold.** Holding is hidden and fights the iPhone's text selection. Buttons are the exception, because tapping a button has to do its job.
-- Blocks can be tapped in Meet and Shadow and after an answer is given, not during a question or a timed drill.
+- Blocks can be tapped in Meet and after an answer is given, not during a question.
 - Swap frames reuse them: "I like ___" has an empty block to fill.
 
 ### Special drills
@@ -206,7 +207,7 @@ A short starter pack, ten weekly packs of about 10 exchanges each, then two week
 
 - **Colours:** a warm cream paper background, the RPG's ink brown (`#66432F`) for all text and outlines instead of black, soft sky blue and blush pink. Each friend has an accent colour for their pack.
 - **Shapes (hand-drawn lines since 2026-11-16, your choice):** thick ink-brown outlines drawn by hand, like the friends' own lines: about 3px, a little heavier towards the bottom right and in the corners, with a slight wobble. They are drawn once on your PC as small pictures (`tools/sketch`), so the phone does no extra work for them. Three weights keep the page calm: thick for buttons, speech bubbles, the main cards and the panel's top edge; medium for round buttons, switches, tabs and highlighted words; thin for list rows, page sections, the こんなとき cards and ordinary words. Chips have no line. Large rounded corners, and manga speech bubbles with a drawn tail pointing at whoever is speaking. Cards lie flat; only buttons cast a hard shadow, so what can be tapped stands out. The lesson's stamp is an unevenly inked rubber-stamp ring.
-- **Layout ("Focus", chosen 2026-11-16):** the friends' stage is sized to what they do on each screen. Today is a large scene with Hachiware's greeting floating above the friends. In a lesson the friends get a band where they react, and below it one task at a time: the step's name in the top bar (新しいフレーズ, まねして言う, 聞き取りクイズ, 答えてみよう), the cards, and one row of buttons. The end of a lesson grows back into a scene for the celebration. The notebook, practice and settings are plain pages without the stage (the 3D stops drawing there).
+- **Layout ("Focus", chosen 2026-11-16):** the friends' stage is sized to what they do on each screen. Today is a large scene with Hachiware's greeting floating above the friends. In a lesson the friends get a band where they react, and below it one task at a time: the step's name in the top bar (新しいフレーズ, 聞き取りクイズ, 答えてみよう), the cards, and one row of buttons. The end of a lesson grows back into a scene for the celebration. The notebook, practice and settings are plain pages without the stage (the 3D stops drawing there).
 - **Word blocks** look like rounded stickers. Highlighted blocks carry the host friend's accent colour, like a marker pen.
 - **Type:** the rounded fonts already on the iPhone (Hiragino Maru Gothic for Japanese, SF Rounded for English), so nothing is downloaded.
 - **3D:** the same toon shading and ink outline as the RPG. The friends stand in a meadow like the fields in the Chiikawa anime (since 2026-11-16, your request):
@@ -234,6 +235,7 @@ A short starter pack, ten weekly packs of about 10 exchanges each, then two week
   - **Per line:** one clip at natural speed, plus a clip for each block. No slow versions.
   - **Word timings, if the engine provides them:** blocks light up as they are spoken, and a tapped block plays its slice of the real sentence. If not, blocks get separately generated clips. Checked in Phase 0.
   - **Optional:** an audio file dropped into the project with the right name replaces the generated one for that line, if you ever want to add a real voice.
+- **Readings for her notes (2026-11-17):** made on the phone. A pronunciation engine (eSpeak NG, 1.3 MB, loaded only when a note needs it and kept offline) gives the American sounds, and a converter turns them into katakana by the rules of the hand-made readings. A note that is a lesson line keeps its hand-made reading. eSpeak NG is GPL-licensed, so the app is too (decision 7).
 - **Self-check screen (in Japanese, 「動作チェック」):** neither of us has an iPhone, so the app tests itself on hers: sound, the silent switch, offline use, saving, 3D speed, and later the microphone. She taps ○ or ✕ where only a person can judge, then shares a short report with you (for example on LINE) and you paste it to me. The report includes the app's version number.
 - **Updates:** every time the app starts online it checks for a new version straight away. If there is one, a short 「アップデート中」 note shows and the app switches to it before she begins, so she is never stuck on an old version. Offline or on a slow connection she carries on, and the update switches in later on the home screen, never mid-lesson.
 - **Icon:** the star from your Chiikawa PvZ art (`art/portrait_hoshi.png`), on the app's cream paper for the home screen.
@@ -312,6 +314,7 @@ Made on 2026-11-16:
 4. **Testing:** no iPhone on your side, so she is the tester.
 5. **Voices:** a normal American generated voice, made on your PC. No recordings and no online voice service.
 6. **Hosting:** a public repo with GitHub Pages, chosen as the free and simplest option, knowing the model files in it can be downloaded by anyone.
+7. **Licence (2026-11-17):** GPL-3.0-or-later, because the pronunciation engine for note readings (eSpeak NG) is under it. Chosen by you over swapping the engine. Chiikawa and its characters are not covered (README, Licence).
 
 Open, and not blocking:
 

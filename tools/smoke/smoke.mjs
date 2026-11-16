@@ -144,9 +144,11 @@ async function phoneChecks(browser, phone) {
     await page.getByRole('tab', { name: /メモ/ }).click();
     await page.getByRole('button', { name: '＋ メモを書く' }).click();
     await page.getByPlaceholder('LINEで送ってもらった英語を、ここに貼り付けます').fill('“Can I have some water?”');
+    await page.getByText('キャナイ ヘァヴ サム').first().waitFor();
     await page.getByPlaceholder('意味、使う場面、聞いてみたいことなど').fill('お水がほしいとき');
     await page.getByRole('button', { name: '英語を聞く' }).click();
     await page.getByRole('button', { name: '保存する' }).click();
+    await page.getByText('キャナイ ヘァヴ サム').first().waitFor();
     await page.getByText('Can I have some water?', { exact: true }).click();
     await page.getByPlaceholder('意味、使う場面、聞いてみたいことなど').fill('お水がほしいときに言う');
     await page.getByRole('button', { name: '閉じる' }).click();
@@ -155,16 +157,24 @@ async function phoneChecks(browser, phone) {
     await page.getByRole('button', { name: 'このメモを削除' }).click();
     await page.getByRole('button', { name: '削除する' }).click();
     await page.getByText('Can I have some water?', { exact: true }).waitFor({ state: 'detached' });
-    return 'English tidied, kept on close, deleted after one confirmation';
+    return 'English tidied and read in katakana, kept on close, deleted after one confirmation';
   });
 
-  await check('works offline once ready', async () => {
+  await check('works offline once ready, note readings too', async () => {
     await tab(page, '今日');
     await page.getByText('✓ ネットなしでも使えます').waitFor({ timeout: 30_000 });
     await context.setOffline(true);
     await page.reload();
     await booted(page);
     await page.getByText('今日のレッスン').waitFor();
+    // The pronunciation engine is a file of its own, loaded only when a note needs it: offline, from the phone.
+    await tab(page, 'ノート');
+    await page.getByRole('tab', { name: /メモ/ }).click();
+    await page.getByRole('button', { name: '＋ メモを書く' }).click();
+    await page.getByPlaceholder('LINEで送ってもらった英語を、ここに貼り付けます').fill('Where are you going?');
+    await page.getByText('ウェアラー ユー').first().waitFor();
+    await page.getByRole('button', { name: '閉じる' }).click();
+    await tab(page, '今日');
     await context.setOffline(false);
   });
 

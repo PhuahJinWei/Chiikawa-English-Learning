@@ -8,6 +8,8 @@
 
   /** Settings (a menu tab): display, learning pace, and the app's tools. */
   const s = app.progress.settings;
+  /** The app's source and its licence (GPL-3.0-or-later). */
+  const SOURCE = 'https://github.com/PhuahJinWei/Chiikawa-English-Learning';
   let shared = $state('');
   let summaryText = $state('');
 
@@ -126,6 +128,13 @@
     <p class="note muted">
       記録はこのiPhoneの中だけに保存されます{app.saved ? '' : '（いま保存できていません）'}。<br />
       バージョン {versionText()}
+    </p>
+    <!-- The notice the GPL asks of an app people use: who holds the copyright, the licence, no warranty, and where to
+         read the licence (README, Licence). -->
+    <p class="note muted legal">
+      © 2026 PhuahJinWei<br />
+      GPL-3.0ライセンスのフリーソフトウェアです（無保証）。<br />
+      <a href={SOURCE} target="_blank" rel="noopener noreferrer">ライセンスとソースコード</a>
     </p>
   </div>
 </div>
@@ -265,5 +274,11 @@
     line-height: 1.6;
     text-align: center;
     font-weight: 700;
+  }
+  .legal {
+    font-size: 12px;
+  }
+  .legal a {
+    color: inherit;
   }
 </style>

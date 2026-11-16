@@ -1,7 +1,7 @@
 import type { Exchange } from '../content/types.ts';
 import type { Progress, SavedSession } from './progress.ts';
 import type { Grade } from './schedule.ts';
-import { recordDayDone, recordMissedLine, recordPracticed, recordResult, type Step } from './session.ts';
+import { recordDayDone, recordKnown, recordMissedLine, recordPracticed, recordResult, type Step } from './session.ts';
 
 /**
  * The bookkeeping of a running lesson, kept apart from the screen so it can be tested: moving between steps,
@@ -73,6 +73,24 @@ export function finishStep(r: Run, p: Progress, find: (id: string) => Exchange |
     r.retried.push(key);
     r.steps.push({ ...s, review: false });
   }
+}
+
+/**
+ * She already knows the new phrase on this step (もう知ってる on its Meet step, today's lesson only): it is recorded
+ * as known, and today's later steps for it (its checks and its practice) are dropped. The caller then moves on.
+ */
+export function skipKnown(r: Run, p: Progress, e: Exchange): void {
+  if (!r.daily) return;
+  recordKnown(p, e, r.day);
+  const keep = r.steps.map((s, i) => i <= r.index || s.exId !== e.id);
+  const dropped = keep.filter((k) => !k).length;
+  const moved = (i: number) => keep.slice(0, i).filter(Boolean).length;
+  r.recorded = r.recorded.filter((i) => keep[i]).map(moved);
+  r.steps = r.steps.filter((_, i) => keep[i]);
+  // Its own checks (a Catch, and an Answer unless it is only understood) were part of the new phrase; the rest
+  // were practice, which the end of the lesson counts.
+  const own = e.kind === 'understand' ? 1 : 2;
+  r.counts.practice = Math.max(0, r.counts.practice - Math.max(0, dropped - own));
 }
 
 /** Moves by `by` steps (0 = restart this step). Returns true when the lesson has reached its end. */

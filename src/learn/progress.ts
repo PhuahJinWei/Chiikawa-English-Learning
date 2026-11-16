@@ -1,4 +1,4 @@
-import type { Step } from './session.ts';
+import { STEP_KINDS, type Step } from './session.ts';
 import type { SkillState } from './schedule.ts';
 
 /** Everything saved on the phone. Nothing is sent anywhere. */
@@ -110,14 +110,21 @@ function normalizeSkill(s: unknown): SkillState | undefined {
 
 function normalizeSession(s: unknown): SavedSession | null {
   if (!isObj(s) || typeof s.day !== 'number' || typeof s.index !== 'number' || !Array.isArray(s.steps)) return null;
-  const steps = s.steps.filter((x): x is Step => isObj(x) && typeof x.kind === 'string' && typeof x.exId === 'string');
-  if (steps.length !== s.steps.length) return null;
+  const all = s.steps.filter((x): x is Step => isObj(x) && typeof x.kind === 'string' && typeof x.exId === 'string');
+  if (all.length !== s.steps.length) return null;
+  // A lesson saved by an older version can hold steps the app no longer has (the repeat-after-me step, removed
+  // 2026-11-17): they are dropped, and her place and the recorded steps move with the steps that stay.
+  const keep = all.map((x) => STEP_KINDS.includes(x.kind));
+  const steps = all.filter((_, i) => keep[i]);
+  const moved = (i: number) => keep.slice(0, i).filter(Boolean).length;
   const counts = isObj(s.counts) ? s.counts : {};
   return {
     day: s.day,
     steps,
-    index: Math.max(0, Math.min(s.index, steps.length)),
-    recorded: Array.isArray(s.recorded) ? s.recorded.filter((x): x is number => typeof x === 'number') : [],
+    index: moved(Math.max(0, Math.min(s.index, all.length))),
+    recorded: Array.isArray(s.recorded)
+      ? s.recorded.filter((x): x is number => typeof x === 'number' && keep[x] === true).map(moved)
+      : [],
     retried: Array.isArray(s.retried) ? s.retried.filter((x): x is string => typeof x === 'string') : [],
     counts: { fresh: num(counts.fresh), reviews: num(counts.reviews), practice: num(counts.practice) },
   };

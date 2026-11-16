@@ -5,7 +5,7 @@
 <script lang="ts">
   import { onDestroy, untrack } from 'svelte';
   import { ORDERED, exchangeById } from '../../content/index.ts';
-  import { finishStep, fromSaved, leaveRun, move, practiceRun, type Run, type StepResult } from '../../learn/run.ts';
+  import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown, type Run, type StepResult } from '../../learn/run.ts';
   import { buildSession, newSaved, resumable, type Step } from '../../learn/session.ts';
   import { onInterruption } from '../audio.svelte.ts';
   import ConfirmQuit from '../components/ConfirmQuit.svelte';
@@ -13,6 +13,7 @@
   import PauseSheet from '../components/PauseSheet.svelte';
   import { accentStyle } from '../friends.ts';
   import { calm } from '../scene.ts';
+  import { sfx } from '../sfx.ts';
   import { lesson, pauseLesson, resumeLesson } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
   import { app, go, save } from '../state.svelte.ts';
@@ -21,7 +22,6 @@
   import Catch from '../steps/Catch.svelte';
   import Finish from '../steps/Finish.svelte';
   import Meet from '../steps/Meet.svelte';
-  import Shadow from '../steps/Shadow.svelte';
   import { keepAwake } from '../wakelock.svelte.ts';
 
   /**
@@ -123,6 +123,14 @@
 
   const back = () => go_(-1);
 
+  /** もう知ってる on a new phrase (today's lesson only): it counts as known, and today's steps for it are dropped. */
+  function known() {
+    if (!ex) return;
+    sfx.chime();
+    skipKnown(run, app.progress, ex);
+    go_(1);
+  }
+
   function leave() {
     quitting = false;
     resumeLesson();
@@ -144,9 +152,7 @@
     {#key `${run.index}:${restart}`}
       <div class="slot">
         {#if step.kind === 'meet'}
-          <Meet {ex} onDone={() => next()} onBack={run.index > 0 ? back : null} />
-        {:else if step.kind === 'shadow'}
-          <Shadow {ex} onDone={() => next()} onBack={run.index > 0 ? back : null} />
+          <Meet {ex} onDone={() => next()} onBack={run.index > 0 ? back : null} onKnown={daily ? known : null} />
         {:else if step.kind === 'catch'}
           <Catch {ex} {step} onDone={next} onBack={run.index > 0 ? back : null} />
         {:else}

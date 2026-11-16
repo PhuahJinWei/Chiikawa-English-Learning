@@ -27,14 +27,4 @@ export function heartPath(en: string): string | null {
   return loose ? audioPath(loose) : null;
 }
 
-/** How long a line's clip lasts, from the audio list (for her turn to speak after it). */
-export function clipMs(en: string): number {
-  return CLIPS[audioSlug(en)]?.ms ?? 1200;
-}
-
-/** Time for her to say a line after hearing it: a little longer than the clip, never rushed. */
-export function turnMs(en: string): number {
-  return Math.max(1800, Math.min(4500, clipMs(en) * 1.7 + 700));
-}
-
 export { audioPath };
