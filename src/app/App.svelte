@@ -100,7 +100,8 @@
           {:else if app.screen === 'settings'}
             <Settings />
           {:else if app.screen === 'lesson'}
-            <Lesson />
+            <!-- A new lesson can start from the end of the last one (もっと覚える): a fresh screen for each. -->
+            {#key app.lessonKey}<Lesson />{/key}
           {:else if app.screen === 'selfcheck'}
             <SelfCheck />
           {:else if app.screen === 'install'}

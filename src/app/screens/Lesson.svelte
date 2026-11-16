@@ -7,7 +7,7 @@
   import { ORDERED, TALKS, exchangeById, talkById } from '../../content/index.ts';
   import { joinedBetween } from '../../learn/partners.ts';
   import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown, type Run, type StepResult } from '../../learn/run.ts';
-  import { buildSession, newSaved, resumable, type Step } from '../../learn/session.ts';
+  import { buildMore, buildSession, newSaved, resumable, unmet, type Step } from '../../learn/session.ts';
   import { englishLevel } from '../../learn/shift.ts';
   import { onInterruption } from '../audio.svelte.ts';
   import LessonBar from '../components/LessonBar.svelte';
@@ -17,7 +17,7 @@
   import { sfx } from '../sfx.ts';
   import { lesson, pauseLesson, resumeLesson } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
-  import { app, go, save } from '../state.svelte.ts';
+  import { app, go, save, startMore } from '../state.svelte.ts';
   import { STEP_NAMES } from '../step-kinds.ts';
   import Answer from '../steps/Answer.svelte';
   import Talk from '../steps/Talk.svelte';
@@ -33,7 +33,11 @@
    * the same day. The bookkeeping itself lives in src/learn/run.ts (tested).
    */
   const cfg = untrack(() => app.lesson);
-  const daily = cfg.mode === 'daily';
+  // Today's lesson and もっと覚える are recorded and saved alike; only practice is not.
+  const daily = cfg.mode !== 'practice';
+  // More new phrases after today's lesson: today's stamp was already given when it began. Found from the stamp, not
+  // the mode, so a round she left part-way and continues (続きから) is still one.
+  const extra = daily && untrack(() => app.progress.days.includes(app.today));
   const exists = (s: Step) => (s.kind === 'talk' ? !!talkById(s.talkId) : !!exchangeById(s.exId));
 
   const run: Run = $state(
@@ -41,7 +45,9 @@
       if (!daily) return practiceRun(cfg.steps, app.today);
       const going = resumable(app.progress, app.today, exists);
       if (going) return fromSaved($state.snapshot(going));
-      const planned = newSaved(buildSession(app.progress, ORDERED, app.today, TALKS), app.today);
+      const plan =
+        cfg.mode === 'more' ? buildMore(app.progress, ORDERED) : buildSession(app.progress, ORDERED, app.today, TALKS);
+      const planned = newSaved(plan, app.today);
       app.progress.session = planned;
       save();
       return fromSaved($state.snapshot(planned));
@@ -63,6 +69,8 @@
   // with a friend who joins at that level (src/learn/partners.ts).
   const levelBefore = untrack(() => englishLevel(app.progress).level);
   const finished = $derived(run.index >= run.steps.length);
+  // At the end of a round of もっと覚える, whether there are new phrases left for another one.
+  const phrasesLeft = $derived(finished && unmet(app.progress, ORDERED).length > 0);
   const levelUp = $derived(finished && englishLevel(app.progress).level > levelBefore ? englishLevel(app.progress).level : null);
   const joining = $derived(levelUp ? (joinedBetween(levelBefore, levelUp).at(-1) ?? null) : null);
   // ちいかわ's part is played by today's partner; a friend who has just joined comes on stage for the celebration.
@@ -170,7 +178,17 @@
     {/key}
   {:else if run.index >= run.steps.length}
     <div class="slot">
-      <Finish {daily} {stamped} {levelUp} joined={joining} counts={run.counts} onClose={leave} onMore={() => go('practice')} />
+      <Finish
+        {daily}
+        {extra}
+        {stamped}
+        {levelUp}
+        joined={joining}
+        counts={run.counts}
+        {phrasesLeft}
+        onClose={leave}
+        onMore={() => (extra && phrasesLeft ? startMore() : go('practice'))}
+      />
     </div>
   {/if}
 

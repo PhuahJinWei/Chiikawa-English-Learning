@@ -13,20 +13,27 @@
   /**
    * The end of a lesson is a small conversation, and her buttons are her lines (PLAN.md section 2): Hachiware hands
    * over the stamp ("Here you go."), she says "Thank you!"; he says "See you!", she says "Bye!" (late in the evening
-   * "Good night!", which is only ever used for parting).
+   * "Good night!", which is only ever used for parting). After a round of もっと覚える the stamp was already given, so
+   * he says "All done!" instead, and her other button takes the next new phrases.
    */
   let {
     daily,
+    extra = false,
     stamped,
     levelUp = null,
     joined = null,
     counts,
+    phrasesLeft = false,
     onClose,
     onMore,
   }: {
     daily: boolean;
+    /** More new phrases after today's lesson (もっと覚える): today's stamp was given at the end of that lesson. */
+    extra?: boolean;
     /** False when she skipped every step: no answer, no stamp. */
     stamped: boolean;
+    /** New phrases are left for another round of もっと覚える. */
+    phrasesLeft?: boolean;
     /** Her new English level, when it went up in this lesson. */
     levelUp?: number | null;
     /** The friend who joined at that level (src/learn/partners.ts): on stage now, her partner from tomorrow. */
@@ -74,9 +81,13 @@
 <StepLayout>
   {#snippet top()}
     {#if phase === 'stamp'}
-      <Bubble who="hachiware" named={false} text={daily ? '今日のスタンプだよ。おつかれさま！' : '練習おつかれさま！'}>
+      <Bubble
+        who="hachiware"
+        named={false}
+        text={extra ? '新しいフレーズ、おつかれさま！' : daily ? '今日のスタンプだよ。おつかれさま！' : '練習おつかれさま！'}
+      >
         {#snippet before()}
-          <span class="lead"><UiWord t={daily ? UI.hereYouGo : UI.allDone} size="bubble" /></span>
+          <span class="lead"><UiWord t={daily && !extra ? UI.hereYouGo : UI.allDone} size="bubble" /></span>
         {/snippet}
       </Bubble>
     {:else}
@@ -97,7 +108,7 @@
   {/snippet}
   {#snippet body()}
     <div class="card stamp-card">
-      {#if daily && stamped}
+      {#if daily && stamped && !extra}
         <div class="stamp" role="img" aria-label="{studied}日目のスタンプ">
           <span class="stamp-day">{studied}</span>
           <span class="stamp-label">日目</span>
@@ -122,7 +133,7 @@
   {#snippet primary()}
     {#if phase === 'stamp'}
       <div class="pair">
-        <button class="btn soft" onclick={onMore}>もっと練習する</button>
+        <button class="btn soft" onclick={onMore}>{extra && phrasesLeft ? 'もっと覚える' : 'もっと練習する'}</button>
         <button class="btn primary" onclick={thanks}><UiWord t={UI.thanks} /></button>
       </div>
     {:else}

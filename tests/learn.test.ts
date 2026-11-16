@@ -4,6 +4,7 @@ import type { Exchange } from '../src/content/types.ts';
 import { emptyProgress, normalize, type Progress } from '../src/learn/progress.ts';
 import { dayNumber, learned, reviewed } from '../src/learn/schedule.ts';
 import {
+  buildMore,
   buildPractice,
   buildSession,
   estimateSeconds,
@@ -75,6 +76,36 @@ describe('daily lessons', () => {
     const again = buildSession(p, ORDERED, 10);
     expect(again.fresh).toBe(0);
     expect(buildSession(p, ORDERED, 11).fresh).toBe(2);
+  });
+
+  it('once the lesson is done, もっと覚える teaches the next phrases, round after round, with no daily limit', () => {
+    const p = emptyProgress();
+    playLesson(p, buildSession(p, ORDERED, 10).steps, 10);
+    expect(buildSession(p, ORDERED, 10).fresh).toBe(0);
+    // A round: the next phrases in the path, as many as a lesson teaches, learned the usual way (and nothing else).
+    const round = buildMore(p, ORDERED);
+    expect(round).toMatchObject({ fresh: 2, reviews: 0, practice: 0 });
+    expect(round.steps.map((s) => `${s.kind}:${stepTarget(s)}`)).toEqual([
+      'meet:thank-you', 'meet:are-you-ok',
+      'catch:thank-you', 'catch:are-you-ok', 'answer:thank-you', 'answer:are-you-ok',
+    ]);
+    expect(round.steps.some((s) => 'review' in s && s.review)).toBe(false);
+    playLesson(p, round.steps, 10);
+    // Recorded as met today, and the next round goes on from there.
+    expect(p.ex['thank-you']).toMatchObject({ met: 10 });
+    const next = buildMore(p, ORDERED);
+    expect(next.steps.filter((s) => s.kind === 'meet').map(stepTarget)).toEqual(['nice-to-meet-you', 'whats-your-name']);
+    playLesson(p, next.steps, 10);
+    playLesson(p, buildMore(p, ORDERED).steps, 10);
+    // A big day evens itself out: the next lesson is busy with their reviews, so it teaches fewer new phrases.
+    const day2 = buildSession(p, ORDERED, 11);
+    expect(day2.reviews).toBeGreaterThanOrEqual(14);
+    expect(day2.fresh).toBeLessThanOrEqual(1);
+    // A round is the size of a lesson's new phrases (the setting), and there is none once everything is learned.
+    p.settings.newPerDay = 3;
+    expect(buildMore(p, ORDERED).fresh).toBe(3);
+    for (const e of ORDERED) recordResult(p, e, 'hear', 'good', false, 10);
+    expect(buildMore(p, ORDERED)).toMatchObject({ steps: [], fresh: 0 });
   });
 
   it('next day: reviews first, alternating "what does it mean?" and "what would you answer?"', () => {

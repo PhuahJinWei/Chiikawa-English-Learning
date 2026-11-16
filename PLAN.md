@@ -157,6 +157,8 @@ This replaces underlining. Grammar is never marked; the blocks worth catching ar
 
 **A daily session is 10 to 15 minutes:** greeting chat, review of what is due, 3 to 5 new exchanges, a short conversation, goodbye and a stamp. Extra practice is available any time.
 
+**No daily limit on new phrases (2026-11-17, at your request):** the lesson teaches as many new phrases as set in 設定 (1 to 3, 2 by default). Once it is done, 「もっと覚える」 on the Today screen teaches the next ones in the path, round after round, as many as she likes. A round is recorded like the lesson, and a lesson with many reviews due teaches fewer new phrases, so a big day evens itself out.
+
 **Review schedule (as built, 2026-11-16):** each step moves through boxes reviewed after 1, 2, 4, 7, 10 and 20 days, then every 40 days. A miss sends it back to the first box. Understanding and saying are tracked separately. (With the trip, gaps stopped at 10 days and shrank before departure; with no deadline, phrases she knows well come back less often, so the daily review stays short as the course grows.)
 
 ## 5. Content

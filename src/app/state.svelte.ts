@@ -7,8 +7,11 @@ export type Tab = 'today' | 'notebook' | 'practice' | 'settings';
 export type Screen = Tab | 'lesson' | 'selfcheck' | 'install' | 'backup';
 
 export interface LessonConfig {
-  /** 'daily' is today's lesson (saved, resumable, moves the schedule); 'practice' never moves the schedule. */
-  mode: 'daily' | 'practice';
+  /**
+   * 'daily' is today's lesson (saved, resumable, moves the schedule); 'more' is more new phrases once it is done
+   * (もっと覚える), recorded and saved the same way; 'practice' never moves the schedule.
+   */
+  mode: 'daily' | 'more' | 'practice';
   steps: Step[];
   title: string;
   /** Where ✕ and the end of the lesson go back to. */
@@ -19,6 +22,8 @@ export const app = $state({
   progress: loadProgress() as Progress,
   screen: 'today' as Screen,
   lesson: { mode: 'daily', steps: [], title: '', returnTo: 'today' } as LessonConfig,
+  /** Counts the lessons started, so one can start from the end of another (もっと覚える) on a fresh lesson screen. */
+  lessonKey: 0,
   /** Today's day number (changes at 4 a.m.). */
   today: dayNumber(),
   /** Whether the last save worked. */
@@ -54,12 +59,22 @@ export function startDaily(): void {
   // The app may have stayed open past 4 a.m.: plan for the real today.
   app.today = dayNumber();
   app.lesson = { mode: 'daily', steps: [], title: '今日のレッスン', returnTo: 'today' };
+  app.lessonKey++;
+  app.screen = 'lesson';
+}
+
+/** The next new phrases once today's lesson is done (もっと覚える): from the Today screen, or the end of a round. */
+export function startMore(): void {
+  app.today = dayNumber();
+  app.lesson = { mode: 'more', steps: [], title: 'もっと覚える', returnTo: 'today' };
+  app.lessonKey++;
   app.screen = 'lesson';
 }
 
 export function startPractice(steps: Step[], title: string, returnTo: Tab): void {
   if (!steps.length) return;
   app.lesson = { mode: 'practice', steps, title, returnTo };
+  app.lessonKey++;
   app.screen = 'lesson';
 }
 

@@ -179,6 +179,27 @@ async function phoneChecks(browser, phone) {
     await context.setOffline(false);
   });
 
+  await check('once today’s lesson is done, もっと覚える teaches the next new phrases', async () => {
+    // After the offline check, which looks for a line shown only before her first lesson. As at the end of today's
+    // lesson: today's stamp, and no lesson left part-way (src/learn/schedule.ts dayNumber).
+    await page.evaluate(() => {
+      const key = 'eigo-friends/progress/v1';
+      const p = JSON.parse(localStorage.getItem(key));
+      const shifted = new Date(Date.now() - 4 * 3600 * 1000);
+      p.days.push(Math.round(Date.UTC(shifted.getFullYear(), shifted.getMonth(), shifted.getDate()) / 86400000));
+      p.session = null;
+      localStorage.setItem(key, JSON.stringify(p));
+    });
+    await page.reload();
+    await booted(page);
+    await page.getByText('次の新しいフレーズ').waitFor();
+    await page.getByRole('button', { name: 'もっと覚える' }).click();
+    await page.getByRole('button', { name: '一時停止' }).click();
+    await page.getByRole('button', { name: '今日はここまでにする' }).click();
+    // Left part-way, the round waits on the Today screen like today's lesson.
+    await page.getByRole('button', { name: '続きから' }).waitFor();
+  });
+
   await check('sideways, it asks to hold the phone upright', async () => {
     const size = page.viewportSize();
     await page.setViewportSize({ width: size.height, height: size.width });

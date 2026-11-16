@@ -85,7 +85,10 @@
     <h2>学習</h2>
     <section class="card soft list">
       <div class="item static">
-        <span>1日に習う新しいフレーズの数</span>
+        <span class="label">
+          1回に習う新しいフレーズの数
+          <small>今日のレッスンのあと「もっと覚える」で、いくつでも先に進めます。</small>
+        </span>
         <span class="seg">
           {#each [1, 2, 3] as n (n)}
             <button class:on={s.newPerDay === n} onclick={() => setNew(n)}>{n}</button>

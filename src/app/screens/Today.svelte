@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ORDERED, TALKS, UI, exchangeById, talkById } from '../../content/index.ts';
   import { dayNumber } from '../../learn/schedule.ts';
-  import { buildSession, estimateMinutes, resumable, type Step } from '../../learn/session.ts';
+  import { buildMore, buildSession, estimateMinutes, resumable, type Step } from '../../learn/session.ts';
   import { nextToJoin } from '../../learn/partners.ts';
   import { englishLevel } from '../../learn/shift.ts';
   import Bubble from '../components/Bubble.svelte';
@@ -11,7 +11,7 @@
   import { act, calm, choosePartner, withPartner } from '../scene.ts';
   import { lifetime } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
-  import { app, go, startDaily } from '../state.svelte.ts';
+  import { app, go, startDaily, startMore } from '../state.svelte.ts';
 
   /**
    * Today: what today's lesson holds and how long it takes (REVIEW 1.11), 「つづきから」 when it was left part-way,
@@ -33,6 +33,11 @@
   const mins = $derived(estimateMinutes(left));
   const meets = $derived(left.filter((s): s is Extract<Step, { kind: 'meet' }> => s.kind === 'meet'));
   const newTitles = $derived(meets.map((s) => exchangeById(s.exId)?.title ?? ''));
+  // Once today's lesson is done she can keep going (もっと覚える): the next new phrases in the path, round after round.
+  const more = $derived(doneToday && !going ? buildMore(app.progress, ORDERED) : null);
+  const moreTitles = $derived(
+    (more?.steps ?? []).flatMap((s) => (s.kind === 'meet' ? [exchangeById(s.exId)?.title ?? ''] : [])),
+  );
   const reviews = $derived(left.filter((s) => (s.kind === 'catch' || s.kind === 'answer') && s.review).length);
   // Checks of today's new phrases belong to learning them; only the rest is practice.
   const learning = $derived(new Set(meets.map((s) => s.exId)));
@@ -70,7 +75,7 @@
     if (going) return '続きからやろう！';
     if (first) return 'ハチワレだよ。一緒に英語を話そう！';
     if (partner.first && !doneToday) return `今日から${FRIENDS[partner.id].name}も一緒だよ！`;
-    if (doneToday) return '今日はおしまい！ また明日ね。';
+    if (doneToday) return moreTitles.length ? 'おつかれさま！もっと覚えてもいいよ。' : '今日はおしまい！ また明日ね。';
     if (!left.length) return '今日はお休み。「練習」で復習しよう！';
     return '今日のレッスン、準備できてるよ！';
   });
@@ -118,6 +123,11 @@
         <p class="line"><b>途中から</b>：あと{left.length}ステップ</p>
       {:else if doneToday}
         <p class="line">今日のスタンプをもらいました。</p>
+        {#if moreTitles.length}
+          <p class="line">
+            <b>次の新しいフレーズ</b>：{#each moreTitles as t, i (i)}<span class="nobreak">「{t}」</span>{/each}
+          </p>
+        {/if}
       {:else if left.length}
         {#if newTitles.length}
           <p class="line">
@@ -183,9 +193,16 @@
     {/if}
   {/snippet}
   {#snippet primary()}
-    <button class="btn primary start" onclick={begin}>
-      {going ? '続きから' : doneToday || !left.length ? '練習する' : 'はじめる'}
-    </button>
+    {#if moreTitles.length}
+      <div class="pair">
+        <button class="btn soft" onclick={() => go('practice')}>練習する</button>
+        <button class="btn primary start" onclick={startMore}>もっと覚える</button>
+      </div>
+    {:else}
+      <button class="btn primary start" onclick={begin}>
+        {going ? '続きから' : doneToday || !left.length ? '練習する' : 'はじめる'}
+      </button>
+    {/if}
   {/snippet}
 </StepLayout>
 
@@ -315,6 +332,16 @@
     background: var(--stamp-sm) center / 100% 100% no-repeat, #fff7f8;
     color: #e0607a;
     font-weight: 900;
+  }
+  /* After today's lesson: 練習する beside もっと覚える, as at the end of a lesson. */
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .pair .soft {
+    min-height: 60px;
   }
   /* On a short screen (an iPhone SE, or any iPhone in Safari with its bars), a slightly lower button leaves the
      lesson card, the level and the stamps room to show whole. */

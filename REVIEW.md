@@ -6,6 +6,17 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## もっと覚える: no daily limit on new phrases (2026-11-17)
+
+You asked whether she can move ahead on the same day. She could not: a lesson taught 2 new phrases (up to 3 in 設定), counted per day, and 練習 only reviews. Now she can.
+
+- **Once today's lesson is done**, the Today screen lists the next new phrases and shows 「もっと覚える」 beside 練習する. While phrases are left, Hachiware says 「おつかれさま！もっと覚えてもいいよ。」 instead of 「また明日ね」.
+- **A round** is the next phrases in the path, as many as her setting (2 by default), learned like the lesson's: meet, check, say. They are recorded the same way, so each comes back for review from the next day. A round is saved after every step, one left part-way comes back as 続きから, and もう知ってる works there too.
+- **At the end of a round** there is no second stamp. Hachiware says "All done!", and her other button is 「もっと覚える」 for the next round, as many as she likes. The end of the daily lesson is unchanged.
+- **A big day evens itself out:** the next lesson holds their reviews, and a lesson with 14 or more reviews due teaches 1 new phrase (none at 24). She can still choose もっと覚える after it.
+- **Settings:** the setting is now 「1回に習う新しいフレーズの数」, with a note that もっと覚える goes further.
+- **Checked:** a new test (a round, how it is recorded, the next one, and the lesson after a big day), the type check, the build, the WebKit smoke test with a new check that starts a round and leaves it part-way (28 of 28), and the Today and end-of-round screens at iPhone size.
+
 ## Audio made: all 128 steps in the app (2026-11-17)
 
 You approved the drafts and said to make the audio. All 83 drafts (parts 2 to 5) are now taught, in the new order: 128 steps and 11 conversations.

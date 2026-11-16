@@ -151,6 +151,17 @@ export function buildSession(p: Progress, ordered: readonly Exchange[], today: n
   return { steps, reviews: reviews.length, fresh: fresh.length, practice };
 }
 
+/**
+ * More new phrases once today's lesson is done (もっと覚える, 2026-11-17): the next ones in the path, as many as a day's
+ * lesson teaches, learned the same way (Meet, Catch, Answer) and recorded like today's lesson. There is no daily
+ * limit: she can take one round after another. Each phrase comes back for review on the following days, and a lesson
+ * with many reviews due teaches fewer new phrases (newAllowance), so a big day evens itself out.
+ */
+export function buildMore(p: Progress, ordered: readonly Exchange[]): Plan {
+  const fresh = unmet(p, ordered).slice(0, p.settings.newPerDay);
+  return { steps: stepsForNew(fresh), reviews: 0, fresh: fresh.length, practice: 0 };
+}
+
 export type PracticeKind = 'weak' | 'mixed' | 'listen' | 'speak' | 'talk';
 
 /** Conversations in one 会話 practice. */

@@ -54,7 +54,7 @@ table for Excel. Both are made from `src/content`, so don't edit them: run `npm 
 ## Adding content
 
 The course is one path. The steps are written in `src/content/course/part1.ts` to `part5.ts`; the order she learns
-them in is the list in `src/content/course/order.ts` (two new steps a day by default), and a new step goes in that
+them in is the list in `src/content/course/order.ts` (two new steps a day by default, and more with もっと覚える after the lesson), and a new step goes in that
 list too (a test fails if a step is missing from it or named twice). Each step is one thing she learns: `hear` + `say` (she answers), `say` alone with a `cue` (she starts; `then` is what she may hear back), or
 `hear` alone (she only understands). `from` names the earlier step it is built from: the test then checks it reuses
 that step's words and brings at most two new word blocks. `topic` puts it on a notebook shelf and decides which friend
