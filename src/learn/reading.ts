@@ -349,9 +349,10 @@ const MARKS: [RegExp, string][] = [
 ];
 const markOf = (punct: string) => MARKS.find(([re]) => re.test(punct))?.[1] ?? '';
 
-/** The mark for the punctuation some English ends with ("some more?" → ？); none for a full stop at the very end. */
+/** The mark for the punctuation some English ends with ("some more?" → ？); none for a full stop at the very end.
+ * Closing quotes and brackets after it are passed over: “Can I have some water?” still ends with ？. */
 export function markAfter(text: string, end = false): string {
-  const mark = markOf(/[.,!?;:…。、！？]*\s*$/.exec(text)?.[0] ?? '');
+  const mark = markOf(/[.,!?;:…。、！？]*[\s"”’»」』)\]}>]*$/.exec(text)?.[0] ?? '');
   return end && mark === '。' ? '' : mark;
 }
 

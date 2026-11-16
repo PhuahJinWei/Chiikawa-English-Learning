@@ -2,7 +2,7 @@ import { heard, said } from '../parse.ts';
 import type { StepDef } from '../types.ts';
 
 /**
- * Part 2, all drafts (2026-11-16), for review in the content sheet before any audio is made:
+ * Part 2 (written 2026-11-16; reviewed in the content sheet, approved and voiced 2026-11-17):
  * - the longer answers of part 1, each now a step of its own built from the short answer (`from`);
  * - new steps: everyday replies ("No problem!", "Me too!", "Sure!"), things she says first ("How are you?",
  *   "What is this?"), and sentences built from ones she knows ("See you tomorrow!" → "See you next year!").
@@ -10,7 +10,7 @@ import type { StepDef } from '../types.ts';
 export const PART2: StepDef[] = [
   // ── Longer answers, built from the short ones in part 1.
   {
-    id: 'hi-nice-to-meet-you', topic: 'basics', status: 'draft',
+    id: 'hi-nice-to-meet-you', topic: 'basics',
     from: 'hi',
     title: 'こんにちは、はじめまして',
     when: '初めて会う人に "Hi!" と言われたら、"Nice to meet you." をつけると、ていねいだよ。',
@@ -19,7 +19,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'hachiware', gesture: 'wave', face: 'happy' }], replies: [[{ who: 'chiikawa', gesture: 'wave', face: 'smile' }]] },
   },
   {
-    id: 'one-more-time-please', topic: 'basics', status: 'draft',
+    id: 'one-more-time-please', topic: 'basics',
     from: 'again',
     near: ['again', 'sorry-what'],
     title: 'もう一回お願いします',
@@ -29,7 +29,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'worried', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'listen', face: 'worried' }]] },
   },
   {
-    id: 'thank-you-so-much', topic: 'basics', status: 'draft',
+    id: 'thank-you-so-much', topic: 'basics',
     from: 'thank-you',
     title: '本当にありがとう',
     when: 'とてもうれしいときは "so much" をつけて、気持ちをもっと伝えよう。',
@@ -38,16 +38,16 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'hachiware', gesture: 'hop', mark: 'heart' }], replies: [[{ who: 'chiikawa', gesture: 'bow', face: 'happy' }]] },
   },
   {
-    id: 'im-ok', topic: 'basics', status: 'draft',
+    id: 'im-ok', topic: 'basics',
     from: 'are-you-ok',
     title: '私は大丈夫',
-    when: "\"OK!\" に \"I'm\" をつけると、「私は大丈夫」とはっきり言えるよ。",
-    hear: [heard('Are you|*OK?', '大丈夫？'), heard('You|*OK?', '大丈夫？'), heard('*All right?', '大丈夫？')],
-    say: [said("I'm|OK.", '大丈夫ですよ。')],
+    when: "\"I'm OK\" に \"thank you\" をつけると、ていねいな「大丈夫です、ありがとう」になるよ。",
+    hear: [heard('Are you|*OK?', '大丈夫？'), heard('You|*OK?', '大丈夫？'), heard('Are you|*all right?', '大丈夫？')],
+    say: [said("I'm|OK,|thank you.", '大丈夫です、ありがとうございます。')],
     scene: { heard: [{ who: 'hachiware', face: 'worried', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'smile' }]] },
   },
   {
-    id: 'no-thank-you-im-full', topic: 'table', status: 'draft',
+    id: 'no-thank-you-im-full', topic: 'table',
     from: 'some-more',
     title: 'もうお腹いっぱい',
     when: '断るときは、理由をひとこと足すと感じがいいよ。',
@@ -56,7 +56,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'kurimanju', gesture: 'hop', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'happy' }]] },
   },
   {
-    id: 'i-understand', topic: 'basics', status: 'draft',
+    id: 'i-understand', topic: 'basics',
     from: 'understand',
     title: 'わかりました',
     when: '"Yes." のかわりに "I understand." と言うと、「わかりました」とはっきり伝わるよ。',
@@ -65,16 +65,16 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'hachiware', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'smile' }]] },
   },
   {
-    id: 'nice-to-meet-you-too', topic: 'family', status: 'draft',
+    id: 'nice-to-meet-you-too', topic: 'family',
     from: 'nice-to-meet-you',
     title: 'こちらこそ、はじめまして',
     when: '"You too!" を長く言うと、こうなるよ。',
     hear: [heard('*Nice to meet you!', 'はじめまして！'), heard('Hello!|*Nice to meet you!', 'こんにちは、はじめまして！')],
-    say: [said('Nice to meet you|too!', 'こちらこそ、会えてうれしいです！')],
+    say: [said('Nice to meet you|too!', 'こちらこそ、はじめまして！')],
     scene: { heard: [{ who: 'shisa', gesture: 'bow', face: 'smile' }], replies: [[{ who: 'chiikawa', gesture: 'bow', face: 'happy' }]] },
   },
   {
-    id: 'and-you', topic: 'family', status: 'draft',
+    id: 'and-you', topic: 'family',
     from: 'how-are-you',
     title: 'そちらは？',
     when: '答えたら "And you?" と聞き返そう。会話が続くよ！',
@@ -83,7 +83,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'shisa', gesture: 'wave', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'happy' }]] },
   },
   {
-    id: 'see-you-tomorrow', topic: 'basics', status: 'draft',
+    id: 'see-you-tomorrow', topic: 'basics',
     from: 'bye',
     title: 'また明日',
     when: '"See you!" に "tomorrow"（明日）をつけると「また明日」。',
@@ -92,43 +92,43 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'hachiware', gesture: 'wave' }], replies: [[{ who: 'chiikawa', gesture: 'wave', face: 'smile' }]] },
   },
   {
-    id: 'good-night-see-you-tomorrow', topic: 'basics', status: 'draft',
+    id: 'good-night-see-you-tomorrow', topic: 'basics',
     from: 'good-night',
     title: 'おやすみ、また明日',
     when: '"Good night!" と "See you tomorrow!" をつなげてみよう。',
     hear: [heard('*Good night!', 'おやすみ！'), heard('*Night!', 'おやすみ！'), heard('*Sleep well!', 'ぐっすり寝てね！')],
-    say: [said('Good night!|See you|tomorrow!', 'おやすみなさい！ また明日。')],
+    say: [said('Good night!|See you|tomorrow!', 'おやすみなさい！ また明日！')],
     scene: { heard: [{ who: 'hachiware', gesture: 'doze', mark: 'zzz' }], replies: [[{ who: 'chiikawa', gesture: 'wave', face: 'smile' }]] },
   },
   {
-    id: 'its-delicious', topic: 'table', status: 'draft',
+    id: 'its-delicious', topic: 'table',
     from: 'like-it',
     title: 'とってもおいしい',
-    when: '"good" のかわりに "delicious" と言うと、もっとほめられるよ。',
+    when: '"good" より "delicious" のほうが、強いほめことばだよ。',
     hear: [heard('Do you|*like it?', '気に入った？'), heard('*How|is it?@after', '味はどう？'), heard('Is it|*tasty?', 'おいしい？')],
     say: [said("It's|delicious!", 'とってもおいしいです！')],
     scene: { heard: [{ who: 'kurimanju', gesture: 'eat', face: 'happy' }, { who: 'hachiware', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'cheer', face: 'happy', mark: 'heart' }]] },
   },
   {
-    id: 'sorry-i-dont-know', topic: 'basics', status: 'draft',
+    id: 'sorry-i-dont-know', topic: 'basics',
     from: 'dont-know',
-    title: 'ごめんなさい、知らないです',
+    title: 'すみません、知らないです',
     when: '前に "Sorry," をつけると、やわらかい言い方になるよ。',
     hear: [heard('Do you|*know?', '知ってる？'), heard('*Any idea?', '何か心当たりある？')],
-    say: [said("Sorry,|I|don't|know.", 'ごめんなさい、知らないんです。')],
+    say: [said("Sorry,|I|don't|know.", 'すみません、知らないです。')],
     scene: { heard: [{ who: 'hachiware', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'shake', face: 'worried' }]] },
   },
   {
-    id: 'thank-you-for-having-me', topic: 'family', status: 'draft',
+    id: 'thank-you-for-having-me', topic: 'family',
     from: 'welcome',
     title: 'お世話になります',
     when: '"Thank you" に "for having me" をつけると「迎えてくれてありがとう」。「お世話になります」に近い気持ちだよ。',
-    hear: [heard('*Welcome!', 'いらっしゃい！'), heard('*Welcome|to Malaysia!', 'マレーシアへようこそ！')],
-    say: [said('Thank you|for having me!', '迎えてくれて、ありがとうございます！')],
+    hear: [heard('*Welcome!', 'いらっしゃい！')],
+    say: [said('Thank you|for having me!', '迎えてくださって、ありがとうございます！')],
     scene: { heard: [{ who: 'shisa', gesture: 'wave', face: 'happy' }, { who: 'hachiware', gesture: 'cheer', face: 'happy' }], replies: [[{ who: 'chiikawa', gesture: 'bow', face: 'happy' }]] },
   },
   {
-    id: 'from-japan', topic: 'family', status: 'draft',
+    id: 'from-japan', topic: 'family',
     from: 'this-is-for-you',
     near: ['this-is-for-you', 'thank-you'],
     title: '日本のおみやげです',
@@ -138,7 +138,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'determined' }], replies: [[{ who: 'chiikawa', gesture: 'bow', face: 'happy', mark: 'heart' }]] },
   },
   {
-    id: 'sorry-i-dont-understand', topic: 'home', status: 'draft',
+    id: 'sorry-i-dont-understand', topic: 'home',
     from: 'dont-understand',
     near: ['dont-understand'],
     title: 'すみません、わかりません',
@@ -148,7 +148,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'worried', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'shake', face: 'worried' }]] },
   },
   {
-    id: 'im-full-thank-you', topic: 'table', status: 'draft',
+    id: 'im-full-thank-you', topic: 'table',
     from: 'full',
     title: 'お腹いっぱい、ありがとう',
     when: "\"I'm full.\" のあとに、お礼をひとこと。",
@@ -157,25 +157,25 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'kurimanju', gesture: 'sit', face: 'happy' }, { who: 'hachiware', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'happy', mark: 'heart' }]] },
   },
   {
-    id: 'im-ready', topic: 'app', status: 'draft',
+    id: 'im-ready', topic: 'app',
     from: 'ready',
-    title: '準備できたよ',
+    title: '準備できました',
     when: "\"OK!\" のかわりに \"I'm ready!\" と答えると、「準備できた」とはっきり伝わるよ。",
     hear: [heard('*Ready?', '準備できた？'), heard('Are you|*ready?', '準備できた？')],
-    say: [said("I'm|ready!", '準備できたよ！')],
+    say: [said("I'm|ready!", '準備できました！')],
     scene: { heard: [{ who: 'hachiware', face: 'smile', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'determined' }]] },
   },
   {
-    id: 'a-little-its-good', topic: 'table', status: 'draft',
+    id: 'a-little-its-good', topic: 'table',
     from: 'spicy',
     title: '少し辛いけど、おいしい',
     when: "\"A little.\" のあとに \"It's good!\" と足すと、作った人も安心するよ。",
-    hear: [heard('Is it|*spicy?', '辛い？'), heard('Can you|eat|*spicy food?', '辛いもの、食べられる？')],
+    hear: [heard('Is it|*spicy?', '辛い？')],
     say: [said("A little.|It's|good!", '少しだけです。おいしいです！')],
     scene: { heard: [{ who: 'kurimanju', gesture: 'startled', face: 'shocked', mark: 'exclaim' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'smile' }]] },
   },
   {
-    id: 'im-from-japan', topic: 'family', status: 'draft',
+    id: 'im-from-japan', topic: 'family',
     from: 'where-from',
     title: '日本から来ました',
     when: "\"Japan.\" を長く言うと \"I'm from Japan.\"。",
@@ -185,7 +185,7 @@ export const PART2: StepDef[] = [
   },
   // ── New drafts: replies she should know, things she says first, and sentences built from ones she knows.
   {
-    id: 'no-problem', topic: 'family', status: 'draft',
+    id: 'no-problem', topic: 'family',
     title: '気にしないで',
     when: '謝られたら "No problem!"（気にしないで）も、よく使う返事。"It\'s OK." と同じように使えるよ。',
     hear: [heard('*Sorry!', 'ごめんね！'), heard("I'm|*sorry.", 'ごめんなさい。')],
@@ -193,7 +193,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'shisa', gesture: 'bow', face: 'worried' }], replies: [[{ who: 'chiikawa', gesture: 'shake', face: 'smile' }]] },
   },
   {
-    id: 'im-hungry', topic: 'feelings', status: 'draft',
+    id: 'im-hungry', topic: 'feelings',
     from: 'full',
     title: 'お腹がすいた',
     cue: 'お腹がすいた…',
@@ -202,7 +202,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'teary' }], replies: [[{ who: 'chiikawa', gesture: 'eat', face: 'happy' }]] },
   },
   {
-    id: 'me-too', topic: 'chat', status: 'draft',
+    id: 'me-too', topic: 'chat',
     from: 'im-hungry',
     title: '私も！',
     when: '相手と同じ気持ちなら "Me too!"。いちばん簡単に会話をつなげる返事だよ。',
@@ -211,7 +211,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'usagi', gesture: 'hop', mark: 'exclaim' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'happy' }]] },
   },
   {
-    id: 'im-tired', topic: 'feelings', status: 'draft',
+    id: 'im-tired', topic: 'feelings',
     from: 'im-hungry',
     title: '疲れた',
     cue: 'たくさん歩いて、疲れた…',
@@ -220,7 +220,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'worried' }], replies: [[{ who: 'chiikawa', gesture: 'doze', mark: 'zzz' }]] },
   },
   {
-    id: 'im-happy', topic: 'feelings', status: 'draft',
+    id: 'im-happy', topic: 'feelings',
     from: 'im-tired',
     title: 'うれしい',
     cue: 'うれしい！ この気持ちを伝えたい',
@@ -229,7 +229,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'happy', mark: 'heart' }], replies: [[{ who: 'chiikawa', gesture: 'cheer', face: 'happy' }]] },
   },
   {
-    id: 'ask-how-are-you', topic: 'chat', status: 'draft',
+    id: 'ask-how-are-you', topic: 'chat',
     from: 'how-are-you',
     title: '元気？と聞く',
     cue: '会った人に、元気か聞きたい',
@@ -239,17 +239,17 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'determined' }], replies: [[{ who: 'chiikawa', gesture: 'wave', face: 'smile' }]] },
   },
   {
-    id: 'ask-like-it', topic: 'chat', status: 'draft',
+    id: 'ask-like-it', topic: 'chat',
     from: 'like-it',
     title: '気に入った？と聞く',
     cue: 'おみやげ、気に入ってくれたかな？',
     when: '聞かれたことばは、自分から聞くときにも使えるよ。',
     say: [said('Do you|like it?', '気に入りましたか？')],
-    then: [heard('Yes,|I|*love it!', 'うん、大好き！')],
+    then: [heard('Yes,|I|*love it!', 'うん、すごく気に入った！')],
     scene: { heard: [{ who: 'chiikawa', face: 'worried', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'hop', face: 'happy' }]] },
   },
   {
-    id: 'what-is-this', topic: 'chat', status: 'draft',
+    id: 'what-is-this', topic: 'chat',
     title: 'これは何？',
     cue: '見たことのない食べ物。これは何だろう？',
     when: 'わからないものは、指さして "What is this?" と聞こう。答えは "It\'s 〜." で返ってくることが多いよ。',
@@ -258,16 +258,16 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', gesture: 'look', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'look', face: 'smile' }]] },
   },
   {
-    id: 'help-me', topic: 'home', status: 'draft',
+    id: 'help-me', topic: 'home',
     from: 'can-i-help',
     title: '手伝ってくれる？',
     when: '"Can I help?"（手伝いましょうか）の反対で、頼まれるときのことば。頼まれたら "Sure!"（いいよ）。',
     hear: [heard('Can you|*help|me?', 'ちょっと手伝ってくれる？')],
-    say: [said('Sure!', 'いいですよ！')],
+    say: [said('Sure!', 'はい、もちろんです！')],
     scene: { heard: [{ who: 'rakko', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'determined' }]] },
   },
   {
-    id: 'lets-go-she', topic: 'home', status: 'draft',
+    id: 'lets-go-she', topic: 'home',
     from: 'lets-go',
     title: '行こう！と誘う',
     cue: 'みんなを誘って出かけたい',
@@ -276,7 +276,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'determined' }], replies: [[{ who: 'chiikawa', gesture: 'cheer', face: 'happy' }]] },
   },
   {
-    id: 'it-was-fun', topic: 'feelings', status: 'draft',
+    id: 'it-was-fun', topic: 'feelings',
     from: 'gochisousama',
     title: '楽しかった',
     cue: '出かけて、とても楽しかった！',
@@ -285,7 +285,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'happy' }], replies: [[{ who: 'chiikawa', gesture: 'cheer', face: 'happy', mark: 'note' }]] },
   },
   {
-    id: 'today-was-fun', topic: 'feelings', status: 'draft',
+    id: 'today-was-fun', topic: 'feelings',
     from: 'it-was-fun',
     title: '今日は楽しかった',
     cue: '一日の終わりに、今日は楽しかったと伝えたい',
@@ -294,7 +294,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'happy' }], replies: [[{ who: 'chiikawa', gesture: 'hop', face: 'happy', mark: 'heart' }]] },
   },
   {
-    id: 'see-you-next-year', topic: 'basics', status: 'draft',
+    id: 'see-you-next-year', topic: 'basics',
     from: 'see-you-tomorrow',
     title: 'また来年',
     cue: 'しばらく会えない人と、お別れするとき',
@@ -303,7 +303,7 @@ export const PART2: StepDef[] = [
     scene: { heard: [{ who: 'chiikawa', face: 'teary' }], replies: [[{ who: 'chiikawa', gesture: 'wave', face: 'smile' }]] },
   },
   {
-    id: 'come-again-next-year', topic: 'family', status: 'draft',
+    id: 'come-again-next-year', topic: 'family',
     from: 'see-you-next-year',
     title: '来年また来ます',
     cue: '帰る日。また来たいと伝えたい',

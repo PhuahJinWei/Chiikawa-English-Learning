@@ -9,14 +9,14 @@ import type { TalkDef, TalkTurn } from './types.ts';
  * up once she has learned all its steps (and said her own lines at least once), one a day in today's lesson, and
  * whenever she likes in 練習. In the order they become ready. Review them in the content sheet (npm run sheet).
  */
-const them = (step: string, en: string): TalkTurn => ({ who: 'them', step, en });
+const them = (step: string, en: string, ja?: string): TalkTurn => ({ who: 'them', step, en, ...(ja ? { ja } : {}) });
 const me = (step: string, en: string): TalkTurn => ({ who: 'me', step, en });
 
 export const TALK_DEFS: readonly TalkDef[] = [
   {
     id: 'here-you-go',
     topic: 'basics',
-    title: 'はい、どうぞ',
+    title: 'これ、あげる',
     cue: '友だちが何か持ってきてくれた',
     turns: [them('hi', 'Hey!'), me('hi', 'Hi!'), them('thank-you', 'This is for you.'), me('thank-you', 'Thank you!')],
   },
@@ -32,6 +32,18 @@ export const TALK_DEFS: readonly TalkDef[] = [
       me('how-are-you', 'Good, thank you.'),
       them('bye', 'See you later!'),
       me('bye', 'Bye!'),
+    ],
+  },
+  {
+    id: 'slowly',
+    topic: 'family',
+    title: 'ゆっくり話してもらう',
+    cue: '話しかけられたけど、速くて聞き取れない…',
+    turns: [
+      them('where-from', 'Where are you from?'),
+      me('slowly', 'Slowly, please.'),
+      them('where-from', 'Where from?'),
+      me('where-from', 'Japan.'),
     ],
   },
   {
@@ -77,18 +89,6 @@ export const TALK_DEFS: readonly TalkDef[] = [
     ],
   },
   {
-    id: 'slowly',
-    topic: 'family',
-    title: 'ゆっくり話してもらう',
-    cue: '話しかけられたけど、速くて聞き取れない…',
-    turns: [
-      them('where-from', 'Where are you from?'),
-      me('slowly', 'Slowly, please.'),
-      them('where-from', 'Where from?'),
-      me('where-from', 'Japan.'),
-    ],
-  },
-  {
     id: 'good-night',
     topic: 'home',
     title: 'おやすみ',
@@ -105,7 +105,7 @@ export const TALK_DEFS: readonly TalkDef[] = [
     id: 'first-meeting',
     topic: 'family',
     title: 'はじめまして',
-    cue: '友だちのお父さん・お母さんに初めて会った！',
+    cue: '友だちの親せきのおばさんに、初めて会った！',
     turns: [
       me('auntie', 'Hi, Auntie!'),
       them('nice-to-meet-you', 'Hello! Nice to meet you!'),
@@ -125,7 +125,8 @@ export const TALK_DEFS: readonly TalkDef[] = [
       them('full', 'Are you full?'),
       me('full', "I'm full."),
       me('gochisousama', 'Thank you! It was delicious!'),
-      them('welcome', 'Welcome!'),
+      // The family answers thanks with "Welcome!": here it means どういたしまして.
+      them('welcome', 'Welcome!', 'どういたしまして！'),
     ],
   },
   {

@@ -6,17 +6,25 @@ import { PART2 } from './course/part2.ts';
 import { PART3 } from './course/part3.ts';
 import { PART4 } from './course/part4.ts';
 import { PART5 } from './course/part5.ts';
+import { ORDER } from './course/order.ts';
 import { TALK_DEFS } from './talks.ts';
 import { TOPICS } from './topics.ts';
 import { UI } from './ui.ts';
 import type { Act, Exchange, ExchangeKind, Line, StepDef, Talk, TalkDef, Topic } from './types.ts';
 
 /**
- * The course is one learning path, in teaching order: src/content/course/part1.ts, then part2.ts to part5.ts. Each step is one
+ * The course is one learning path, in the order of src/content/course/order.ts; the steps are written in part1.ts to part5.ts. Each step is one
  * thing she learns. This module turns the steps into what the app uses; the checks in tests/content.test.ts make sure
  * they link up, and tools/sheet/make-sheet.mjs shows them as a sheet for review.
  */
-export const STEPS: readonly StepDef[] = [...PART1, ...PART2, ...PART3, ...PART4, ...PART5];
+/** Every step as written, in the files' order (the checks use this to find steps missing from the order). */
+export const WRITTEN: readonly StepDef[] = [...PART1, ...PART2, ...PART3, ...PART4, ...PART5];
+
+// The path follows course/order.ts. A step missing from the order still comes at the end, so nothing is ever lost;
+// the checks name it.
+const WRITTEN_BY_ID = new Map(WRITTEN.map((s) => [s.id, s] as const));
+const ordered = ORDER.flatMap((id) => WRITTEN_BY_ID.get(id) ?? []);
+export const STEPS: readonly StepDef[] = [...ordered, ...WRITTEN.filter((s) => !ordered.includes(s))];
 
 const CLIPS = (manifest as { clips: Record<string, unknown> }).clips;
 const hasClip = (text: string) => Object.hasOwn(CLIPS, audioSlug(text));
@@ -39,9 +47,6 @@ export const VERSATILE: ReadonlySet<string> = new Set([
 export const kindOf = (s: StepDef): ExchangeKind =>
   s.hear?.length && s.say?.length ? 'reply' : s.say?.length ? 'say' : 'understand';
 
-/** What she hears in Catch: the lines she hears, or for something she says first, that line said by someone else. */
-const catchOf = (s: StepDef): Line[] => (kindOf(s) === 'say' ? (s.say ?? []) : (s.hear ?? []));
-
 // Her replies to each line she hears, across the whole path: replies to the same line are fine answers in each
 // other's steps ("Are you OK?" → "OK!" in one step, "I'm OK." in another).
 const repliesTo = new Map<string, Set<string>>();
@@ -54,7 +59,6 @@ for (const s of STEPS) {
   }
 }
 
-const STEP_BY_ID = new Map(STEPS.map((s) => [s.id, s] as const));
 const CALM_REPLY: Act = { who: 'chiikawa', gesture: 'nod', face: 'smile' };
 
 function defaultHeard(s: StepDef, topic: Topic): Act[] {
@@ -71,11 +75,7 @@ function compile(s: StepDef): Exchange {
   const own = new Set(short.map((l) => l.en));
   const shared = kind === 'reply' ? heard.flatMap((h) => [...(repliesTo.get(keyOf(h.en)) ?? [])]) : [];
   const fits = [...new Set([...(s.fits ?? []), ...shared])].filter((en) => !own.has(en));
-  // A step built from one with the same sentence in it (she heard it there, she says it here) is never its wrong
-  // answer in the meaning quiz: the two meanings would both be right.
-  const base = s.from ? STEP_BY_ID.get(s.from) : undefined;
-  const twin = !!base && catchOf(s).some((l) => catchOf(base).some((b) => sameSentence(l.en, b.en)));
-  const near = [...new Set([...(s.near ?? []), ...(twin && base ? [base.id] : [])])];
+  const near = [...(s.near ?? [])];
   return {
     id: s.id,
     kind,
@@ -102,6 +102,22 @@ function compile(s: StepDef): Exchange {
 
 /** The whole path as the app would use it, drafts included: for the content sheet and the checks. */
 export const COURSE: readonly Exchange[] = STEPS.map(compile);
+
+// Steps that ask the same sentence are never each other's wrong answers in the meaning quiz: both meanings would be
+// right. That is a step built from one with the same sentence in it (she heard it there, she says it here), and two
+// answers to the same line ("Sorry!" → "It's OK." or "No problem!"; "How many?" → one to three, four to six…).
+{
+  const asking = new Map<string, Set<Exchange>>();
+  for (const e of COURSE) {
+    for (const l of catchLines(e)) asking.set(keyOf(l.en), (asking.get(keyOf(l.en)) ?? new Set()).add(e));
+  }
+  for (const same of asking.values()) {
+    for (const e of same) {
+      const others = [...same].filter((o) => o !== e).map((o) => o.id);
+      if (others.length) e.near = [...new Set([...(e.near ?? []), ...others])];
+    }
+  }
+}
 
 // A step whose quiz lines are its base's (a longer answer to the same question) is also too close to whatever its
 // base is too close to: "Thank you so much!" hears "This is for you." just like "Thank you!" does.
@@ -131,6 +147,11 @@ export function exchangeById(id: string): Exchange | undefined {
   return BY_ID.get(id);
 }
 
+/** The steps too close to this one in meaning to be its wrong answers in the quiz, itself included. */
+export function nearIds(ex: Exchange): Set<string> {
+  return new Set([ex.id, ...(ex.near ?? []), ...EXCHANGES.filter((e) => e.near?.includes(ex.id)).map((e) => e.id)]);
+}
+
 /** Any step of the path, drafts included. */
 export function stepById(id: string): Exchange | undefined {
   return COURSE_BY_ID.get(id);
@@ -154,11 +175,12 @@ function compileTalk(t: TalkDef): Talk | null {
     const e = COURSE_BY_ID.get(turn.step);
     if (!e) return null;
     const pool = turn.who === 'me' ? e.short : [...e.heard, ...e.then, ...(e.kind === 'say' ? e.short : [])];
-    const line = pool.find((l) => l.en === turn.en);
-    if (!line) return null;
+    const found = pool.find((l) => l.en === turn.en);
+    if (!found) return null;
+    const line = turn.ja ? { ...found, ja: turn.ja } : found;
     const acts =
       turn.who === 'me'
-        ? (e.scene.replies?.[e.short.indexOf(line)] ?? [CALM_REPLY])
+        ? (e.scene.replies?.[e.short.indexOf(found)] ?? [CALM_REPLY])
         : (e.scene.heard ?? []).map((a) => (a.who === 'chiikawa' ? a : { ...a, who: speaker }));
     turns.push({ who: turn.who, step: e.id, line, acts });
   }

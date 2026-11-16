@@ -1,6 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
-  import { EXCHANGES, UI, VERSATILE, catchLines } from '../../content/index.ts';
+  import { EXCHANGES, UI, VERSATILE, catchLines, nearIds } from '../../content/index.ts';
   import type { Exchange, Line } from '../../content/types.ts';
   import { closest } from '../../learn/contrast.ts';
   import type { Step } from '../../learn/session.ts';
@@ -42,7 +42,7 @@
   const line: Line = !step.review && pool.length > 1 ? pick(pool.slice(1)) : pick(pool);
 
   // Exchanges too close in meaning are never each other's wrong answers.
-  const near = new Set([ex.id, ...(ex.near ?? []), ...EXCHANGES.filter((e) => e.near?.includes(ex.id)).map((e) => e.id)]);
+  const near = nearIds(ex);
   const others = (filter: (e: Exchange) => boolean) => {
     const pool = EXCHANGES.filter((e) => !near.has(e.id) && filter(e));
     return [...shuffle(pool.filter((e) => app.progress.ex[e.id])), ...shuffle(pool.filter((e) => !app.progress.ex[e.id]))];

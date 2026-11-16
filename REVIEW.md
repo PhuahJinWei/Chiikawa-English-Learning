@@ -6,6 +6,67 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Audio made: all 128 steps in the app (2026-11-17)
+
+You approved the drafts and said to make the audio. All 83 drafts (parts 2 to 5) are now taught, in the new order: 128 steps and 11 conversations.
+
+- **The clips:** 178 new ones, made on this PC with the same voice and settings as before (Heart, natural speed). That makes 386 clips in all, 3.0 MB of MP3. One leftover clip from an older wording was deleted. The app keeps 420 files offline (6.4 MB), and the phone downloads only the new and changed files the next time it opens online.
+- **"All right?" (#4) is now "Are you all right?"**, as planned, so no question depends on a rising voice.
+- **"I'm happy!" stays as it is** (you did not ask for "I'm so happy!").
+- **Three problems showed up once the new steps were live, all fixed:**
+  - **The meaning quiz could mark a right meaning wrong.** "It's OK." and "No problem!" both answer "Sorry!", but nothing said they ask the same thing, so the quiz for "Sorry!" could offer ごめんなさい as a wrong choice. Steps that ask the same sentence are now never each other's wrong answers. This also covers "How many?" (the four number steps) and "What day is it?" (the three day steps).
+  - **The planned sound-alike pairs had become a coin toss.** With the new phrases, "Time to eat!" shares as many words with "What do you want to eat?" as with "Time to go!", and "Sorry!" ties "Sorry, what?" with "Sorry, I don't understand." Among lines sharing as many words, the one nearest in length now wins, so the planned pairs from REVIEW 2.4 hold as the course grows.
+  - **A note in quotes lost its ？.** “Can I have some water?” is now a lesson line, and in quotes its reading came out without the question mark. Closing quotes are now passed over.
+- **Checked:** every step has all its clips; no clip is cut off or garbled, judging by its length against its sounds; the voice's sounds for the stand-in name and the tricky words are right ("Yuki" ユーキ, Malaysia, bakery, the days, "live" as liv). Tests (116), type check, build, and the WebKit smoke test (26 of 26) all pass.
+- **Not checked by ear:** I cannot listen. The new clips can be heard on `/review.html` (dev server), or in the app.
+
+## New order: introductions first (2026-11-17)
+
+You asked to move the introductions up before the drafts go into the app. The order she learns the steps in is now one list, `src/content/course/order.ts`. The steps stay in the files they were written in (part 1 to part 5), and the list alone decides when she meets each one. No step changed, and no audio was made.
+
+At two new steps a day (the default), the path now runs:
+
+| Days | Steps in the sheet | What |
+|---|---|---|
+| 1–2 | #1 to #4 | "Hi!", "Sorry, what?", "Thank you!", "Are you OK?" (as before) |
+| 3–5 | #5 to #10 | Meeting people: "Nice to meet you!", her name, where she is from, "How are you?", her job ("I work at a bakery."), "Do you speak English?" |
+| 6–16 | #11 to #32 | Getting by as a guest, with "I'm from Japan.", "Hi, nice to meet you!" and asking someone's name among them |
+| 17–26 | #33 to #52 | The rest of the first phrases |
+| 27–31 | #53 to #62 | Numbers, the time, the days of the week |
+| 32–39 | #63 to #78 | About herself: work hours and days, days off, hobbies, brothers, "My name is…" |
+| 40–49 | #79 to #98 | Longer answers, built from the short ones |
+| 50–57 | #99 to #114 | Food, feelings, and asking things herself |
+| 58–64 | #115 to #128 | Plans, what happened, and goodbyes |
+
+- **The phrases already in the app** keep their content; the new list only changes when she meets the ones she has not learned yet. Her progress stays as it is. The biggest moves: "Where are you from?" goes from #33 to #7, "Nice to meet you!" from #7 to #5, and "Slowly, please." from #16 to #13. "Want some more?" (#5 to #14), "One more time." (#8 to #23) and "Good!" (#14 to #36) come later. Until the drafts have audio, only the phrases already in the app are taught, in this new order.
+- **Conversations:** 「ゆっくり話してもらう」 is now C3, because it is ready on day 7, sooner than before. 「おうちに着いたら」, 「朝ごはん」 and 「いただきます」 move to C4 to C6. C1, C2 and C7 to C11 keep their numbers.
+- **The # numbers in the sheet follow the new order.** The numbers in the sections below were written before it, so they point to the old places.
+- **Checked:** a new test fails if a step is missing from the list or named twice. At its new place, every step still comes after the step it is built from and adds at most two new word blocks. Conversations are still listed in the order they become ready. Tests (115), type check, and the content sheet (regenerated) all pass.
+
+## Content check: all 128 steps, 213 blocks, 11 conversations (2026-11-17)
+
+You asked for a full check before the drafts go into the app. How: an independent English review and an independent Japanese review read everything, I checked every reading against the voice's sounds and ran mechanical checks (punctuation, politeness of her lines, consistent glosses), then verified each finding against the source before changing it.
+
+- **Mistakes found and fixed:**
+  - **A bug in two lines:** "What time is it?" and "What day is it?" showed as "is it@after" (source markup). A test now fails if markup ever shows in the English.
+  - **Word meanings that were wrong where they are used** (tapping a word shows its meaning): "to" in "to the beach" said 〜まで (now 〜へ); "too" in "too spicy" said 〜も (now 〜すぎる); "have" in "Can I have…?" said いる (now もらう); the "it" of the time and the day said それ (now a note that it means nothing). "good" now says いい, with a note that it is 元気 in "Good, thank you." and おいしい for food; "OK" adds わかった.
+  - **Notes that taught something wrong:** "I'm off." alone means "I'm leaving"; it is a day off only with the day ("I'm off on Mondays"). "some water" is just お水, not お水を少し. "How about you?" fits after being asked her name, job or hobby, not after any question. "My name is…" is more formal, not more polite. 12 numbers cover the hours, not all times.
+  - **Glosses:** in C9 the family's "Welcome!" answers her thanks, so it now shows どういたしまして (conversations can now give one line its own gloss). Her lines that were casual are now polite: "OK!" to "Ready?" はい、大丈夫です！, "I'm ready!" 準備できました！, "Sorry, I don't know." すみません、知らないです, "Thank you for having me!" 迎えてくださって…, "Sure!" はい、もちろんです！, and そちら instead of あなた in "And you?" and "How about you?".
+  - **English that did not fit:** "Can you eat spicy food?" → "A little. It's good!" (she is not eating yet): that question is gone from #63. "Welcome to Malaysia!" → "Thank you for having me!" (only hosts have her): #58 keeps only "Welcome!".
+- **English made more natural** (the reviewers' suggestions I agreed with):
+  - "I work from seven." sounded unfinished: now "I start at seven." (answering "What time do you start?"), and the chain goes on to "I work from seven to four."
+  - "I'm OK." (already taught) → "I'm OK, thank you."; "All right?" → "Are you all right?", which does not depend on a rising voice.
+  - "Do you have brothers?" → "Do you have any brothers or sisters?"
+  - "Anything!" → "Anything is fine!"; "It's too spicy!" → "It's too spicy for me!" (about her taste, not the cook); "Tomorrow, we go to the beach." → "Tomorrow we're going to the beach."
+  - "Can I have this?" is now at the family table, not ordering from a menu (person-to-person only).
+  - Titles and situations: C1 is now 「これ、あげる」 (its line is "This is for you."); in C8 she meets a relative's "Auntie", since her friend's own parents would not ask where she is from.
+- **For you to decide (not changed):**
+  - "Hey!" is glossed やっほー (#1, #46, C1). The Japanese review found it cutesy for a friend's parent and suggested やあ. *Decided 2026-11-17: you keep やっほー.*
+  - "I'm happy!" could be "I'm so happy!" (more natural as an exclamation; both are correct).
+  - "How was your trip?" is now 「ここまでの旅、どうだった？」; tell me if you prefer other wording.
+- **Waiting for the audio run:** "All right?" in #4 (in the app) has the same rising-voice problem. Changing it needs a new clip, and a step without all its clips leaves the app, so it changes when the audio for the drafts is made.
+- **Checked:** the tests (114, one new), the type check, and the content sheet (regenerated: 128 steps, 213 word blocks).
+
 ## Everyday talk: 19 more drafts for your review (2026-11-17)
 
 The third batch, #110 to #128 in the content sheet: food, plans, what happened, and asking about the other person. Drafts only: not in the app, no audio. The examples are things anyone might do on a visit, not facts about her.

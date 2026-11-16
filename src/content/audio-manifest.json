@@ -46,6 +46,16 @@
     "end": 232
    }
   },
+  "a-week": {
+   "text": "a week.",
+   "ms": 800,
+   "phonemes": "ɐ wˈiːk",
+   "pitch": {
+    "start": 233,
+    "low": 180,
+    "end": 195
+   }
+  },
   "again": {
    "text": "Again.",
    "ms": 740,
@@ -77,7 +87,7 @@
    }
   },
   "all-right-q": {
-   "text": "All right?",
+   "text": "all right?",
    "ms": 900,
    "phonemes": "ˈɔːl ɹˈaɪt",
    "pitch": {
@@ -96,6 +106,16 @@
     "end": 190
    }
   },
+  "and": {
+   "text": "and",
+   "ms": 650,
+   "phonemes": "ˈænd",
+   "pitch": {
+    "start": 269,
+    "low": 198,
+    "end": 208
+   }
+  },
   "and-you-q": {
    "text": "And you?",
    "ms": 790,
@@ -104,6 +124,16 @@
     "start": 236,
     "low": 81,
     "end": 186
+   }
+  },
+  "any": {
+   "text": "any",
+   "ms": 670,
+   "phonemes": "ˈɛni",
+   "pitch": {
+    "start": 232,
+    "low": 185,
+    "end": 215
    }
   },
   "any-idea-q": {
@@ -116,6 +146,36 @@
     "end": 188
    }
   },
+  "anything": {
+   "text": "Anything",
+   "ms": 750,
+   "phonemes": "ˈɛnɪθˌɪŋ",
+   "pitch": {
+    "start": 185,
+    "low": 104,
+    "end": 190
+   }
+  },
+  "anything-is-fine-x": {
+   "text": "Anything is fine!",
+   "ms": 1170,
+   "phonemes": "ˈɛnɪθˌɪŋ ɪz fˈaɪn",
+   "pitch": {
+    "start": 207,
+    "low": 148,
+    "end": 174
+   }
+  },
+  "are-we": {
+   "text": "are we",
+   "ms": 790,
+   "phonemes": "ɑːɹ wˈiː",
+   "pitch": {
+    "start": 264,
+    "low": 83,
+    "end": 200
+   }
+  },
   "are-you": {
    "text": "Are you",
    "ms": 770,
@@ -124,6 +184,16 @@
     "start": 203,
     "low": 81,
     "end": 198
+   }
+  },
+  "are-you-all-right-q": {
+   "text": "Are you all right?",
+   "ms": 1020,
+   "phonemes": "ɑːɹ juː ˈɔːl ɹˈaɪt",
+   "pitch": {
+    "start": 224,
+    "low": 82,
+    "end": 189
    }
   },
   "are-you-full-q": {
@@ -166,6 +236,46 @@
     "end": 167
    }
   },
+  "at": {
+   "text": "At",
+   "ms": 620,
+   "phonemes": "ˈæt",
+   "pitch": {
+    "start": 229,
+    "low": 108,
+    "end": 174
+   }
+  },
+  "at-a-bakery": {
+   "text": "at a bakery.",
+   "ms": 1030,
+   "phonemes": "æɾə bˈeɪkɚɹi",
+   "pitch": {
+    "start": 234,
+    "low": 80,
+    "end": 187
+   }
+  },
+  "at-nine": {
+   "text": "At nine.",
+   "ms": 840,
+   "phonemes": "æt nˈaɪn",
+   "pitch": {
+    "start": 248,
+    "low": 93,
+    "end": 179
+   }
+  },
+  "at-seven": {
+   "text": "At seven.",
+   "ms": 880,
+   "phonemes": "æt sˈɛvən",
+   "pitch": {
+    "start": 180,
+    "low": 83,
+    "end": 170
+   }
+  },
   "at-this-x": {
    "text": "at this!",
    "ms": 830,
@@ -186,6 +296,26 @@
     "end": 176
    }
   },
+  "been-to": {
+   "text": "been to",
+   "ms": 880,
+   "phonemes": "bˈɪn tuː",
+   "pitch": {
+    "start": 199,
+    "low": 162,
+    "end": 163
+   }
+  },
+  "brothers": {
+   "text": "brothers",
+   "ms": 860,
+   "phonemes": "bɹˈʌðɚz",
+   "pitch": {
+    "start": 222,
+    "low": 178,
+    "end": 207
+   }
+  },
   "bye-x": {
    "text": "Bye!",
    "ms": 700,
@@ -204,6 +334,26 @@
     "start": 247,
     "low": 178,
     "end": 191
+   }
+  },
+  "can-i-have-some-water-q": {
+   "text": "Can I have some water?",
+   "ms": 1350,
+   "phonemes": "kæn aɪ hæv sˌʌm wˈɔːɾɚ",
+   "pitch": {
+    "start": 236,
+    "low": 170,
+    "end": 180
+   }
+  },
+  "can-i-have-this-q": {
+   "text": "Can I have this?",
+   "ms": 1170,
+   "phonemes": "kæn aɪ hæv ðˈɪs",
+   "pitch": {
+    "start": 246,
+    "low": 160,
+    "end": 205
    }
   },
   "can-i-help-q": {
@@ -236,6 +386,46 @@
     "end": 145
    }
   },
+  "can-you-help-me-q": {
+   "text": "Can you help me?",
+   "ms": 1050,
+   "phonemes": "kæn juː hˈɛlp mˌiː",
+   "pitch": {
+    "start": 240,
+    "low": 82,
+    "end": 165
+   }
+  },
+  "can-you-speak-english-q": {
+   "text": "Can you speak English?",
+   "ms": 1330,
+   "phonemes": "kæn juː spˈiːk ˈɪŋɡlɪʃ",
+   "pitch": {
+    "start": 235,
+    "low": 96,
+    "end": 178
+   }
+  },
+  "chicken": {
+   "text": "Chicken,",
+   "ms": 830,
+   "phonemes": "tʃˈɪkɪn",
+   "pitch": {
+    "start": 275,
+    "low": 83,
+    "end": 183
+   }
+  },
+  "chicken-please": {
+   "text": "Chicken, please.",
+   "ms": 1160,
+   "phonemes": "tʃˈɪkɪn plˈiːz",
+   "pitch": {
+    "start": 270,
+    "low": 87,
+    "end": 88
+   }
+  },
   "come": {
    "text": "Come",
    "ms": 670,
@@ -266,6 +456,16 @@
     "end": 186
    }
   },
+  "days": {
+   "text": "days",
+   "ms": 780,
+   "phonemes": "dˈeɪz",
+   "pitch": {
+    "start": 209,
+    "low": 100,
+    "end": 178
+   }
+  },
   "delicious-x": {
    "text": "delicious!",
    "ms": 860,
@@ -276,14 +476,54 @@
     "end": 210
    }
   },
+  "did-you": {
+   "text": "did you",
+   "ms": 810,
+   "phonemes": "dˈɪd juː",
+   "pitch": {
+    "start": 241,
+    "low": 84,
+    "end": 196
+   }
+  },
+  "do": {
+   "text": "do",
+   "ms": 640,
+   "phonemes": "dˈuː",
+   "pitch": {
+    "start": 216,
+    "low": 186,
+    "end": 211
+   }
+  },
+  "do-q": {
+   "text": "do?",
+   "ms": 660,
+   "phonemes": "dˈuː",
+   "pitch": {
+    "start": 216,
+    "low": 183,
+    "end": 211
+   }
+  },
   "do-you": {
-   "text": "Do you",
+   "text": "do you",
    "ms": 790,
    "phonemes": "dˈuː juː",
    "pitch": {
     "start": 201,
     "low": 178,
     "end": 213
+   }
+  },
+  "do-you-have-any-brothers-or-sisters-q": {
+   "text": "Do you have any brothers or sisters?",
+   "ms": 1990,
+   "phonemes": "dˈuː juː hæv ˌɛni bɹˈʌðɚz ɔːɹ sˈɪstɚz",
+   "pitch": {
+    "start": 221,
+    "low": 83,
+    "end": 263
    }
   },
   "do-you-know-q": {
@@ -304,6 +544,26 @@
     "start": 219,
     "low": 163,
     "end": 197
+   }
+  },
+  "do-you-like-malaysia-q": {
+   "text": "Do you like Malaysia?",
+   "ms": 1250,
+   "phonemes": "dˈuː juː lˈaɪk məlˈeɪʒə",
+   "pitch": {
+    "start": 214,
+    "low": 173,
+    "end": 173
+   }
+  },
+  "do-you-speak-english-q": {
+   "text": "Do you speak English?",
+   "ms": 1240,
+   "phonemes": "dˈuː juː spˈiːk ˈɪŋɡlɪʃ",
+   "pitch": {
+    "start": 217,
+    "low": 86,
+    "end": 181
    }
   },
   "do-you-understand-q": {
@@ -356,6 +616,16 @@
     "end": 209
    }
   },
+  "drawing": {
+   "text": "drawing.",
+   "ms": 750,
+   "phonemes": "dɹˈɔːɪŋ",
+   "pitch": {
+    "start": 241,
+    "low": 174,
+    "end": 188
+   }
+  },
   "drink-q": {
    "text": "drink?",
    "ms": 740,
@@ -386,6 +656,16 @@
     "end": 181
    }
   },
+  "eat-q": {
+   "text": "eat?",
+   "ms": 680,
+   "phonemes": "ˈiːt",
+   "pitch": {
+    "start": 233,
+    "low": 198,
+    "end": 216
+   }
+  },
   "eaten-q": {
    "text": "eaten?",
    "ms": 750,
@@ -394,6 +674,36 @@
     "start": 290,
     "low": 178,
     "end": 189
+   }
+  },
+  "eight": {
+   "text": "Eight.",
+   "ms": 670,
+   "phonemes": "ˈeɪt",
+   "pitch": {
+    "start": 190,
+    "low": 112,
+    "end": 212
+   }
+  },
+  "eight-x": {
+   "text": "eight!",
+   "ms": 680,
+   "phonemes": "ˈeɪt",
+   "pitch": {
+    "start": 230,
+    "low": 197,
+    "end": 222
+   }
+  },
+  "eleven": {
+   "text": "Eleven.",
+   "ms": 770,
+   "phonemes": "ᵻlˈɛvən",
+   "pitch": {
+    "start": 227,
+    "low": 93,
+    "end": 195
    }
   },
   "excuse-me": {
@@ -417,6 +727,16 @@
     "end": 201
    }
   },
+  "five": {
+   "text": "Five.",
+   "ms": 750,
+   "phonemes": "fˈaɪv",
+   "pitch": {
+    "start": 256,
+    "low": 188,
+    "end": 205
+   }
+  },
   "for-having-me-x": {
    "text": "for having me!",
    "ms": 1040,
@@ -425,6 +745,16 @@
     "start": 251,
     "low": 81,
     "end": 200
+   }
+  },
+  "for-me-x": {
+   "text": "for me!",
+   "ms": 790,
+   "phonemes": "fɔːɹ mˈiː",
+   "pitch": {
+    "start": 250,
+    "low": 100,
+    "end": 176
    }
   },
   "for-you": {
@@ -445,6 +775,36 @@
     "start": 251,
     "low": 98,
     "end": 178
+   }
+  },
+  "four": {
+   "text": "Four.",
+   "ms": 700,
+   "phonemes": "fˈoːɹ",
+   "pitch": {
+    "start": 256,
+    "low": 179,
+    "end": 198
+   }
+  },
+  "friday": {
+   "text": "Friday.",
+   "ms": 810,
+   "phonemes": "fɹˈaɪdeɪ",
+   "pitch": {
+    "start": 252,
+    "low": 171,
+    "end": 190
+   }
+  },
+  "fridays": {
+   "text": "Fridays.",
+   "ms": 900,
+   "phonemes": "fɹˈaɪdeɪz",
+   "pitch": {
+    "start": 247,
+    "low": 89,
+    "end": 206
    }
   },
   "from": {
@@ -468,13 +828,13 @@
    }
   },
   "full": {
-   "text": "full.",
-   "ms": 690,
+   "text": "Full",
+   "ms": 670,
    "phonemes": "fˈʊl",
    "pitch": {
     "start": 257,
-    "low": 183,
-    "end": 198
+    "low": 188,
+    "end": 202
    }
   },
   "full-already-q": {
@@ -495,6 +855,46 @@
     "start": 257,
     "low": 186,
     "end": 203
+   }
+  },
+  "fun-x": {
+   "text": "fun!",
+   "ms": 700,
+   "phonemes": "fˈʌn",
+   "pitch": {
+    "start": 257,
+    "low": 186,
+    "end": 192
+   }
+  },
+  "go": {
+   "text": "go",
+   "ms": 640,
+   "phonemes": "ɡˈoʊ",
+   "pitch": {
+    "start": 209,
+    "low": 192,
+    "end": 202
+   }
+  },
+  "going": {
+   "text": "going",
+   "ms": 730,
+   "phonemes": "ɡˈoʊɪŋ",
+   "pitch": {
+    "start": 218,
+    "low": 178,
+    "end": 199
+   }
+  },
+  "going-q": {
+   "text": "going?",
+   "ms": 760,
+   "phonemes": "ɡˈoʊɪŋ",
+   "pitch": {
+    "start": 221,
+    "low": 175,
+    "end": 199
    }
   },
   "good": {
@@ -597,6 +997,26 @@
     "end": 186
    }
   },
+  "happy-x": {
+   "text": "happy!",
+   "ms": 740,
+   "phonemes": "hˈæpi",
+   "pitch": {
+    "start": 253,
+    "low": 185,
+    "end": 208
+   }
+  },
+  "have": {
+   "text": "have",
+   "ms": 690,
+   "phonemes": "hˈæv",
+   "pitch": {
+    "start": 245,
+    "low": 190,
+    "end": 220
+   }
+  },
   "have-a-seat": {
    "text": "Have a seat.",
    "ms": 930,
@@ -615,6 +1035,16 @@
     "start": 243,
     "low": 171,
     "end": 202
+   }
+  },
+  "have-you-been-to-japan-q": {
+   "text": "Have you been to Japan?",
+   "ms": 1440,
+   "phonemes": "hæv juː bˌɪn tə dʒəpˈæn",
+   "pitch": {
+    "start": 235,
+    "low": 112,
+    "end": 164
    }
   },
   "have-you-eaten-q": {
@@ -645,6 +1075,16 @@
     "start": 238,
     "low": 106,
     "end": 182
+   }
+  },
+  "help": {
+   "text": "help",
+   "ms": 660,
+   "phonemes": "hˈɛlp",
+   "pitch": {
+    "start": 244,
+    "low": 168,
+    "end": 206
    }
   },
   "help-q": {
@@ -767,6 +1207,16 @@
     "end": 206
    }
   },
+  "how-about-you-q": {
+   "text": "How about you?",
+   "ms": 1090,
+   "phonemes": "hˌaʊ ɐbˈaʊt juː",
+   "pitch": {
+    "start": 250,
+    "low": 158,
+    "end": 167
+   }
+  },
   "how-are-you": {
    "text": "How are you",
    "ms": 910,
@@ -807,6 +1257,46 @@
     "end": 179
    }
   },
+  "how-many-q": {
+   "text": "How many?",
+   "ms": 850,
+   "phonemes": "hˌaʊ mˈɛni",
+   "pitch": {
+    "start": 241,
+    "low": 90,
+    "end": 134
+   }
+  },
+  "how-was": {
+   "text": "How was",
+   "ms": 840,
+   "phonemes": "hˈaʊ wʌz",
+   "pitch": {
+    "start": 243,
+    "low": 90,
+    "end": 215
+   }
+  },
+  "how-was-your-trip-q": {
+   "text": "How was your trip?",
+   "ms": 1170,
+   "phonemes": "hˌaʊ wʌz jʊɹ tɹˈɪp",
+   "pitch": {
+    "start": 223,
+    "low": 153,
+    "end": 167
+   }
+  },
+  "hungry": {
+   "text": "hungry.",
+   "ms": 790,
+   "phonemes": "hˈʌŋɡɹi",
+   "pitch": {
+    "start": 253,
+    "low": 171,
+    "end": 202
+   }
+  },
   "i": {
    "text": "I",
    "ms": 620,
@@ -837,6 +1327,86 @@
     "end": 209
    }
   },
+  "i-have-two-brothers": {
+   "text": "I have two brothers.",
+   "ms": 1350,
+   "phonemes": "aɪ hæv tˈuː bɹˈʌðɚz",
+   "pitch": {
+    "start": 225,
+    "low": 173,
+    "end": 199
+   }
+  },
+  "i-have-two-younger-brothers": {
+   "text": "I have two younger brothers.",
+   "ms": 1600,
+   "phonemes": "aɪ hæv tˈuː jˈʌŋɡɚ bɹˈʌðɚz",
+   "pitch": {
+    "start": 223,
+    "low": 156,
+    "end": 205
+   }
+  },
+  "i-like-drawing": {
+   "text": "I like drawing.",
+   "ms": 1070,
+   "phonemes": "aɪ lˈaɪk dɹˈɔːɪŋ",
+   "pitch": {
+    "start": 217,
+    "low": 160,
+    "end": 165
+   }
+  },
+  "i-like-drawing-and-taking-pictures": {
+   "text": "I like drawing and taking pictures.",
+   "ms": 2070,
+   "phonemes": "aɪ lˈaɪk dɹˈɔːɪŋ ænd tˈeɪkɪŋ pˈɪktʃɚz",
+   "pitch": {
+    "start": 225,
+    "low": 154,
+    "end": 257
+   }
+  },
+  "i-like-taking-pictures": {
+   "text": "I like taking pictures.",
+   "ms": 1500,
+   "phonemes": "aɪ lˈaɪk tˈeɪkɪŋ pˈɪktʃɚz",
+   "pitch": {
+    "start": 175,
+    "low": 100,
+    "end": 262
+   }
+  },
+  "i-like-this-x": {
+   "text": "I like this!",
+   "ms": 990,
+   "phonemes": "aɪ lˈaɪk ðˈɪs",
+   "pitch": {
+    "start": 238,
+    "low": 81,
+    "end": 187
+   }
+  },
+  "i-start-at-seven": {
+   "text": "I start at seven.",
+   "ms": 1190,
+   "phonemes": "aɪ stˈɑːɹt æt sˈɛvən",
+   "pitch": {
+    "start": 211,
+    "low": 123,
+    "end": 164
+   }
+  },
+  "i-took-pictures": {
+   "text": "I took pictures.",
+   "ms": 1240,
+   "phonemes": "aɪ tˈʊk pˈɪktʃɚz",
+   "pitch": {
+    "start": 222,
+    "low": 80,
+    "end": 154
+   }
+  },
   "i-understand": {
    "text": "I understand.",
    "ms": 1060,
@@ -845,6 +1415,116 @@
     "start": 200,
     "low": 81,
     "end": 200
+   }
+  },
+  "i-want-to-go-shopping": {
+   "text": "I want to go shopping.",
+   "ms": 1370,
+   "phonemes": "aɪ wˈɔnt tə ɡˌoʊ ʃˈɑːpɪŋ",
+   "pitch": {
+    "start": 228,
+    "low": 110,
+    "end": 174
+   }
+  },
+  "i-want-to-take-pictures": {
+   "text": "I want to take pictures.",
+   "ms": 1520,
+   "phonemes": "aɪ wˈɔnt tə tˈeɪk pˈɪktʃɚz",
+   "pitch": {
+    "start": 226,
+    "low": 82,
+    "end": 106
+   }
+  },
+  "i-went-shopping": {
+   "text": "I went shopping.",
+   "ms": 1150,
+   "phonemes": "aɪ wɛnt ʃˈɑːpɪŋ",
+   "pitch": {
+    "start": 186,
+    "low": 141,
+    "end": 168
+   }
+  },
+  "i-went-to-the-beach": {
+   "text": "I went to the beach.",
+   "ms": 1230,
+   "phonemes": "aɪ wɛnt tə ðə bˈiːtʃ",
+   "pitch": {
+    "start": 229,
+    "low": 155,
+    "end": 175
+   }
+  },
+  "i-work-at-a-bakery": {
+   "text": "I work at a bakery.",
+   "ms": 1280,
+   "phonemes": "aɪ wˈɜːk æɾə bˈeɪkɚɹi",
+   "pitch": {
+    "start": 184,
+    "low": 96,
+    "end": 183
+   }
+  },
+  "i-work-at-a-bakery-from-seven-to-four-five-days-a-week": {
+   "text": "I work at a bakery from seven to four, five days a week.",
+   "ms": 3430,
+   "phonemes": "aɪ wˈɜːk æɾə bˈeɪkɚɹi fɹʌm sˈɛvən tə fˈoːɹ fˈaɪv dˈeɪz ɐ wˈiːk",
+   "pitch": {
+    "start": 223,
+    "low": 82,
+    "end": 176
+   }
+  },
+  "i-work-five-days-a-week": {
+   "text": "I work five days a week.",
+   "ms": 1560,
+   "phonemes": "aɪ wˈɜːk fˈaɪv dˈeɪz ɐ wˈiːk",
+   "pitch": {
+    "start": 236,
+    "low": 173,
+    "end": 186
+   }
+  },
+  "i-work-from-seven-to-four": {
+   "text": "I work from seven to four.",
+   "ms": 1650,
+   "phonemes": "aɪ wˈɜːk fɹʌm sˈɛvən tə fˈoːɹ",
+   "pitch": {
+    "start": 198,
+    "low": 143,
+    "end": 177
+   }
+  },
+  "i-work-from-seven-to-four-five-days-a-week": {
+   "text": "I work from seven to four, five days a week.",
+   "ms": 2740,
+   "phonemes": "aɪ wˈɜːk fɹʌm sˈɛvən tə fˈoːɹ fˈaɪv dˈeɪz ɐ wˈiːk",
+   "pitch": {
+    "start": 227,
+    "low": 154,
+    "end": 171
+   }
+  },
+  "ill": {
+   "text": "I'll",
+   "ms": 660,
+   "phonemes": "ˈaɪl",
+   "pitch": {
+    "start": 232,
+    "low": 189,
+    "end": 196
+   }
+  },
+  "ill-come-again-next-year-x": {
+   "text": "I'll come again next year!",
+   "ms": 1440,
+   "phonemes": "aɪl kˈʌm ɐɡˈɛn nˈɛkst jˈɪɹ",
+   "pitch": {
+    "start": 224,
+    "low": 154,
+    "end": 166
    }
   },
   "im": {
@@ -887,6 +1567,46 @@
     "end": 152
    }
   },
+  "im-happy-x": {
+   "text": "I'm happy!",
+   "ms": 890,
+   "phonemes": "aɪm hˈæpi",
+   "pitch": {
+    "start": 231,
+    "low": 80,
+    "end": 186
+   }
+  },
+  "im-hungry": {
+   "text": "I'm hungry.",
+   "ms": 900,
+   "phonemes": "aɪm hˈʌŋɡɹi",
+   "pitch": {
+    "start": 186,
+    "low": 92,
+    "end": 196
+   }
+  },
+  "im-off-on-mondays": {
+   "text": "I'm off on Mondays.",
+   "ms": 1330,
+   "phonemes": "aɪm ˈɔf ˌɔn mˈʌndeɪz",
+   "pitch": {
+    "start": 224,
+    "low": 144,
+    "end": 192
+   }
+  },
+  "im-off-on-mondays-and-fridays": {
+   "text": "I'm off on Mondays and Fridays.",
+   "ms": 1860,
+   "phonemes": "aɪm ˈɔf ˌɔn mˈʌndeɪz ænd fɹˈaɪdeɪz",
+   "pitch": {
+    "start": 180,
+    "low": 87,
+    "end": 217
+   }
+  },
   "im-ok": {
    "text": "I'm OK.",
    "ms": 910,
@@ -895,6 +1615,16 @@
     "start": 140,
     "low": 82,
     "end": 180
+   }
+  },
+  "im-ok-thank-you": {
+   "text": "I'm OK, thank you.",
+   "ms": 1330,
+   "phonemes": "aɪm ˌoʊkˈeɪ θˈæŋk juː",
+   "pitch": {
+    "start": 218,
+    "low": 133,
+    "end": 170
    }
   },
   "im-ready-x": {
@@ -915,6 +1645,76 @@
     "start": 227,
     "low": 99,
     "end": 182
+   }
+  },
+  "im-thirsty": {
+   "text": "I'm thirsty.",
+   "ms": 990,
+   "phonemes": "aɪm θˈɜːsti",
+   "pitch": {
+    "start": 235,
+    "low": 82,
+    "end": 172
+   }
+  },
+  "im-tired": {
+   "text": "I'm tired.",
+   "ms": 930,
+   "phonemes": "aɪm tˈaɪɚd",
+   "pitch": {
+    "start": 222,
+    "low": 80,
+    "end": 170
+   }
+  },
+  "im-yuki": {
+   "text": "I'm Yuki.",
+   "ms": 920,
+   "phonemes": "aɪm jˈuːki",
+   "pitch": {
+    "start": 231,
+    "low": 80,
+    "end": 175
+   }
+  },
+  "im-yuki-and-you-q": {
+   "text": "I'm Yuki. And you?",
+   "ms": 1420,
+   "phonemes": "aɪm jˈuːki ænd jˈuː",
+   "pitch": {
+    "start": 206,
+    "low": 94,
+    "end": 179
+   }
+  },
+  "in": {
+   "text": "In",
+   "ms": 620,
+   "phonemes": "ˈɪn",
+   "pitch": {
+    "start": 225,
+    "low": 198,
+    "end": 212
+   }
+  },
+  "in-japan": {
+   "text": "In Japan.",
+   "ms": 990,
+   "phonemes": "ɪn dʒəpˈæn",
+   "pitch": {
+    "start": 215,
+    "low": 83,
+    "end": 180
+   }
+  },
+  "is-fine-x": {
+   "text": "is fine!",
+   "ms": 830,
+   "phonemes": "ɪz fˈaɪn",
+   "pitch": {
+    "start": 227,
+    "low": 94,
+    "end": 171
    }
   },
   "is-it": {
@@ -957,6 +1757,16 @@
     "end": 170
    }
   },
+  "is-this-q": {
+   "text": "is this?",
+   "ms": 820,
+   "phonemes": "ɪz ðˈɪs",
+   "pitch": {
+    "start": 229,
+    "low": 93,
+    "end": 195
+   }
+  },
   "it-was": {
    "text": "It was",
    "ms": 810,
@@ -967,6 +1777,26 @@
     "end": 197
    }
   },
+  "it-was-fun-x": {
+   "text": "It was fun!",
+   "ms": 950,
+   "phonemes": "ɪt wʌz fˈʌn",
+   "pitch": {
+    "start": 235,
+    "low": 81,
+    "end": 172
+   }
+  },
+  "it-was-good-x": {
+   "text": "It was good!",
+   "ms": 930,
+   "phonemes": "ɪt wʌz ɡˈʊd",
+   "pitch": {
+    "start": 238,
+    "low": 80,
+    "end": 176
+   }
+  },
   "its": {
    "text": "It's",
    "ms": 660,
@@ -975,6 +1805,16 @@
     "start": 228,
     "low": 203,
     "end": 232
+   }
+  },
+  "its-chicken": {
+   "text": "It's chicken.",
+   "ms": 950,
+   "phonemes": "ɪts tʃˈɪkɪn",
+   "pitch": {
+    "start": 228,
+    "low": 83,
+    "end": 171
    }
   },
   "its-delicious-x": {
@@ -1007,14 +1847,24 @@
     "end": 170
    }
   },
-  "its-ok-no-problem-x": {
-   "text": "It's OK. No problem!",
-   "ms": 1690,
-   "phonemes": "ɪts ˌoʊkˈeɪ nˈoʊ pɹˈɑːbləm",
+  "its-three": {
+   "text": "It's three.",
+   "ms": 870,
+   "phonemes": "ɪts θɹˈiː",
    "pitch": {
-    "start": 220,
-    "low": 85,
-    "end": 162
+    "start": 219,
+    "low": 87,
+    "end": 168
+   }
+  },
+  "its-too-spicy-for-me-x": {
+   "text": "It's too spicy for me!",
+   "ms": 1430,
+   "phonemes": "ɪts tˈuː spˈaɪsi fɔːɹ mˌiː",
+   "pitch": {
+    "start": 229,
+    "low": 149,
+    "end": 160
    }
   },
   "japan": {
@@ -1025,6 +1875,16 @@
     "start": 260,
     "low": 93,
     "end": 177
+   }
+  },
+  "japan-q": {
+   "text": "Japan?",
+   "ms": 830,
+   "phonemes": "dʒəpˈæn",
+   "pitch": {
+    "start": 260,
+    "low": 91,
+    "end": 184
    }
   },
   "japan-x": {
@@ -1087,6 +1947,16 @@
     "end": 175
    }
   },
+  "like": {
+   "text": "like",
+   "ms": 720,
+   "phonemes": "lˈaɪk",
+   "pitch": {
+    "start": 239,
+    "low": 188,
+    "end": 206
+   }
+  },
   "like-it-q": {
    "text": "like it?",
    "ms": 780,
@@ -1115,6 +1985,17 @@
     "start": 209,
     "low": 82,
     "end": 194
+   }
+  },
+  "live-q": {
+   "text": "live?",
+   "say": "liv?",
+   "ms": 670,
+   "phonemes": "lˈɪv",
+   "pitch": {
+    "start": 207,
+    "low": 197,
+    "end": 225
    }
   },
   "look": {
@@ -1147,6 +2028,56 @@
     "end": 203
    }
   },
+  "love-it-x": {
+   "text": "love it!",
+   "ms": 760,
+   "phonemes": "lˈʌv ɪt",
+   "pitch": {
+    "start": 218,
+    "low": 119,
+    "end": 199
+   }
+  },
+  "malaysia-q": {
+   "text": "Malaysia?",
+   "ms": 830,
+   "phonemes": "məlˈeɪʒə",
+   "pitch": {
+    "start": 219,
+    "low": 99,
+    "end": 192
+   }
+  },
+  "me-q": {
+   "text": "me?",
+   "ms": 640,
+   "phonemes": "mˈiː",
+   "pitch": {
+    "start": 208,
+    "low": 189,
+    "end": 206
+   }
+  },
+  "me-too-x": {
+   "text": "Me too!",
+   "ms": 840,
+   "phonemes": "mˌiː tˈuː",
+   "pitch": {
+    "start": 204,
+    "low": 93,
+    "end": 177
+   }
+  },
+  "monday": {
+   "text": "Monday.",
+   "ms": 760,
+   "phonemes": "mˈʌndeɪ",
+   "pitch": {
+    "start": 215,
+    "low": 97,
+    "end": 204
+   }
+  },
   "more-q": {
    "text": "More?",
    "ms": 700,
@@ -1167,6 +2098,26 @@
     "end": 201
    }
   },
+  "my-name-is": {
+   "text": "My name is",
+   "ms": 1000,
+   "phonemes": "maɪ nˈeɪm ɪz",
+   "pitch": {
+    "start": 213,
+    "low": 83,
+    "end": 164
+   }
+  },
+  "my-name-is-yuki": {
+   "text": "My name is Yuki.",
+   "ms": 1310,
+   "phonemes": "maɪ nˈeɪm ɪz jˈuːki",
+   "pitch": {
+    "start": 206,
+    "low": 164,
+    "end": 174
+   }
+  },
   "next-one-x": {
    "text": "Next one!",
    "ms": 900,
@@ -1185,6 +2136,16 @@
     "start": 204,
     "low": 198,
     "end": 212
+   }
+  },
+  "next-year-x": {
+   "text": "next year!",
+   "ms": 910,
+   "phonemes": "nˈɛkst jˈɪɹ",
+   "pitch": {
+    "start": 220,
+    "low": 81,
+    "end": 171
    }
   },
   "nice-to-meet-you": {
@@ -1225,6 +2186,16 @@
     "start": 213,
     "low": 137,
     "end": 177
+   }
+  },
+  "nine": {
+   "text": "Nine.",
+   "ms": 720,
+   "phonemes": "nˈaɪn",
+   "pitch": {
+    "start": 225,
+    "low": 100,
+    "end": 198
    }
   },
   "no": {
@@ -1287,6 +2258,16 @@
     "end": 164
    }
   },
+  "off": {
+   "text": "off",
+   "ms": 640,
+   "phonemes": "ˈɔf",
+   "pitch": {
+    "start": 147,
+    "low": 110,
+    "end": 201
+   }
+  },
   "ok": {
    "text": "OK.",
    "ms": 760,
@@ -1317,6 +2298,16 @@
     "end": 181
    }
   },
+  "on-mondays": {
+   "text": "on Mondays.",
+   "ms": 1020,
+   "phonemes": "ˌɔn mˈʌndeɪz",
+   "pitch": {
+    "start": 239,
+    "low": 81,
+    "end": 214
+   }
+  },
   "once-more": {
    "text": "Once more.",
    "ms": 890,
@@ -1325,6 +2316,16 @@
     "start": 212,
     "low": 82,
     "end": 199
+   }
+  },
+  "one": {
+   "text": "One.",
+   "ms": 640,
+   "phonemes": "wˈʌn",
+   "pitch": {
+    "start": 214,
+    "low": 197,
+    "end": 220
    }
   },
   "one-more-time": {
@@ -1345,6 +2346,26 @@
     "start": 197,
     "low": 161,
     "end": 167
+   }
+  },
+  "or": {
+   "text": "or",
+   "ms": 640,
+   "phonemes": "ˈɔːɹ",
+   "pitch": {
+    "start": 233,
+    "low": 197,
+    "end": 244
+   }
+  },
+  "pictures": {
+   "text": "pictures.",
+   "ms": 870,
+   "phonemes": "pˈɪktʃɚz",
+   "pitch": {
+    "start": 250,
+    "low": 178,
+    "end": 194
    }
   },
   "please": {
@@ -1377,6 +2398,16 @@
     "end": 210
    }
   },
+  "saturday": {
+   "text": "Saturday.",
+   "ms": 850,
+   "phonemes": "sˈæɾɚdˌeɪ",
+   "pitch": {
+    "start": 263,
+    "low": 86,
+    "end": 190
+   }
+  },
   "say-it": {
    "text": "Say it.",
    "ms": 740,
@@ -1397,6 +2428,16 @@
     "end": 216
    }
   },
+  "see-you-at-eight-x": {
+   "text": "See you at eight!",
+   "ms": 1070,
+   "phonemes": "sˈiː juː æɾ ˈeɪt",
+   "pitch": {
+    "start": 270,
+    "low": 80,
+    "end": 130
+   }
+  },
   "see-you-later-x": {
    "text": "See you later!",
    "ms": 920,
@@ -1405,6 +2446,16 @@
     "start": 267,
     "low": 81,
     "end": 187
+   }
+  },
+  "see-you-next-year-x": {
+   "text": "See you next year!",
+   "ms": 1160,
+   "phonemes": "sˈiː juː nˈɛkst jˈɪɹ",
+   "pitch": {
+    "start": 263,
+    "low": 154,
+    "end": 158
    }
   },
   "see-you-tomorrow-x": {
@@ -1425,6 +2476,36 @@
     "start": 270,
     "low": 178,
     "end": 198
+   }
+  },
+  "seven": {
+   "text": "Seven.",
+   "ms": 740,
+   "phonemes": "sˈɛvən",
+   "pitch": {
+    "start": 266,
+    "low": 179,
+    "end": 193
+   }
+  },
+  "shopping": {
+   "text": "shopping.",
+   "ms": 850,
+   "phonemes": "ʃˈɑːpɪŋ",
+   "pitch": {
+    "start": 262,
+    "low": 82,
+    "end": 179
+   }
+  },
+  "sisters-q": {
+   "text": "sisters?",
+   "ms": 890,
+   "phonemes": "sˈɪstɚz",
+   "pitch": {
+    "start": 201,
+    "low": 178,
+    "end": 201
    }
   },
   "sit": {
@@ -1455,6 +2536,16 @@
     "start": 277,
     "low": 163,
     "end": 175
+   }
+  },
+  "six": {
+   "text": "Six.",
+   "ms": 750,
+   "phonemes": "sˈɪks",
+   "pitch": {
+    "start": 205,
+    "low": 157,
+    "end": 192
    }
   },
   "sleep-well-x": {
@@ -1495,6 +2586,16 @@
     "start": 228,
     "low": 94,
     "end": 208
+   }
+  },
+  "some": {
+   "text": "some",
+   "ms": 660,
+   "phonemes": "sˈʌm",
+   "pitch": {
+    "start": 282,
+    "low": 198,
+    "end": 206
    }
   },
   "some-more-q": {
@@ -1567,6 +2668,36 @@
     "end": 197
    }
   },
+  "sounds-good-x": {
+   "text": "Sounds good!",
+   "ms": 1000,
+   "phonemes": "sˈaʊndz ɡˈʊd",
+   "pitch": {
+    "start": 250,
+    "low": 84,
+    "end": 179
+   }
+  },
+  "speak-english-q": {
+   "text": "speak English?",
+   "ms": 1060,
+   "phonemes": "spˈiːk ˈɪŋɡlɪʃ",
+   "pitch": {
+    "start": 223,
+    "low": 81,
+    "end": 189
+   }
+  },
+  "spicy": {
+   "text": "spicy",
+   "ms": 890,
+   "phonemes": "spˈaɪsi",
+   "pitch": {
+    "start": 243,
+    "low": 91,
+    "end": 193
+   }
+  },
   "spicy-food-q": {
    "text": "spicy food?",
    "ms": 1120,
@@ -1585,6 +2716,66 @@
     "start": 204,
     "low": 88,
     "end": 196
+   }
+  },
+  "start": {
+   "text": "start",
+   "ms": 780,
+   "phonemes": "stˈɑːɹt",
+   "pitch": {
+    "start": 198,
+    "low": 183,
+    "end": 187
+   }
+  },
+  "start-q": {
+   "text": "start?",
+   "ms": 790,
+   "phonemes": "stˈɑːɹt",
+   "pitch": {
+    "start": 188,
+    "low": 178,
+    "end": 184
+   }
+  },
+  "sunday": {
+   "text": "Sunday.",
+   "ms": 780,
+   "phonemes": "sˈʌndeɪ",
+   "pitch": {
+    "start": 249,
+    "low": 173,
+    "end": 197
+   }
+  },
+  "sure-x": {
+   "text": "Sure!",
+   "ms": 670,
+   "phonemes": "ʃˈʊɹ",
+   "pitch": {
+    "start": 280,
+    "low": 179,
+    "end": 199
+   }
+  },
+  "take-pictures": {
+   "text": "take pictures.",
+   "ms": 1120,
+   "phonemes": "tˈeɪk pˈɪktʃɚz",
+   "pitch": {
+    "start": 239,
+    "low": 103,
+    "end": 187
+   }
+  },
+  "taking-pictures": {
+   "text": "taking pictures.",
+   "ms": 1260,
+   "phonemes": "tˈeɪkɪŋ pˈɪktʃɚz",
+   "pitch": {
+    "start": 233,
+    "low": 81,
+    "end": 157
    }
   },
   "tasty-q": {
@@ -1617,14 +2808,24 @@
     "end": 129
    }
   },
+  "ten": {
+   "text": "Ten.",
+   "ms": 680,
+   "phonemes": "tˈɛn",
+   "pitch": {
+    "start": 246,
+    "low": 188,
+    "end": 190
+   }
+  },
   "thank-you": {
-   "text": "Thank you",
-   "ms": 850,
+   "text": "thank you.",
+   "ms": 840,
    "phonemes": "θˈæŋk juː",
    "pitch": {
-    "start": 248,
-    "low": 91,
-    "end": 197
+    "start": 251,
+    "low": 171,
+    "end": 183
    }
   },
   "thank-you-for-having-me-x": {
@@ -1677,6 +2878,26 @@
     "end": 202
    }
   },
+  "the-beach": {
+   "text": "the beach.",
+   "ms": 850,
+   "phonemes": "ðə bˈiːtʃ",
+   "pitch": {
+    "start": 216,
+    "low": 122,
+    "end": 158
+   }
+  },
+  "the-beach-x": {
+   "text": "the beach!",
+   "ms": 850,
+   "phonemes": "ðə bˈiːtʃ",
+   "pitch": {
+    "start": 214,
+    "low": 175,
+    "end": 181
+   }
+  },
   "the-toilet-q": {
    "text": "the toilet?",
    "ms": 880,
@@ -1685,6 +2906,16 @@
     "start": 203,
     "low": 102,
     "end": 131
+   }
+  },
+  "thirsty": {
+   "text": "thirsty.",
+   "ms": 760,
+   "phonemes": "θˈɜːsti",
+   "pitch": {
+    "start": 238,
+    "low": 171,
+    "end": 187
    }
   },
   "this-is": {
@@ -1717,6 +2948,16 @@
     "end": 168
    }
   },
+  "this-q": {
+   "text": "this?",
+   "ms": 710,
+   "phonemes": "ðˈɪs",
+   "pitch": {
+    "start": 210,
+    "low": 197,
+    "end": 198
+   }
+  },
   "this-way-x": {
    "text": "This way!",
    "ms": 820,
@@ -1735,6 +2976,26 @@
     "start": 211,
     "low": 197,
     "end": 199
+   }
+  },
+  "three": {
+   "text": "Three.",
+   "ms": 720,
+   "phonemes": "θɹˈiː",
+   "pitch": {
+    "start": 232,
+    "low": 176,
+    "end": 194
+   }
+  },
+  "thursday": {
+   "text": "Thursday.",
+   "ms": 780,
+   "phonemes": "θˈɜːzdeɪ",
+   "pitch": {
+    "start": 242,
+    "low": 170,
+    "end": 195
    }
   },
   "time-to-eat-x": {
@@ -1757,6 +3018,16 @@
     "end": 187
    }
   },
+  "tired": {
+   "text": "tired.",
+   "ms": 790,
+   "phonemes": "tˈaɪɚd",
+   "pitch": {
+    "start": 254,
+    "low": 175,
+    "end": 209
+   }
+  },
   "tired-q": {
    "text": "Tired?",
    "ms": 790,
@@ -1765,6 +3036,16 @@
     "start": 252,
     "low": 178,
     "end": 227
+   }
+  },
+  "to": {
+   "text": "to",
+   "ms": 680,
+   "phonemes": "tˈuː",
+   "pitch": {
+    "start": 269,
+    "low": 182,
+    "end": 201
    }
   },
   "to-malaysia-x": {
@@ -1777,6 +3058,16 @@
     "end": 198
    }
   },
+  "to-the-beach-x": {
+   "text": "To the beach!",
+   "ms": 950,
+   "phonemes": "tə ðə bˈiːtʃ",
+   "pitch": {
+    "start": 267,
+    "low": 166,
+    "end": 203
+   }
+  },
   "to-this": {
    "text": "to this.",
    "ms": 790,
@@ -1785,6 +3076,76 @@
     "start": 238,
     "low": 200,
     "end": 203
+   }
+  },
+  "today": {
+   "text": "Today",
+   "ms": 720,
+   "phonemes": "tədˈeɪ",
+   "pitch": {
+    "start": 261,
+    "low": 182,
+    "end": 187
+   }
+  },
+  "today-q": {
+   "text": "today?",
+   "ms": 740,
+   "phonemes": "tədˈeɪ",
+   "pitch": {
+    "start": 267,
+    "low": 173,
+    "end": 182
+   }
+  },
+  "today-was-fun-x": {
+   "text": "Today was fun!",
+   "ms": 1130,
+   "phonemes": "tədˈeɪ wʌz fˈʌn",
+   "pitch": {
+    "start": 246,
+    "low": 150,
+    "end": 181
+   }
+  },
+  "tomorrow": {
+   "text": "Tomorrow",
+   "ms": 790,
+   "phonemes": "təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 252,
+    "low": 99,
+    "end": 195
+   }
+  },
+  "tomorrow-i-want-to-go-shopping": {
+   "text": "Tomorrow, I want to go shopping.",
+   "ms": 1960,
+   "phonemes": "təmˈɑːɹoʊ aɪ wˈɔnt tə ɡˌoʊ ʃˈɑːpɪŋ",
+   "pitch": {
+    "start": 239,
+    "low": 152,
+    "end": 184
+   }
+  },
+  "tomorrow-q": {
+   "text": "tomorrow?",
+   "ms": 810,
+   "phonemes": "təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 252,
+    "low": 100,
+    "end": 199
+   }
+  },
+  "tomorrow-were-going-to-the-beach": {
+   "text": "Tomorrow we're going to the beach.",
+   "ms": 1800,
+   "phonemes": "təmˈɑːɹoʊ wɪɹ ɡˌoʊɪŋ tə ðə bˈiːtʃ",
+   "pitch": {
+    "start": 240,
+    "low": 164,
+    "end": 202
    }
   },
   "tomorrow-x": {
@@ -1797,6 +3158,16 @@
     "end": 198
    }
   },
+  "too": {
+   "text": "too",
+   "ms": 680,
+   "phonemes": "tˈuː",
+   "pitch": {
+    "start": 269,
+    "low": 182,
+    "end": 201
+   }
+  },
   "too-x": {
    "text": "too!",
    "ms": 680,
@@ -1805,6 +3176,16 @@
     "start": 273,
     "low": 182,
     "end": 201
+   }
+  },
+  "took": {
+   "text": "took",
+   "ms": 640,
+   "phonemes": "tˈʊk",
+   "pitch": {
+    "start": 276,
+    "low": 90,
+    "end": 164
    }
   },
   "try": {
@@ -1835,6 +3216,36 @@
     "start": 253,
     "low": 98,
     "end": 211
+   }
+  },
+  "tuesday": {
+   "text": "Tuesday.",
+   "ms": 820,
+   "phonemes": "tˈuːzdeɪ",
+   "pitch": {
+    "start": 264,
+    "low": 173,
+    "end": 192
+   }
+  },
+  "twelve": {
+   "text": "Twelve.",
+   "ms": 780,
+   "phonemes": "twˈɛlv",
+   "pitch": {
+    "start": 276,
+    "low": 183,
+    "end": 204
+   }
+  },
+  "two": {
+   "text": "Two.",
+   "ms": 680,
+   "phonemes": "tˈuː",
+   "pitch": {
+    "start": 274,
+    "low": 183,
+    "end": 199
    }
   },
   "uncle-x": {
@@ -1937,6 +3348,16 @@
     "end": 177
    }
   },
+  "was": {
+   "text": "was",
+   "ms": 690,
+   "phonemes": "wˈʌz",
+   "pitch": {
+    "start": 214,
+    "low": 198,
+    "end": 222
+   }
+  },
   "water": {
    "text": "Water,",
    "ms": 700,
@@ -1955,6 +3376,26 @@
     "start": 207,
     "low": 82,
     "end": 110
+   }
+  },
+  "water-q": {
+   "text": "water?",
+   "ms": 720,
+   "phonemes": "wˈɔːɾɚ",
+   "pitch": {
+    "start": 211,
+    "low": 174,
+    "end": 202
+   }
+  },
+  "wednesday": {
+   "text": "Wednesday.",
+   "ms": 820,
+   "phonemes": "wˈɛnzdeɪ",
+   "pitch": {
+    "start": 219,
+    "low": 89,
+    "end": 195
    }
   },
   "welcome": {
@@ -1987,6 +3428,26 @@
     "end": 186
    }
   },
+  "went": {
+   "text": "went",
+   "ms": 690,
+   "phonemes": "wˈɛnt",
+   "pitch": {
+    "start": 226,
+    "low": 203,
+    "end": 212
+   }
+  },
+  "were": {
+   "text": "we're",
+   "ms": 640,
+   "phonemes": "wˈɪɹ",
+   "pitch": {
+    "start": 208,
+    "low": 183,
+    "end": 208
+   }
+  },
   "what": {
    "text": "What",
    "ms": 630,
@@ -1995,6 +3456,56 @@
     "start": 211,
     "low": 110,
     "end": 178
+   }
+  },
+  "what-day": {
+   "text": "What day",
+   "ms": 850,
+   "phonemes": "wˌʌt dˈeɪ",
+   "pitch": {
+    "start": 208,
+    "low": 88,
+    "end": 177
+   }
+  },
+  "what-day-is-it-q": {
+   "text": "What day is it?",
+   "ms": 1090,
+   "phonemes": "wˌʌt dˈeɪ ɪz ɪt",
+   "pitch": {
+    "start": 205,
+    "low": 140,
+    "end": 152
+   }
+  },
+  "what-did-you-do-today-q": {
+   "text": "What did you do today?",
+   "ms": 1290,
+   "phonemes": "wˌʌt dˈɪd juː dˈuː tədˈeɪ",
+   "pitch": {
+    "start": 192,
+    "low": 85,
+    "end": 166
+   }
+  },
+  "what-do-you-do-q": {
+   "text": "What do you do?",
+   "ms": 980,
+   "phonemes": "wˌʌt dˈuː juː dˈuː",
+   "pitch": {
+    "start": 202,
+    "low": 96,
+    "end": 182
+   }
+  },
+  "what-do-you-want-to-do-tomorrow-q": {
+   "text": "What do you want to do tomorrow?",
+   "ms": 1540,
+   "phonemes": "wˌʌt dˈuː juː wˈɔnt tə dˈuː təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 209,
+    "low": 167,
+    "end": 173
    }
   },
   "what-do-you-want-to-drink-q": {
@@ -2007,6 +3518,26 @@
     "end": 211
    }
   },
+  "what-do-you-want-to-eat-q": {
+   "text": "What do you want to eat?",
+   "ms": 1280,
+   "phonemes": "wˌʌt dˈuː juː wˈɔnt tʊ ˈiːt",
+   "pitch": {
+    "start": 202,
+    "low": 124,
+    "end": 180
+   }
+  },
+  "what-is-this-q": {
+   "text": "What is this?",
+   "ms": 1000,
+   "phonemes": "wˌʌt ɪz ðˈɪs",
+   "pitch": {
+    "start": 215,
+    "low": 85,
+    "end": 196
+   }
+  },
   "what-q": {
    "text": "what?",
    "ms": 680,
@@ -2015,6 +3546,76 @@
     "start": 212,
     "low": 110,
     "end": 188
+   }
+  },
+  "what-time": {
+   "text": "What time",
+   "ms": 870,
+   "phonemes": "wˌʌt tˈaɪm",
+   "pitch": {
+    "start": 217,
+    "low": 94,
+    "end": 177
+   }
+  },
+  "what-time-do-you-start-q": {
+   "text": "What time do you start?",
+   "ms": 1380,
+   "phonemes": "wˌʌt tˈaɪm dˈuː juː stˈɑːɹt",
+   "pitch": {
+    "start": 203,
+    "low": 139,
+    "end": 189
+   }
+  },
+  "what-time-is-it-q": {
+   "text": "What time is it?",
+   "ms": 1150,
+   "phonemes": "wˌʌt tˈaɪm ɪz ɪt",
+   "pitch": {
+    "start": 207,
+    "low": 133,
+    "end": 189
+   }
+  },
+  "what-time-tomorrow-q": {
+   "text": "What time tomorrow?",
+   "ms": 1250,
+   "phonemes": "wˌʌt tˈaɪm təmˈɑːɹoʊ",
+   "pitch": {
+    "start": 195,
+    "low": 145,
+    "end": 172
+   }
+  },
+  "whats": {
+   "text": "What's",
+   "ms": 710,
+   "phonemes": "wˈʌts",
+   "pitch": {
+    "start": 228,
+    "low": 203,
+    "end": 224
+   }
+  },
+  "whats-your-hobby-q": {
+   "text": "What's your hobby?",
+   "ms": 1090,
+   "phonemes": "wˌʌts jʊɹ hˈɑːbi",
+   "pitch": {
+    "start": 204,
+    "low": 80,
+    "end": 184
+   }
+  },
+  "whats-your-name-q": {
+   "text": "What's your name?",
+   "ms": 1000,
+   "phonemes": "wˌʌts jʊɹ nˈeɪm",
+   "pitch": {
+    "start": 202,
+    "low": 80,
+    "end": 177
    }
   },
   "where": {
@@ -2027,6 +3628,16 @@
     "end": 202
    }
   },
+  "where-are-we-going-q": {
+   "text": "Where are we going?",
+   "ms": 1100,
+   "phonemes": "wˌɛɹ ɑːɹ wiː ɡˈoʊɪŋ",
+   "pitch": {
+    "start": 196,
+    "low": 80,
+    "end": 197
+   }
+  },
   "where-are-you-from-q": {
    "text": "Where are you from?",
    "ms": 1060,
@@ -2035,6 +3646,27 @@
     "start": 209,
     "low": 94,
     "end": 187
+   }
+  },
+  "where-do-you-live-q": {
+   "text": "Where do you live?",
+   "say": "Where do you liv?",
+   "ms": 1020,
+   "phonemes": "wˌɛɹ dˈuː juː lˈɪv",
+   "pitch": {
+    "start": 198,
+    "low": 81,
+    "end": 155
+   }
+  },
+  "where-do-you-work-q": {
+   "text": "Where do you work?",
+   "ms": 1060,
+   "phonemes": "wˌɛɹ dˈuː juː wˈɜːk",
+   "pitch": {
+    "start": 213,
+    "low": 171,
+    "end": 183
    }
   },
   "where-from-q": {
@@ -2067,6 +3699,26 @@
     "end": 206
    }
   },
+  "work": {
+   "text": "work",
+   "ms": 700,
+   "phonemes": "wˈɜːk",
+   "pitch": {
+    "start": 174,
+    "low": 103,
+    "end": 209
+   }
+  },
+  "work-q": {
+   "text": "work?",
+   "ms": 720,
+   "phonemes": "wˈɜːk",
+   "pitch": {
+    "start": 211,
+    "low": 190,
+    "end": 205
+   }
+  },
   "yes": {
    "text": "Yes.",
    "ms": 720,
@@ -2077,6 +3729,16 @@
     "end": 196
    }
   },
+  "yes-i-love-it-x": {
+   "text": "Yes, I love it!",
+   "ms": 1190,
+   "phonemes": "jˈɛs aɪ lˈʌv ɪt",
+   "pitch": {
+    "start": 213,
+    "low": 83,
+    "end": 139
+   }
+  },
   "yes-please": {
    "text": "Yes, please.",
    "ms": 1020,
@@ -2085,6 +3747,26 @@
     "start": 212,
     "low": 84,
     "end": 88
+   }
+  },
+  "yesterday": {
+   "text": "Yesterday,",
+   "ms": 910,
+   "phonemes": "jˈɛstɚdˌeɪ",
+   "pitch": {
+    "start": 224,
+    "low": 81,
+    "end": 180
+   }
+  },
+  "yesterday-i-went-shopping": {
+   "text": "Yesterday, I went shopping.",
+   "ms": 1720,
+   "phonemes": "jˈɛstɚdˌeɪ aɪ wɛnt ʃˈɑːpɪŋ",
+   "pitch": {
+    "start": 184,
+    "low": 161,
+    "end": 174
    }
   },
   "you": {
@@ -2117,6 +3799,46 @@
     "end": 180
    }
   },
+  "younger": {
+   "text": "younger",
+   "ms": 740,
+   "phonemes": "jˈʌŋɡɚ",
+   "pitch": {
+    "start": 209,
+    "low": 173,
+    "end": 209
+   }
+  },
+  "your-hobby-q": {
+   "text": "your hobby?",
+   "ms": 860,
+   "phonemes": "jʊɹ hˈɑːbi",
+   "pitch": {
+    "start": 215,
+    "low": 87,
+    "end": 185
+   }
+  },
+  "your-name-q": {
+   "text": "your name?",
+   "ms": 810,
+   "phonemes": "jʊɹ nˈeɪm",
+   "pitch": {
+    "start": 216,
+    "low": 84,
+    "end": 186
+   }
+  },
+  "your-trip-q": {
+   "text": "your trip?",
+   "ms": 870,
+   "phonemes": "jʊɹ tɹˈɪp",
+   "pitch": {
+    "start": 203,
+    "low": 106,
+    "end": 130
+   }
+  },
   "your-turn-x": {
    "text": "Your turn!",
    "ms": 900,
@@ -2135,6 +3857,16 @@
     "start": 207,
     "low": 81,
     "end": 188
+   }
+  },
+  "yuki": {
+   "text": "Yuki.",
+   "ms": 780,
+   "phonemes": "jˈuːki",
+   "pitch": {
+    "start": 221,
+    "low": 128,
+    "end": 195
    }
   }
  }

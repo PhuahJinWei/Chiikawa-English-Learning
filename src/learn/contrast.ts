@@ -20,16 +20,25 @@ export function alike(a: Line, b: Line): number {
   return new Set(wordsOf(b.en).filter((w) => mine.has(w))).size;
 }
 
-/** The candidate whose line sounds most like `heard` (a random one among equals), or null if none shares a word. */
+/**
+ * The candidate whose line sounds most like `heard`, or null if none shares a word: the one sharing the most words,
+ * then the one nearest in length ("Sorry!" is closer to "Sorry, what?" than to "Sorry, I don't understand.", and
+ * "Time to eat!" to "Time to go!" than to "What do you want to eat?"), then a random one among equals.
+ */
 export function closest<T extends { line: Line }>(heard: Line, candidates: readonly T[], rand = Math.random): T | null {
+  const length = wordsOf(heard.en).length;
   let top = 0;
+  let gap = Infinity;
   let best: T[] = [];
   for (const c of candidates) {
     const score = alike(heard, c.line);
-    if (score > top) {
+    if (score === 0) continue;
+    const g = Math.abs(wordsOf(c.line.en).length - length);
+    if (score > top || (score === top && g < gap)) {
       top = score;
+      gap = g;
       best = [c];
-    } else if (score > 0 && score === top) {
+    } else if (score === top && g === gap) {
       best.push(c);
     }
   }

@@ -92,6 +92,7 @@ describe('readings made from the voice’s sounds', () => {
     expect(markAfter('some more?')).toBe('？');
     expect(markAfter('Hi,')).toBe('、');
     expect(markAfter('Thank you.', true)).toBe('');
+    expect(markAfter('“Can I have some water?”', true)).toBe('？');
     expect(joinClauses([{ kana: 'ハイ', mark: '！' }, { kana: 'ハウ アー ユー', mark: '？' }, { kana: 'センクス', mark: '' }])).toBe(
       'ハイ！ハウ アー ユー？センクス',
     );
@@ -100,16 +101,19 @@ describe('readings made from the voice’s sounds', () => {
 
 describe('note readings', () => {
   it('are made by the pronunciation engine, and kept', async () => {
-    expect(await readingOf('“Can I have some water?”')).toBe('キャナイ ヘァヴ サム [ウォー]ダー？');
-    expect(readyReading('“Can I have some water?”')).toBe('キャナイ ヘァヴ サム [ウォー]ダー？');
+    // Not a lesson line, so the engine makes it (a lesson line would get its hand-made reading instead).
+    expect(handMade('Is the bus late?')).toBe(false);
+    expect(await readingOf('“Is the bus late?”')).toBe('イズ ダ バス レイッ？');
+    expect(readyReading('“Is the bus late?”')).toBe('イズ ダ バス レイッ？');
     expect(await readingOf('Hi! How are you?')).toBe('ハイ！ハウ アー ユー？');
-    expect(handMade('Can I have some water?')).toBe(false);
   });
 
   it('of a lesson line are its hand-made reading, with her own punctuation', async () => {
     expect(handMade('thank you')).toBe(true);
     expect(readyReading('thank you')).toBe('[セン]キュー');
     expect(await readingOf('Thank you!')).toBe('[セン]キュー！');
+    // Quotes around it do not hide its ？.
+    expect(await readingOf('“Can I have some water?”')).toBe('キャナイ ヘァヴ サム [ウォー]ダー？');
   });
 
   it('are empty when there is no English to read', async () => {

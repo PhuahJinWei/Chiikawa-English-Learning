@@ -2,8 +2,8 @@ import { heard, said } from '../parse.ts';
 import type { StepDef } from '../types.ts';
 
 /**
- * Part 1: the first 45 steps, in teaching order (two a day). These are finished and voiced: the app teaches them.
- * Moved here unchanged from the old packs on 2026-11-16.
+ * Part 1: the first 45 steps written, finished and voiced: the app teaches them. Moved here from the old packs on
+ * 2026-11-16. The order she learns them in is course/order.ts (introductions moved up on 2026-11-17).
  */
 export const PART1: StepDef[] = [
   {
@@ -37,7 +37,7 @@ export const PART1: StepDef[] = [
     title: '大丈夫？',
     when: '心配して聞いてくれるよ。大丈夫なら "OK!"',
     fits: ['Yes.', 'No.', "I'm OK.", "It's OK.", 'Good, thank you.'],
-    hear: [heard('Are you|*OK?', '大丈夫？'), heard('You|*OK?', '大丈夫？'), heard('*All right?', '大丈夫？')],
+    hear: [heard('Are you|*OK?', '大丈夫？'), heard('You|*OK?', '大丈夫？'), heard('Are you|*all right?', '大丈夫？')],
     say: [said('OK!', '大丈夫です！')],
     scene: { heard: [{ who: 'hachiware', face: 'worried', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'smile' }]] },
   },
@@ -260,7 +260,7 @@ export const PART1: StepDef[] = [
     when: '始める前に聞かれるよ。"OK!" で大丈夫！',
     fits: ['Yes.', 'Not yet.'],
     hear: [heard('*Ready?', '準備できた？'), heard('Are you|*ready?', '準備できた？')],
-    say: [said('OK!', 'いいよ！')],
+    say: [said('OK!', 'はい、大丈夫です！')],
     scene: { heard: [{ who: 'hachiware', face: 'smile', mark: 'question' }], replies: [[{ who: 'chiikawa', gesture: 'nod', face: 'determined' }]] },
   },
   {
@@ -333,7 +333,7 @@ export const PART1: StepDef[] = [
     cue: '食べ終わった！「ごちそうさま」を伝えたい',
     when: '英語には「ごちそうさま」にあたることばがないよ。かわりに、お礼と「おいしかった」を伝えよう！',
     near: ['youre-welcome'],
-    say: [said('Thank you!|It was|delicious!', 'ありがとうございます！ おいしかったです。')],
+    say: [said('Thank you!|It was|delicious!', 'ありがとうございます！ とてもおいしかったです！')],
     scene: { heard: [{ who: 'chiikawa', gesture: 'sit', face: 'happy' }], replies: [[{ who: 'chiikawa', gesture: 'bow', face: 'happy' }]] },
   },
   {

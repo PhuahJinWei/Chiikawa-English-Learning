@@ -135,6 +135,8 @@ export interface TalkTurn {
   step: string;
   /** The line's English, exactly as written in that step. */
   en: string;
+  /** Its Japanese here, when the step's gloss does not fit this moment ("Welcome!" answering thanks). */
+  ja?: string;
 }
 
 /** A short conversation strung from phrases she has learned (src/content/talks.ts). */

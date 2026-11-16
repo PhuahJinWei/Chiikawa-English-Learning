@@ -8,8 +8,9 @@ import { describe, expect, it } from 'vitest';
 import { BLOCKS, keyOf } from '../src/content/blocks.ts';
 import { kanaSegments } from '../src/content/kana.ts';
 import {
-  COURSE, ORDERED, STEPS, UI, VERSATILE, catchLines, exchangeById, kindOf, stepById, stepLines,
+  COURSE, ORDERED, STEPS, UI, VERSATILE, WRITTEN, catchLines, exchangeById, kindOf, stepById, stepLines,
 } from '../src/content/index.ts';
+import { ORDER } from '../src/content/course/order.ts';
 import { TOPICS } from '../src/content/topics.ts';
 import { audioSlug } from '../src/content/audio.ts';
 import manifest from '../src/content/audio-manifest.json';
@@ -34,6 +35,14 @@ describe('the path', () => {
     }
   });
 
+  it('the order names every written step exactly once (src/content/course/order.ts)', () => {
+    const written = new Set(WRITTEN.map((s) => s.id));
+    expect(ORDER.filter((id, i) => ORDER.indexOf(id) !== i), 'named twice in the order').toEqual([]);
+    expect(ORDER.filter((id) => !written.has(id)), 'in the order, but no step has this id').toEqual([]);
+    expect(WRITTEN.map((s) => s.id).filter((id) => !ORDER.includes(id)), 'written, but missing from the order').toEqual([]);
+    expect(STEPS.map((s) => s.id)).toEqual([...ORDER]);
+  });
+
   it('every step has what its kind needs', () => {
     for (const s of STEPS) {
       expect((s.hear?.length ?? 0) + (s.say?.length ?? 0), `${s.id} has nothing to hear or say`).toBeGreaterThan(0);
@@ -43,6 +52,8 @@ describe('the path', () => {
       expect(s.title.trim().length, s.id).toBeGreaterThan(0);
       expect(s.when.trim().length, s.id).toBeGreaterThan(0);
       for (const l of stepLines(s)) expect(l.ja.trim().length, `${s.id}: "${l.en}"`).toBeGreaterThan(0);
+      // Markup that belongs to the source (| * {} @) never shows in the English she hears and sees.
+      for (const l of stepLines(s)) expect(l.en, `${s.id}: markup in the English`).not.toMatch(/[|*{}@]/);
     }
   });
 

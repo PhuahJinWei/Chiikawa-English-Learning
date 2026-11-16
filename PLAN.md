@@ -168,6 +168,8 @@ This replaces underlining. Grammar is never marked; the blocks worth catching ar
 - **She learns to start talking,** not only to answer: asking "How are you?" or "What is this?", saying how she feels, suggesting "Let's go!".
 - **Every step is a draft until you approve it in the sheet, and no audio is made until the content is decided.** Drafts are never taught; the app teaches a step once it is approved and voiced.
 - **Topics** (the notebook's shelves and the friend on stage) are labels, not the order: the path mixes them.
+- **The order is one list** (`src/content/course/order.ts`, 2026-11-17): the steps are written in five files, grouped by when they were written, and the list alone decides when she learns each one. Introductions now come early (she meets new people from the start): "Nice to meet you", her name, where she is from and her job by day 5 (two a day), then the guest phrases, then numbers, days and the sentences about herself.
+- **All 128 steps are in the app** (2026-11-17): you approved parts 2 to 5, and their audio was made the same day. New content starts as a draft again, and gets audio only once you approve it.
 
 The pack table below is kept as the record of the first plan; part 2 of the path (33 drafts) is the first content written the new way.
 
