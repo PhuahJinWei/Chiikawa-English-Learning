@@ -3,17 +3,20 @@ import { audioSlug } from './audio.ts';
 import { keyOf } from './blocks.ts';
 import { PART1 } from './course/part1.ts';
 import { PART2 } from './course/part2.ts';
+import { PART3 } from './course/part3.ts';
+import { PART4 } from './course/part4.ts';
+import { PART5 } from './course/part5.ts';
 import { TALK_DEFS } from './talks.ts';
 import { TOPICS } from './topics.ts';
 import { UI } from './ui.ts';
 import type { Act, Exchange, ExchangeKind, Line, StepDef, Talk, TalkDef, Topic } from './types.ts';
 
 /**
- * The course is one learning path, in teaching order: src/content/course/part1.ts, then part2.ts. Each step is one
+ * The course is one learning path, in teaching order: src/content/course/part1.ts, then part2.ts to part5.ts. Each step is one
  * thing she learns. This module turns the steps into what the app uses; the checks in tests/content.test.ts make sure
  * they link up, and tools/sheet/make-sheet.mjs shows them as a sheet for review.
  */
-export const STEPS: readonly StepDef[] = [...PART1, ...PART2];
+export const STEPS: readonly StepDef[] = [...PART1, ...PART2, ...PART3, ...PART4, ...PART5];
 
 const CLIPS = (manifest as { clips: Record<string, unknown> }).clips;
 const hasClip = (text: string) => Object.hasOwn(CLIPS, audioSlug(text));

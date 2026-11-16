@@ -9,7 +9,7 @@ import { TOPICS } from '../../src/content/topics.ts';
 
 const TOPIC_EN = {
   app: 'App words', basics: 'Basics', table: 'At the table', family: 'Meeting the family', home: 'Around the house',
-  chat: 'Starting a chat', feelings: 'Feelings',
+  chat: 'Starting a chat', feelings: 'Feelings', me: 'About me',
 };
 const KIND_EN = { reply: 'Answers', say: 'Starts', understand: 'Understands' };
 const KIND_HELP = {

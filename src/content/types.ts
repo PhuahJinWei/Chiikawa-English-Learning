@@ -78,7 +78,7 @@ export interface Scene {
 }
 
 /** A topic: a shelf in the notebook, and the friends on stage while its steps are taught. */
-export type TopicId = 'app' | 'basics' | 'table' | 'family' | 'home' | 'chat' | 'feelings';
+export type TopicId = 'app' | 'basics' | 'table' | 'family' | 'home' | 'chat' | 'feelings' | 'me';
 
 export interface Topic {
   id: TopicId;

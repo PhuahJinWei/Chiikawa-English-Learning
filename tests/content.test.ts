@@ -190,8 +190,8 @@ describe('app words', () => {
 
 describe('readings (REVIEW 3.8)', () => {
   const PH = phonemes as Record<string, string>;
-  /** Syllables in the voice's own phonemes: one per vowel sound ("aɪ" in "idea" is one). */
-  const syllables = (ph: string) => (ph.match(/[aeiouæɑɐɒɔəɚɛɜɪʊʌ]+/g) ?? []).length;
+  /** Syllables in the voice's own phonemes: one per vowel sound ("aɪ" in "idea" is one, "oʊ" and "ɪ" in "going" are two). */
+  const syllables = (ph: string) => (ph.match(/aɪɚ|aʊɚ|aɪ|aʊ|eɪ|oʊ|ɔɪ|[aeiouæɑɐɒɔəɚɛɜɪʊʌ]/g) ?? []).length;
 
   it('use only katakana, spaces and the two marks', () => {
     for (const [key, b] of BLOCKS) expect(b.kana, key).toMatch(/^[゠-ヿ ー[\]]+$/);

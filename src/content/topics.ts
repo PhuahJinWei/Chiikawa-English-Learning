@@ -12,4 +12,5 @@ export const TOPICS: Readonly<Record<TopicId, Topic>> = {
   home: { id: 'home', title: 'おうちで', cast: ['hachiware', 'rakko', 'chiikawa'] },
   chat: { id: 'chat', title: '話しかけてみよう', cast: ['hachiware', 'usagi', 'chiikawa'] },
   feelings: { id: 'feelings', title: '気持ちを言う', cast: ['hachiware', 'momonga', 'chiikawa'] },
+  me: { id: 'me', title: '自分のこと', cast: ['hachiware', 'shisa', 'chiikawa'] },
 };

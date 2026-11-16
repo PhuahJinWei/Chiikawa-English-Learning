@@ -6,6 +6,61 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Everyday talk: 19 more drafts for your review (2026-11-17)
+
+The third batch, #110 to #128 in the content sheet: food, plans, what happened, and asking about the other person. Drafts only: not in the app, no audio. The examples are things anyone might do on a visit, not facts about her.
+
+- **Food and what she wants, #110 to #115:**
+  - "What do you want to eat?" → "Chicken, please." / "Anything!"
+  - "Can I have this?" (she hears "Sure!") → "Can I have some water?"
+  - "I like this!", "It's too spicy!", "I'm thirsty."
+- **Plans, #116 to #120:**
+  - "What do you want to do tomorrow?" → "I want to go shopping." → "I want to take pictures."
+  - She asks "Where are we going?" and hears "To the beach!"
+  - "Tomorrow, we go to the beach." → "Sounds good!"
+  - She asks "What time tomorrow?" and hears "At nine."
+- **What happened, #121 to #125:**
+  - "What did you do today?" → "I went shopping." → "I went to the beach." / "I took pictures."
+  - "Yesterday, I went shopping." and "Tomorrow, I want to go shopping.", said without being asked.
+- **Asking about the other person, #126 to #128:** "How about you?", "Have you been to Japan?" (she hears "Not yet."), and "What do you do?" asked by her.
+- **Frames first:** "Can I have…", "I want to…", "I went…" and "Yesterday, / Tomorrow," each take new words later without new grammar to learn.
+- **17 new word blocks** (203 in all), readings from the voice's sounds as before.
+- **One check corrected:** the test that counts a block's syllables took "going" for one syllable (it read "oʊɪ" as a single vowel); it now counts each vowel sound.
+- **Where the course stands:** 128 steps, 45 in the app and 83 drafts. None of the drafts reach her until you approve them in the sheet and their audio is made.
+- **Checked:** the content rules, the readings against the voice's sounds, the tests (114) and the type check.
+
+## Talking about herself: 31 drafts for your review (2026-11-17)
+
+You asked whether the course is enough for everyday conversation, with the example "I work from 8 to 6, five days every week at a bakery". It was not: 78 phrases and about 126 words, nearly all for being a polite guest, with nothing about herself and no numbers. These drafts are the first two batches, using the facts you gave. They are in the content sheet as #79 to #109, not in the app, and have no audio.
+
+- **Numbers, #79 to #82:** "How many?" → One, Two, Three; Four, Five, Six; Seven, Eight, Nine; Ten, Eleven, Twelve. Three to a step.
+- **The time, #83 to #85:**
+  - She asks "What time is it?" and hears "It's three."
+  - "What time do you start?" → "At seven."
+  - "See you at eight!" → "OK!"
+- **Days of the week, #86 to #88:** "What day is it?" → Monday, Tuesday, Wednesday; Thursday, Friday; Saturday, Sunday.
+- **Her name, #89 to #92:** "What's your name?" → "I'm Yuki." → "My name is Yuki." → "I'm Yuki. And you?", and asking it herself. "Yuki" is a stand-in: the step tells her to say her own name, which is not in the app.
+- **Her work, #93 to #98, built a piece at a time:**
+  - "What do you do?" / "Where do you work?" → "I work at a bakery."
+  - "I work from seven." → "I work from seven to four."
+  - "I work five days a week."
+  - "I work from seven to four, five days a week."
+  - "I work at a bakery from seven to four, five days a week."
+  - The numbers are their own word blocks, taught before, so the sentence is a frame: "from eight to six" is the same blocks with other numbers.
+- **Her days off, #99 and #100:** "I'm off on Mondays." → "I'm off on Mondays and Fridays."
+- **Her hobbies, #101 to #103:** "What's your hobby?" → "I like drawing." → "I like taking pictures." → "I like drawing and taking pictures."
+- **Her family, #104 and #105:** "Do you have brothers?" → "I have two brothers." → "I have two younger brothers."
+- **More questions she will be asked, #106 to #109:**
+  - "Do you speak English?" / "Can you speak English?" → "A little."
+  - "Do you like Malaysia?" → "Yes, I love it!"
+  - "Where do you live?" → "In Japan."
+  - "How was your trip?" → "It was good!"
+- **52 new word blocks** (186 in all), with readings taken from the voice's sounds by the converter built for her notes, then checked by hand. On its own the voice reads "live" as in "live music", so that block is respelled for the voice (tools/audio/say-as.mjs).
+- **For you to decide in the sheet:** the wording of each line, the stand-in name, and whether the long work sentence should also name the days.
+- **Two questions I left out because I do not know her answers:** "Is this your first time in Malaysia?" and "How long are you staying?". Tell me and I will add them.
+- **Still to come:** conversations (C12 on) that use these phrases once they have audio. The app also still caps new phrases at three a day, which you no longer want. (Food, plans and what happened are in the batch above.)
+- **Checked:** the content rules (a step built from another adds at most two new blocks), the readings against the voice's sounds, the tests (114) and the type check. The content sheet is regenerated: 109 steps, 64 of them drafts.
+
 ## Short conversations: 会話してみよう (2026-11-17)
 
 From the review of the learning process: every phrase was practised alone, always after the same cue, and no step had a second turn, so she never practised keeping a conversation going or starting one. You chose to add short conversations first.

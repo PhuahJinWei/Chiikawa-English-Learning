@@ -27,6 +27,10 @@ const CHOSEN_DIFFERENTLY: Record<string, string> = {
   'spicy food': 'スパイスィー [フード]',
   // A d after a long vowel is ド by the rules, as in "food" フード.
   'no need': 'ノウ [ニード]',
+  // Weak inside a sentence (アン), which is how she hears it; alone, the engine says it in full.
+  and: 'エァンド',
+  at: 'エァッ',
+  to: 'トゥー',
 };
 
 describe('readings made from the voice’s sounds', () => {
