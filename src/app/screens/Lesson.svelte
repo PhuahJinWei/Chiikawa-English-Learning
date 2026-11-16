@@ -16,6 +16,7 @@
   import { lesson, pauseLesson, resumeLesson } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
   import { app, go, save } from '../state.svelte.ts';
+  import { STEP_NAMES } from '../step-kinds.ts';
   import Answer from '../steps/Answer.svelte';
   import Catch from '../steps/Catch.svelte';
   import Finish from '../steps/Finish.svelte';
@@ -50,6 +51,11 @@
 
   const step = $derived(run.steps[run.index] as Step | undefined);
   const ex = $derived(step ? exchangeById(step.exId) : undefined);
+  /** The step's name in the top bar: what she is doing now. */
+  const label = $derived(
+    !step ? '' : step.kind === 'answer' && ex?.kind === 'say' ? '言ってみよう' : STEP_NAMES[step.kind],
+  );
+  const tag = $derived(!daily ? '練習' : step && 'review' in step && step.review ? '復習' : '');
   const cast = $derived(ex ? ex.cast : (['hachiware', 'chiikawa'] as const));
   const stamped = $derived(daily && app.progress.days.includes(run.day));
 
@@ -134,7 +140,7 @@
 
 <div class="lesson" style={accentStyle(ex?.host ?? 'hachiware')}>
   {#if step && ex}
-    <LessonBar index={run.index} total={run.steps.length} onQuit={askQuit} onPause={pauseLesson} />
+    <LessonBar index={run.index} total={run.steps.length} kind={step.kind} {label} {tag} onQuit={askQuit} onPause={pauseLesson} />
     {#key `${run.index}:${restart}`}
       <div class="slot">
         {#if step.kind === 'meet'}

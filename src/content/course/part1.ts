@@ -63,6 +63,7 @@ export const PART1: StepDef[] = [
     id: 'nice-to-meet-you', topic: 'family',
     title: 'はじめまして',
     when: '初めて会う人に言われるよ。"You too!" は「こちらこそ！」の気持ち。',
+    near: ['hi'],
     fits: ['Hi!', 'Thank you!'],
     hear: [heard('*Nice to meet you!', 'はじめまして！'), heard('Hello!|*Nice to meet you!', 'こんにちは、はじめまして！')],
     say: [said('You too!', 'こちらこそ！')],

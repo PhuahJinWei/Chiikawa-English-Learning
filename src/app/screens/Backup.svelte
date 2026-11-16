@@ -2,6 +2,7 @@
   import { dayLabel, makeBackup, readBackup } from '../../learn/backup.ts';
   import { mergeNotes } from '../../learn/notes.ts';
   import { emptyProgress, type Progress } from '../../learn/progress.ts';
+  import SheetHead from '../components/SheetHead.svelte';
   import { shareText } from '../platform.ts';
   import { app, go, save } from '../state.svelte.ts';
 
@@ -86,7 +87,8 @@
 </script>
 
 <div class="page">
-  <h1>記録のバックアップ</h1>
+  <!-- The way back is at the top, as on the other pages reached from Settings. -->
+  <SheetHead title="記録のバックアップ" onClose={() => go('settings')} />
   <div class="scroll" bind:this={scroller}>
     <p class="intro">
       記録はこのiPhoneの中だけにあります。アプリを消したりiPhoneを替えたりすると消えてしまうので、ときどきバックアップをLINEやメモに保存してください。
@@ -144,8 +146,6 @@
         </div>
       {/if}
     </section>
-
-    <button class="btn soft" onclick={() => go('settings')}>設定に戻る</button>
   </div>
 </div>
 
@@ -155,11 +155,6 @@
     flex-direction: column;
     height: 100%;
     min-height: 0;
-  }
-  h1 {
-    margin: 10px 0 4px;
-    font-size: 22px;
-    font-weight: 900;
   }
   h2 {
     margin: 8px 0 -4px;

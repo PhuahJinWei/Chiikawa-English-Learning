@@ -48,11 +48,12 @@
     background: none;
     font-size: 12px;
     font-weight: 800;
-    color: var(--ink-3);
+    /* Dark enough to read as a place to go (4.9:1), not as switched off; the current place is marked by its pill. */
+    color: var(--ink-2);
   }
   button.on {
     color: var(--ink);
-    background: var(--paper-2);
+    background: var(--sun);
   }
   svg {
     width: 26px;

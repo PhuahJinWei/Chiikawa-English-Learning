@@ -4,12 +4,9 @@
   import { play, setSoundMethod, soundInfo } from '../audio.svelte.ts';
   import { audioPath } from '../clips.ts';
   import { shareText } from '../platform.ts';
-  import { lifetime } from '../script.svelte.ts';
-  import { stage } from '../stage.ts';
   import { app, go, save, versionText } from '../state.svelte.ts';
 
   /** Settings (a menu tab): display, learning pace, and the app's tools. */
-  const life = lifetime();
   const s = app.progress.settings;
   let shared = $state('');
   let summaryText = $state('');
@@ -66,13 +63,10 @@
           : '送れなかったときは、下の文章をすべて選んでコピーしてください。';
   }
 
-  life.run(async () => {
-    await stage.setCast(['hachiware']);
-  });
 </script>
 
 <div class="page">
-  <h1>設定</h1>
+  <h1 class="page-title">設定</h1>
   <div class="scroll">
     <h2>表示</h2>
     <section class="card list">
@@ -144,9 +138,7 @@
     min-height: 0;
   }
   h1 {
-    margin: 10px 0 4px;
-    font-size: 22px;
-    font-weight: 900;
+    margin: 2px 0 4px;
   }
   h2 {
     margin: 8px 0 -4px;

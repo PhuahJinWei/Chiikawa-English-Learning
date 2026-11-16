@@ -100,14 +100,16 @@
     {/each}
     {#if phase !== 'intro'}
       <TurnIndicator t={UI.sayIt} active={turn} />
-      <div class="dots" aria-label="{done} / {reps.length}">
-        {#each reps as rep, i (i)}<span class="dot" class:on={i < done} class:memory={rep.hide}></span>{/each}
+      <div class="count">
+        <div class="dots" aria-hidden="true">
+          {#each reps as rep, i (i)}<span class="dot" class:on={i < done} class:memory={rep.hide}></span>{/each}
+        </div>
+        <span class="count-text">{done}/{reps.length}回</span>
       </div>
-    {/if}
-  {/snippet}
-  {#snippet extra()}
-    {#if phase === 'done'}
-      <button class="btn soft" onclick={start}><UiWord t={UI.again} /></button>
+      <p class="legend"><span class="dot memory" aria-hidden="true"></span>点線の回は、英語を隠して言います</p>
+      {#if phase === 'done'}
+        <button class="btn soft again" onclick={start}><UiWord t={UI.again} /></button>
+      {/if}
     {/if}
   {/snippet}
   {#snippet primary()}
@@ -125,6 +127,37 @@
     font-size: 20px;
     margin-bottom: 2px;
   }
+  .count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .count-text {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-2);
+  }
+  .legend {
+    margin: -4px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .legend .dot {
+    width: 12px;
+    height: 12px;
+    border-width: 2px;
+  }
+  .again {
+    justify-self: center;
+    width: auto;
+    padding: 6px 22px;
+  }
   .dots {
     display: flex;
     justify-content: center;
@@ -134,7 +167,7 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 3px solid var(--ink);
+    border: var(--line) solid var(--ink);
     background: var(--white);
     transition: background-color 0.2s;
   }

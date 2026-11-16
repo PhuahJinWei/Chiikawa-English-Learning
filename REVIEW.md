@@ -6,6 +6,34 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## The Focus redesign (2026-11-16)
+
+A fresh walk-through as a new learner found the app usable but not confusion-proof, with the friends shrunk to a strip where she spends most time. You chose direction A, "Focus" (PLAN.md section 6):
+
+- **Stage sized per screen:**
+  - Today is a large scene with Hachiware's greeting floating above the friends.
+  - Lessons get a bigger band (about a third of the screen) where the friends react.
+  - The end of a lesson grows into a scene for the celebration.
+  - The notebook, practice, settings and backup are plain full pages, and the 3D stops drawing there.
+  - The self-check and install guide keep a slim strip (the self-check measures it).
+- **Lessons:**
+  - The top bar names the step with an icon (新しいフレーズ, まねして言う, 聞き取りクイズ, 答えてみよう or 言ってみよう) and marks reviews and practice.
+  - Every step ends in one row of buttons. "Sorry, what?" sits under the sound it replays.
+  - The rating step lost its two extra replay buttons (each card has ▶).
+  - The ▶ button itself shows when sound is playing, replacing the four dots that looked like a menu.
+  - Repeat-after-me counts its rounds and explains the dotted ones.
+- **Fixed from the walk-through:**
+  - The menu tabs no longer look switched off (contrast 4.9:1).
+  - The backup page has ✕ at the top.
+  - The level says what it counts ("あと10フレーズでレベル2"), and the stamps are labelled.
+  - Phrase titles never break mid-word.
+  - On a small iPhone, nothing on Today is cut off.
+  - The quiz only offers a sound-alike wrong choice from phrases she has learned.
+  - The tour is three pages, including how a lesson goes.
+  - Buttons are 44px or more.
+- **Lighter look:** 2px lines instead of 3px, and flat cards with shadows only on buttons.
+- **Checked** at 375×812 and 375×667 through the tour, Today, every lesson step, the finish, the notebook, practice, settings and backup, plus the tests, the build and the WebKit smoke test.
+
 ## After step E: the content rework (2026-11-16)
 
 You changed the goal: conversation with no deadline, starting talk as well as answering, new sentences built from known ones, and no audio until the content is decided. The content system was reworked for that (PLAN.md section 5): one learning path of steps in `src/content/course`, steps built from earlier ones (checked), drafts that are never taught or voiced, and **`content-sheet.html`** to review everything without the code.

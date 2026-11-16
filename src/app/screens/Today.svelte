@@ -57,12 +57,13 @@
   // おはよう in the morning, こんばんは after dark: "Hi!" covers both in English (REVIEW 3.3: never "Good night!").
   const greeting = hour >= 4 && hour < 11 ? UI.morning : hour >= 18 || hour < 4 ? UI.evening : UI.hi;
 
+  // One short line each: the bubble floats above the friends, and on a small iPhone a longer one covers their heads.
   const say = $derived.by(() => {
-    if (going) return '続きからやろう！ 途中のところから始まるよ。';
-    if (first) return 'ハチワレだよ。一緒に、話せる英語を練習しよう！ 1日10分くらいでOK。';
-    if (doneToday) return '今日のレッスンは完了！ また明日ね。もっとやりたいときは「練習」へ。';
-    if (!left.length) return '今日はお休みの日。習ったフレーズを「練習」で聞いてみよう。';
-    return '今日のレッスンの準備ができてるよ。';
+    if (going) return '続きからやろう！';
+    if (first) return 'ハチワレだよ。一緒に英語を話そう！';
+    if (doneToday) return '今日はおしまい！ また明日ね。';
+    if (!left.length) return '今日はお休み。「練習」で復習しよう！';
+    return '今日のレッスン、準備できてるよ！';
   });
 
   function begin() {
@@ -81,14 +82,18 @@
   });
 </script>
 
-<StepLayout>
-  {#snippet top()}
-    <Bubble who="hachiware" text={say}>
+<!-- Hachiware's greeting floats over the scene, above the friends (not during the first-run tour, which greets her). -->
+{#if app.progress.settings.toured}
+  <div class="greet">
+    <Bubble who="hachiware" text={say} tail="down" named={false}>
       {#snippet before()}
         <span class="hello"><UiWord t={greeting} size="bubble" /></span>
       {/snippet}
     </Bubble>
-  {/snippet}
+  </div>
+{/if}
+
+<StepLayout>
   {#snippet body()}
     <div class="card lesson">
       <div class="lesson-head">
@@ -104,7 +109,11 @@
       {:else if doneToday}
         <p class="line">今日のスタンプをもらいました。</p>
       {:else if left.length}
-        {#if newTitles.length}<p class="line"><b>新しいフレーズ</b>：{newTitles.join('・')}</p>{/if}
+        {#if newTitles.length}
+          <p class="line">
+            <b>新しいフレーズ</b>：{#each newTitles as t, i (i)}<span class="nobreak">「{t}」</span>{/each}
+          </p>
+        {/if}
         {#if reviews}<p class="line"><b>復習</b>：{reviews}問</p>{/if}
         {#if practice}<p class="line"><b>練習</b>：{practice}問</p>{/if}
       {:else}
@@ -112,28 +121,32 @@
       {/if}
     </div>
 
-    <div class="stats">
-      <span class="chip">{day}日目</span>
-      <span class="chip meter" aria-label="英語レベル{lv.level}。次のレベルまで、あと{lv.toNext}フレーズ">
-        英語レベル{lv.level}
-        <span class="track"><span class="fill" style="width:{Math.max(lv.fill * 100, 2)}%"></span></span>
-        <span class="next">あと{lv.toNext}</span>
-      </span>
-      {#if app.offline === 'ready'}
-        <span class="chip offline">✓ ネットなしでも使えます</span>
-      {:else if app.offline === 'preparing'}
-        <span class="chip offline">ネットなしで使う準備中…</span>
-      {/if}
+    <div class="level" aria-label="英語レベル{lv.level}。次のレベルまで、あと{lv.toNext}フレーズ">
+      <span class="level-name">英語レベル<b>{lv.level}</b></span>
+      <span class="track"><span class="fill" style="width:{Math.max(lv.fill * 100, 3)}%"></span></span>
+      <span class="next">あと{lv.toNext}フレーズでレベル{lv.level + 1}</span>
     </div>
 
-    <div class="week" aria-label="この1週間">
-      {#each week as w (w.d)}
-        <span class="wday" class:today={w.d === app.today}>
-          <span class="circle" class:done={w.done}>{w.done ? '✓' : ''}</span>
-          <span class="wlabel">{w.label}</span>
-        </span>
-      {/each}
+    <div class="week-box">
+      <div class="week-head">
+        <span>今週のスタンプ</span>
+        <span class="muted">はじめて{day}日目</span>
+      </div>
+      <div class="week">
+        {#each week as w (w.d)}
+          <span class="wday" class:today={w.d === app.today}>
+            <span class="circle" class:done={w.done}>{w.done ? '✓' : ''}</span>
+            <span class="wlabel">{w.label}</span>
+          </span>
+        {/each}
+      </div>
     </div>
+
+    {#if app.offline === 'ready'}
+      <p class="offline">✓ ネットなしでも使えます</p>
+    {:else if app.offline === 'preparing'}
+      <p class="offline">ネットなしで使う準備中…</p>
+    {/if}
 
     {#if remindBackup}
       <div class="card remind">
@@ -155,6 +168,15 @@
 </StepLayout>
 
 <style>
+  .greet {
+    position: fixed;
+    top: calc(var(--safe-top) + 12px);
+    left: 16px;
+    right: 16px;
+    max-width: 520px;
+    margin: 0 auto;
+    z-index: 4;
+  }
   .hello {
     display: block;
     font-size: 20px;
@@ -192,29 +214,30 @@
     margin: 0;
     font-size: 14px;
   }
-  .stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  .level {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 2px 10px;
+    padding: 0 2px;
   }
-  .stats .chip {
-    background: var(--white);
+  .level-name {
+    font-size: 15px;
+    font-weight: 800;
   }
-  .stats .chip.offline {
-    background: var(--paper-2);
-    color: var(--ink-2);
-  }
-  .meter {
-    gap: 6px;
+  .level-name b {
+    font-size: 20px;
+    margin-left: 3px;
   }
   .next {
+    grid-column: 1 / -1;
     font-size: 12px;
+    font-weight: 700;
     color: var(--ink-2);
   }
   .track {
-    width: 54px;
-    height: 9px;
-    border: 2px solid var(--ink);
+    height: 10px;
+    border: 1.5px solid var(--ink);
     border-radius: 99px;
     overflow: hidden;
     background: var(--white);
@@ -223,6 +246,24 @@
     display: block;
     height: 100%;
     background: var(--sun-2);
+  }
+  .week-box {
+    display: grid;
+    gap: 6px;
+    padding: 0 2px;
+  }
+  .week-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .offline {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-2);
+    text-align: center;
   }
   .week {
     display: grid;
@@ -246,7 +287,7 @@
     color: #e0607a;
   }
   .circle.done {
-    border: 3px solid #e0607a;
+    border: 2px solid #e0607a;
     background: #fff7f8;
   }
   .wlabel {

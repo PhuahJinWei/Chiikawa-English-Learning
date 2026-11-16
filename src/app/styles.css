@@ -1,5 +1,7 @@
-/* えいごフレンズ: a picture-book look. Cream paper, ink-brown lines instead of black, rounded type, sticker
-   buttons with a hard shadow that squash when pressed. One fixed light theme, like a printed book. */
+/* えいごフレンズ: a picture-book look. Cream paper, fine ink-brown lines instead of black (2px, closer to the
+   original's light line than the first version's 3px), rounded type, sticker buttons with a hard shadow that squash
+   when pressed. Cards lie flat on the page; only buttons cast a shadow, so what can be tapped stands out. One fixed
+   light theme, like a printed book. */
 :root {
   --paper: #fff9ef;
   --paper-2: #fcefd8;
@@ -21,7 +23,7 @@
   --accent: #cfe8fa;
   --accent-2: #86bfe9;
 
-  --line: 3px;
+  --line: 2px;
   --hand: 26px 21px 28px 23px / 23px 28px 21px 26px;
   --hand-sm: 15px 12px 16px 13px / 13px 16px 12px 15px;
   --font: 'Hiragino Maru Gothic ProN', 'Hiragino Maru Gothic Pro', 'BIZ UDPGothic', 'Yu Gothic UI', Meiryo, system-ui, sans-serif;
@@ -85,14 +87,14 @@ input {
   font-size: 18px;
   font-weight: 800;
   line-height: 1.2;
-  box-shadow: 0 4px 0 var(--ink);
+  box-shadow: 0 3px 0 var(--ink);
   transition:
     transform 0.09s ease-out,
     box-shadow 0.09s ease-out,
     background-color 0.2s;
 }
 .btn:active:not(:disabled) {
-  transform: translateY(3px) scale(0.98, 0.95);
+  transform: translateY(2px) scale(0.98, 0.95);
   box-shadow: 0 1px 0 var(--ink);
 }
 .btn:disabled {
@@ -108,7 +110,7 @@ input {
   min-height: 48px;
   font-size: 15px;
   background: var(--paper-2);
-  box-shadow: 0 3px 0 var(--ink);
+  box-shadow: 0 2px 0 var(--ink);
 }
 .btn.good {
   background: var(--mint);
@@ -137,7 +139,25 @@ input {
   border: var(--line) solid var(--ink);
   border-radius: var(--hand);
   padding: 12px 14px 14px;
-  box-shadow: 0 4px 0 var(--ink);
+}
+
+/* A page's own heading, on pages without the friends' stage (Notebook, Practice, Settings, Backup). */
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+}
+.page-intro {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* Items of a list that must never break in the middle (phrase titles in a sentence): lines break between them. */
+.nobreak {
+  display: inline-block;
 }
 
 .chip {
@@ -145,7 +165,7 @@ input {
   align-items: center;
   gap: 6px;
   padding: 3px 10px 3px 8px;
-  border: 2px solid var(--ink);
+  border: 1.5px solid var(--ink);
   border-radius: 99px;
   background: var(--paper-2);
   font-size: 13px;

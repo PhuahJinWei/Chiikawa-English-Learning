@@ -1,14 +1,20 @@
 <script lang="ts">
   import { audioPath } from '../../content/audio.ts';
+  import type { Step } from '../../learn/session.ts';
   import { play } from '../audio.svelte.ts';
   import { act } from '../scene.ts';
+  import { STEP_HINTS, STEP_ICONS, STEP_NAMES } from '../step-kinds.ts';
 
-  /** The first-run tour (REVIEW 1.12): what the app is for, the two cards, a sound check, and how to stay in control. */
+  /**
+   * The first-run tour (REVIEW 1.12), three pages: what the app is for, how a lesson goes (the four steps, named and
+   * drawn as in the lesson's top bar), and a sound check. Everything else is explained where it is used.
+   */
   let { onDone }: { onDone: () => void } = $props();
 
   let page = $state(0);
   let heard = $state<'unknown' | 'yes' | 'no'>('unknown');
-  const last = 3;
+  const last = 2;
+  const KINDS: Step['kind'][] = ['meet', 'shadow', 'catch', 'answer'];
 
   function test() {
     void play(audioPath('Hi!'), 'other');
@@ -23,12 +29,18 @@
       <p>ハチワレたちと一緒に、<b>英語を聞き取って、短い英語で答えたり、自分から話しかけたりする</b>練習をします。</p>
       <p>文法や書く練習はありません。1日10分くらいで大丈夫です。</p>
     {:else if page === 1}
-      <h2 id="tour-title">カードの見方</h2>
-      <div class="mini other"><span class="chip">相手</span>話し相手が言う英語</div>
-      <div class="mini model"><span class="chip">お手本</span>あなたが言う英語のお手本</div>
-      <p>英語を話すのは「相手」と「お手本」です。ハチワレたちは、一緒に聞いて応援する役です。</p>
-      <p>英語のブロックをタップすると、そのことばだけ聞けて、意味も出ます。カタカナの読みの上の点（・）は、強く言うところです。</p>
-    {:else if page === 2}
+      <h2 id="tour-title">レッスンの流れ</h2>
+      <p>新しいフレーズは、この4つのステップで覚えます。いまどのステップかは、画面の上に出ます。</p>
+      <ol class="steps">
+        {#each KINDS as k (k)}
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true">{#each STEP_ICONS[k] as d (d)}<path {d} />{/each}</svg>
+            <span><b>{STEP_NAMES[k]}</b><small>{STEP_HINTS[k]}</small></span>
+          </li>
+        {/each}
+      </ol>
+      <p>途中でやめたいときは⏸を押してください。続きはいつでもできます。</p>
+    {:else}
       <h2 id="tour-title">音のチェック</h2>
       <p>▶を押して、英語が聞こえるか確かめてください。</p>
       <button class="btn" onclick={test}>▶ 音を鳴らす</button>
@@ -44,18 +56,10 @@
           <li>それでも聞こえないときは、あとで「設定」の「音の再生方式」を「予備」にしてみてください。</li>
         </ul>
       {/if}
-    {:else}
-      <h2 id="tour-title">いつでも止められます</h2>
-      <ul class="keys">
-        <li><span class="key">⏸</span>一時停止。最初からやり直したり、前に戻ったりもできます</li>
-        <li><span class="key">← 前へ</span>ひとつ前のステップに戻ります</li>
-        <li><span class="key">✕</span>今日はここまで。続きはあとでできます</li>
-      </ul>
-      <p>下のメニューの「ノート」には習ったフレーズが全部あって、いつでも聞けます。「練習」では好きなだけ練習できます。</p>
     {/if}
   </div>
   <div class="nav">
-    <div class="dots" aria-hidden="true">{#each [0, 1, 2, 3] as i (i)}<i class:on={i === page}></i>{/each}</div>
+    <div class="dots" aria-hidden="true">{#each [0, 1, 2] as i (i)}<i class:on={i === page}></i>{/each}</div>
     <div class="row">
       {#if page > 0}<button class="btn soft" onclick={() => page--}>前へ</button>{/if}
       {#if page < last}
@@ -97,30 +101,49 @@
     font-weight: 700;
     line-height: 1.65;
   }
-  .mini {
+  .steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    counter-reset: step;
+  }
+  .steps li {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border: 2px solid var(--ink);
+    gap: 12px;
+    padding: 8px 12px;
+    border: var(--line) solid var(--ink);
     border-radius: 14px;
-    font-weight: 800;
-    font-size: 14px;
+    background: var(--white);
   }
-  .mini.other .chip {
-    background: var(--sky);
+  .steps svg {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
-  .mini.model {
-    background: #fff4f6;
+  .steps span {
+    display: grid;
   }
-  .mini.model .chip {
-    background: var(--blush);
+  .steps b {
+    font-size: 15px;
+    font-weight: 900;
+  }
+  .steps small {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-2);
   }
   .picked {
     outline: 4px solid var(--sun-2);
   }
-  .tips,
-  .keys {
+  .tips {
     margin: 0;
     padding-left: 0;
     list-style: none;
@@ -132,17 +155,6 @@
   }
   .tips li::before {
     content: '・';
-  }
-  .key {
-    display: inline-block;
-    min-width: 64px;
-    margin-right: 8px;
-    padding: 2px 8px;
-    border: 2px solid var(--ink);
-    border-radius: 10px;
-    background: var(--white);
-    text-align: center;
-    font-weight: 900;
   }
   .nav {
     margin-top: auto;

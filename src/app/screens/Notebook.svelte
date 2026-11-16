@@ -7,22 +7,18 @@
   import { TOP_BOX } from '../../learn/schedule.ts';
   import { play } from '../audio.svelte.ts';
   import { audioPath, heartPath } from '../clips.ts';
-  import Bubble from '../components/Bubble.svelte';
   import NoteSheet from '../components/NoteSheet.svelte';
   import PhraseSheet from '../components/PhraseSheet.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import { hearNote } from '../note-voice.ts';
   import { shareText } from '../platform.ts';
-  import { lifetime } from '../script.svelte.ts';
-  import { stage } from '../stage.ts';
   import { app } from '../state.svelte.ts';
 
   /**
    * The notebook (REVIEW 1.6), with two shelves. 習ったフレーズ: every phrase she has learned, grouped by pack; ▶
    * plays it, tapping the row opens it with all its versions, the replies and practice. メモ: her own notes (REVIEW
-   * section 7), which she can send you. Furuhonya, the bookseller, keeps it.
+   * section 7), which she can send you. A page of its own, without the friends' stage: lists need the room.
    */
-  const life = lifetime();
   let open = $state<Exchange | null>(null);
   let shelf = $state<'phrases' | 'notes'>('phrases');
   let writing = $state<Note | 'new' | null>(null);
@@ -73,24 +69,22 @@
     return Math.min(ep?.hear?.box ?? 0, say);
   };
 
-  life.run(async () => {
-    await stage.setCast(['furuhonya']);
-    void stage.play('furuhonya', 'read');
-  });
 </script>
 
 <StepLayout bind:this={layout}>
   {#snippet top()}
-    <Bubble
-      who="furuhonya"
-      text={shelf === 'notes'
-        ? notes.length
-          ? 'メモは▶で聞けるよ。タップすると書き直せるよ。'
-          : 'ここは、あなたのメモ帳。送ってもらった英語を貼り付けたり、英語で何て言うか知りたいことを書いたりできるよ。'
-        : count
-          ? '習ったフレーズのノートだよ。▶で聞けるし、タップすると詳しく見られるよ。'
-          : 'ここは、習ったフレーズのノート。「今日」のレッスンで習うと、ここにたまっていくよ。'}
-    />
+    <header>
+      <h1 class="page-title">ノート</h1>
+      <p class="page-intro">
+        {shelf === 'notes'
+          ? notes.length
+            ? 'メモは▶で聞けます。タップすると書き直せます。'
+            : '送ってもらった英語を貼り付けたり、英語で何て言うか知りたいことを書いたりできます。'
+          : count
+            ? '習ったフレーズは▶で聞けます。タップすると詳しく見られます。'
+            : '「今日」のレッスンで習ったフレーズが、ここにたまっていきます。'}
+      </p>
+    </header>
   {/snippet}
   {#snippet body()}
     <div class="shelves" role="tablist" aria-label="ノートの棚">

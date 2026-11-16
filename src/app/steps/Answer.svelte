@@ -2,7 +2,6 @@
   import { untrack } from 'svelte';
   import { UI, replyWord } from '../../content/index.ts';
   import type { Exchange } from '../../content/types.ts';
-  import { play } from '../audio.svelte.ts';
   import { audioPath, turnMs } from '../clips.ts';
   import Bubble from '../components/Bubble.svelte';
   import SorryButton from '../components/SorryButton.svelte';
@@ -105,6 +104,7 @@
   {#snippet body()}
     {#if question}
       <SpeakerCard kind="other" line={question} reveal={phase === 'rate'} />
+      {#if phase === 'turn'}<SorryButton line={question} channel="other" />{/if}
     {:else}
       <div class="card cue">
         <span class="chip">こんなとき</span>
@@ -123,13 +123,6 @@
       <div class="row">
         <button class="btn soft" onclick={ask}>もう一度ためす</button>
         <button class="btn soft keep" onclick={() => onDone({})}>このステップを<wbr />とばす</button>
-      </div>
-    {:else if phase === 'turn' || phase === 'rate'}
-      <div class="row">
-        {#if question}<SorryButton line={question} channel="other" />{/if}
-        {#if phase === 'rate'}
-          <button class="btn soft" onclick={() => play(audioPath(ex.short[0].en), 'model')}>お手本をもう一回</button>
-        {/if}
       </div>
     {/if}
   {/snippet}

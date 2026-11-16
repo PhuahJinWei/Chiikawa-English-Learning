@@ -1,18 +1,14 @@
 <script lang="ts">
   import { ORDERED } from '../../content/index.ts';
   import { buildPractice, type PracticeKind } from '../../learn/session.ts';
-  import Bubble from '../components/Bubble.svelte';
   import StepLayout from '../components/StepLayout.svelte';
-  import { lifetime } from '../script.svelte.ts';
-  import { stage } from '../stage.ts';
   import { app, startPractice } from '../state.svelte.ts';
 
   /**
    * Practice she chooses (REVIEW 1.7): weak phrases, everything mixed, listening only or speaking only. It never
-   * changes the review schedule, and rotates so every learned phrase comes round. Usagi bounces about on stage, but
-   * Hachiware does the talking: in the original, Usagi never speaks in sentences.
+   * changes the review schedule, and rotates so every learned phrase comes round. A page of its own, without the
+   * friends' stage; they come back in the practice lesson itself.
    */
-  const life = lifetime();
   const learnedCount = $derived(ORDERED.filter((e) => app.progress.ex[e.id]?.hear).length);
   const speakable = $derived(ORDERED.filter((e) => app.progress.ex[e.id]?.hear && e.kind !== 'understand').length);
 
@@ -27,20 +23,18 @@
     startPractice(buildPractice(app.progress, ORDERED, kind), title, 'practice');
   }
 
-  life.run(async (s) => {
-    await stage.setCast(['hachiware', 'usagi']);
-    await s.wait(400);
-    void stage.play('usagi', 'hop');
-    stage.mark('usagi', 'exclaim');
-  });
 </script>
 
 <StepLayout>
   {#snippet top()}
-    <Bubble
-      who="hachiware"
-      text={learnedCount ? '練習しよう！ やりたいものを選んでね。何回やってもOK！' : 'まずは「今日」のレッスンでフレーズを習ってね。習ったら、ここで練習できるよ！'}
-    />
+    <header>
+      <h1 class="page-title">練習</h1>
+      <p class="page-intro">
+        {learnedCount
+          ? '習ったフレーズを、好きなだけ練習できます。やりたいものを選んでください。'
+          : 'まずは「今日」のレッスンでフレーズを習ってください。習ったフレーズを、ここで練習できます。'}
+      </p>
+    </header>
   {/snippet}
   {#snippet body()}
     {#if learnedCount}

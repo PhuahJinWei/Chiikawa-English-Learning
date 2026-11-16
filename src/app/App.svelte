@@ -21,12 +21,30 @@
 
   /**
    * The app's frame: the friends' stage on top, the current screen under it, and the menu bar at the bottom on every
-   * screen except a lesson (REVIEW 1.1). The stage is larger on Today, smaller in a lesson and on list screens.
+   * screen except a lesson (REVIEW 1.1). The stage is sized to what the friends do on each screen (the Focus design,
+   * 2026-11-16): a large scene on Today and at the end of a lesson, a band in a lesson where they react to her, a
+   * slim strip on the self-check (which measures it) and the install guide, and nothing on the list pages
+   * (Notebook, Practice, Settings, Backup), which get the whole screen and stop the 3D drawing to save battery.
    */
   let stageEl: HTMLDivElement | undefined = $state();
 
+  type StageMode = 'scene' | 'band' | 'strip' | 'none';
+  const mode: StageMode = $derived(
+    app.screen === 'today'
+      ? 'scene'
+      : app.screen === 'lesson'
+        ? app.celebrating
+          ? 'scene'
+          : 'band'
+        : app.screen === 'selfcheck' || app.screen === 'install'
+          ? 'strip'
+          : 'none',
+  );
+  $effect(() => {
+    stage.setPaused(mode === 'none');
+  });
+
   const withTabs = $derived(app.screen !== 'lesson');
-  const size = $derived(app.screen === 'today' ? 'big' : app.screen === 'lesson' ? 'mid' : 'small');
   const touring = $derived(!app.progress.settings.toured && app.screen === 'today');
 
   // Her sound setting. Untracked, so an automatic switch to the backup way is not undone (audio.svelte.ts).
@@ -60,8 +78,8 @@
   });
 </script>
 
-<div class="app size-{size}">
-  <div class="stage" bind:this={stageEl}></div>
+<div class="app mode-{mode}" class:no-tabs={!withTabs}>
+  <div class="stage" bind:this={stageEl} aria-hidden={mode === 'none'}></div>
   <Notices />
   <div class="lower">
     <main class="panel">
@@ -124,13 +142,16 @@
     display: flex;
     flex-direction: column;
     background: var(--paper);
-    --stage-now: clamp(130px, 21dvh, 190px);
+    --stage-now: 0px;
   }
-  .size-big {
-    --stage-now: clamp(190px, 33dvh, 340px);
+  .mode-scene {
+    --stage-now: clamp(230px, 44dvh, 420px);
   }
-  .size-mid {
-    --stage-now: clamp(150px, 26dvh, 280px);
+  .mode-band {
+    --stage-now: clamp(180px, 32dvh, 300px);
+  }
+  .mode-strip {
+    --stage-now: clamp(120px, 18dvh, 170px);
   }
   .stage {
     position: relative;
@@ -156,12 +177,21 @@
     background: var(--paper);
     border-top: var(--line) solid var(--ink);
     border-radius: 26px 26px 0 0;
-    box-shadow: 0 -4px 0 rgba(102, 67, 47, 0.08);
     display: flex;
     flex-direction: column;
   }
-  .size-mid .panel {
+  /* No menu bar in a lesson: the panel keeps clear of the home indicator itself. */
+  .no-tabs .panel {
     padding-bottom: calc(10px + var(--safe-bottom));
+  }
+  /* A page without the stage: the panel is the whole page, under the phone's status bar. */
+  .mode-none .lower {
+    margin-top: 0;
+  }
+  .mode-none .panel {
+    border-top: none;
+    border-radius: 0;
+    padding-top: calc(14px + var(--safe-top));
   }
   .panel > :global(*) {
     flex: 1;

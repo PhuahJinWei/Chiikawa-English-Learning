@@ -60,9 +60,10 @@
       if (out.length < 3 && !out.some((o) => o.key === ja)) out.push({ key: ja, right: false, ja });
     };
     const candidates = others((e) => catchLines(e).length > 0);
-    // One wrong choice sounds like what she heard, from what she has learned when it can be (REVIEW 2.4).
+    // One wrong choice sounds like what she heard (REVIEW 2.4), only from what she has learned: a sound-alike she has
+    // never met (on day 1, "Hello! Nice to meet you!" against "Hello!") only confuses.
     const lines = (es: Exchange[]) => es.flatMap((e) => catchLines(e).map((l) => ({ line: l })));
-    const twin = closest(line, lines(candidates.filter((e) => app.progress.ex[e.id]))) ?? closest(line, lines(candidates));
+    const twin = closest(line, lines(candidates.filter((e) => app.progress.ex[e.id])));
     if (twin) add(twin.line.ja);
     for (const e of candidates) {
       if (out.length === 3) break;
@@ -175,6 +176,10 @@
   {/snippet}
   {#snippet body()}
     <SpeakerCard kind="other" {line} reveal={solved} />
+    {#if !failed && !solved}
+      <!-- Asking again sits by the sound it replays; it reads "Sorry, what?" once she has learned that phrase. -->
+      <SorryButton {line} channel="other" disabled={!heard || busy} />
+    {/if}
     {#if heard && !solved}
       <div class="options">
         {#each options as o, i (o.key)}
@@ -205,8 +210,6 @@
         <button class="btn soft" onclick={listen}>もう一度ためす</button>
         <button class="btn soft keep" onclick={() => onDone({})}>このステップを<wbr />とばす</button>
       </div>
-    {:else}
-      <SorryButton {line} channel="other" disabled={!heard || (busy && !solved)} />
     {/if}
   {/snippet}
   {#snippet primary()}
@@ -231,8 +234,8 @@
     gap: 10px;
   }
   .option {
-    min-height: 58px;
-    font-size: 18px;
+    min-height: 52px;
+    font-size: 17px;
     justify-content: flex-start;
     text-align: left;
     padding-left: 16px;

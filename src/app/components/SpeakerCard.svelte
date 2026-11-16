@@ -10,7 +10,8 @@
    * says. Never a friend: the generated voice is not a friend's voice.
    *
    * Once shown, a card can always be played again with its ▶ button, and each block can be tapped (REVIEW 1.8).
-   * `hideEnglish` keeps the meaning but hides the English, for saying it from memory.
+   * While the card's sound plays, the ▶ itself turns into moving bars: no separate indicator that could pass for a
+   * menu. `hideEnglish` keeps the meaning but hides the English, for saying it from memory.
    */
   let {
     kind,
@@ -37,6 +38,14 @@
   const playable = $derived(!!line && (reveal || hideEnglish));
 </script>
 
+{#snippet glyph()}
+  {#if mine}
+    <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+  {:else}
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+  {/if}
+{/snippet}
+
 {#if compact && line && reveal && !hideEnglish}
   <!-- One row: for other ways of saying something, and lists. -->
   <div class="card {kind} row-card" class:busy={!!mine}>
@@ -44,8 +53,8 @@
       <Blocks {line} size="sm" tappable channel={kind} sweep={mine ? { startedAt: mine.startedAt, durationMs: mine.durationMs } : null} />
       <span class="row-ja">{line.ja}</span>
     </div>
-    <button class="play" onclick={() => play(path, kind)} aria-label="もう一回聞く">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+    <button class="play" class:on={!!mine} onclick={() => play(path, kind)} aria-label="もう一回聞く">
+      {@render glyph()}
     </button>
   </div>
 {:else}
@@ -61,10 +70,9 @@
       {/if}
     </span>
     {#if badge}<span class="badge">{badge}</span>{/if}
-    <span class="waves" class:on={!!mine} aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     {#if playable}
-      <button class="play" onclick={() => play(path, kind)} aria-label="もう一回聞く">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+      <button class="play" class:on={!!mine} onclick={() => play(path, kind)} aria-label="もう一回聞く">
+        {@render glyph()}
       </button>
     {/if}
   </div>
@@ -95,7 +103,6 @@
     align-items: center;
     gap: 10px;
     padding: 8px 10px 8px 12px;
-    box-shadow: 0 3px 0 var(--ink);
   }
   .row-text {
     flex: 1;
@@ -112,7 +119,6 @@
   }
   .card.compact {
     padding: 8px 12px 10px;
-    box-shadow: 0 3px 0 var(--ink);
   }
   .head {
     display: flex;
@@ -140,52 +146,22 @@
     font-weight: 800;
     color: var(--ink-2);
   }
-  .waves {
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    height: 20px;
-  }
-  .waves i {
-    display: block;
-    width: 4px;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--ink-3);
-  }
-  .waves.on i {
-    background: var(--ink);
-    animation: wave 0.7s ease-in-out infinite;
-  }
-  .waves.on i:nth-child(2) {
-    animation-delay: 0.12s;
-  }
-  .waves.on i:nth-child(3) {
-    animation-delay: 0.24s;
-  }
-  .waves.on i:nth-child(4) {
-    animation-delay: 0.36s;
-  }
-  @keyframes wave {
-    0%,
-    100% {
-      height: 6px;
-    }
-    50% {
-      height: 18px;
-    }
-  }
   .play {
     flex: none;
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    border: 2px solid var(--ink);
+    border: var(--line) solid var(--ink);
     background: var(--white);
     display: grid;
     place-items: center;
     padding: 0;
+  }
+  .head .play {
+    margin-left: auto;
+  }
+  .play.on {
+    background: var(--sun);
   }
   .play:active {
     transform: scale(0.92);
@@ -195,6 +171,36 @@
     height: 18px;
     fill: var(--ink);
     margin-left: 2px;
+  }
+  /* Playing: three bars bob inside the button. */
+  .eq {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    height: 18px;
+  }
+  .eq i {
+    display: block;
+    width: 4px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--ink);
+    animation: eq 0.7s ease-in-out infinite;
+  }
+  .eq i:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .eq i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  @keyframes eq {
+    0%,
+    100% {
+      height: 6px;
+    }
+    50% {
+      height: 17px;
+    }
   }
   .body {
     display: grid;

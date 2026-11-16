@@ -9,9 +9,25 @@
   /**
    * A friend's own speech: Japanese typed out with soft blips while their mouth moves. The mouth moves only while
    * typing AND while no English clip is playing: the English voice is never a friend's voice (REVIEW 3.10).
-   * The tail points up at whoever is speaking.
+   * The tail points at whoever is speaking: up from under the stage (lessons), or down from above their head (Today,
+   * where the bubble floats over the scene).
    */
-  let { who, text = '', before, children }: { who: FriendId; text?: string; before?: Snippet; children?: Snippet } = $props();
+  let {
+    who,
+    text = '',
+    tail = 'up',
+    named = true,
+    before,
+    children,
+  }: {
+    who: FriendId;
+    text?: string;
+    tail?: 'up' | 'down';
+    /** Show the speaker's name (off where the tail alone makes it plain, as on Today). */
+    named?: boolean;
+    before?: Snippet;
+    children?: Snippet;
+  } = $props();
 
   let shown = $state('');
   let typing = $state(false);
@@ -62,8 +78,8 @@
   });
 </script>
 
-<div class="bubble" bind:this={el}>
-  <span class="name">{FRIENDS[who].name}</span>
+<div class="bubble" class:down={tail === 'down'} bind:this={el}>
+  {#if named}<span class="name">{FRIENDS[who].name}</span>{/if}
   {@render before?.()}
   {#if text}<p class="text" aria-label={text}>{shown}<span class="rest" aria-hidden="true">{text.slice(shown.length)}</span></p>{/if}
   {@render children?.()}
@@ -76,9 +92,9 @@
     background: var(--white);
     border: var(--line) solid var(--ink);
     border-radius: var(--hand);
-    padding: 9px 14px 11px;
-    font-size: 16px;
-    line-height: 1.55;
+    padding: 7px 13px 9px;
+    font-size: 15px;
+    line-height: 1.5;
     font-weight: 700;
   }
   .bubble::before,
@@ -90,8 +106,8 @@
     transform: translateX(-50%);
   }
   .bubble::before {
-    top: -17px;
-    border-width: 0 11px 17px 11px;
+    top: -15px;
+    border-width: 0 10px 15px 10px;
     border-color: transparent transparent var(--ink) transparent;
   }
   .bubble::after {
@@ -99,9 +115,21 @@
     border-width: 0 7px 12px 7px;
     border-color: transparent transparent var(--white) transparent;
   }
+  .down::before {
+    top: auto;
+    bottom: -15px;
+    border-width: 15px 10px 0 10px;
+    border-color: var(--ink) transparent transparent transparent;
+  }
+  .down::after {
+    top: auto;
+    bottom: -11px;
+    border-width: 12px 7px 0 7px;
+    border-color: var(--white) transparent transparent transparent;
+  }
   .name {
     display: block;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--ink-2);
     margin-bottom: 1px;

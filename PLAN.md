@@ -205,7 +205,8 @@ A short starter pack, ten weekly packs of about 10 exchanges each, then two week
 ## 6. Look and feel
 
 - **Colours:** a warm cream paper background, the RPG's ink brown (`#66432F`) for all text and outlines instead of black, soft sky blue and blush pink. Each friend has an accent colour for their pack.
-- **Shapes:** thick brown outlines that look hand-drawn, large rounded corners, manga speech bubbles with a tail pointing at whoever is speaking.
+- **Shapes:** fine brown outlines that look hand-drawn (2px since the redesign; the first version's 3px was heavier than the original's line), large rounded corners, manga speech bubbles with a tail pointing at whoever is speaking. Cards lie flat; only buttons cast a hard shadow, so what can be tapped stands out.
+- **Layout ("Focus", chosen 2026-11-16):** the friends' stage is sized to what they do on each screen. Today is a large scene with Hachiware's greeting floating above the friends. In a lesson the friends get a band where they react, and below it one task at a time: the step's name in the top bar (新しいフレーズ, まねして言う, 聞き取りクイズ, 答えてみよう), the cards, and one row of buttons. The end of a lesson grows back into a scene for the celebration. The notebook, practice and settings are plain pages without the stage (the 3D stops drawing there).
 - **Word blocks** look like rounded stickers. Highlighted blocks carry the host friend's accent colour, like a marker pen.
 - **Type:** the rounded fonts already on the iPhone (Hiragino Maru Gothic for Japanese, SF Rounded for English), so nothing is downloaded.
 - **3D:** the same toon shading and ink outline as the RPG, on a simple meadow stage. Later the sky follows the phone's clock, so "Good morning" and "Good night" match the real time of day.

@@ -1,5 +1,5 @@
 <script lang="ts">
-  /** Title row of a full page (settings, self-check, install guide), with a close button. */
+  /** Title row of a page reached from Settings (backup, self-check, install guide), with a close button. */
   let { title, onClose }: { title: string; onClose: () => void } = $props();
 </script>
 
@@ -23,10 +23,11 @@
     font-weight: 900;
   }
   .close {
-    width: 40px;
-    height: 40px;
+    flex: none;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    border: 2px solid var(--ink);
+    border: var(--line) solid var(--ink);
     background: var(--white);
     display: grid;
     place-items: center;

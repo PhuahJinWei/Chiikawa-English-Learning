@@ -72,7 +72,7 @@
   }
   .top {
     flex: none;
-    padding-top: 16px;
+    padding-top: 18px;
     position: relative;
     z-index: 1;
   }
@@ -88,11 +88,11 @@
   }
   .content {
     display: grid;
-    gap: 12px;
-    padding: 12px 0 10px;
+    gap: 10px;
+    padding: 10px 0 8px;
   }
   .step:not(:has(.top)) .content {
-    padding-top: 18px;
+    padding-top: 16px;
   }
   .actions {
     flex: none;

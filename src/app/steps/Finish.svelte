@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
+  import { onDestroy, untrack } from 'svelte';
   import { UI } from '../../content/index.ts';
   import Bubble from '../components/Bubble.svelte';
   import StepLayout from '../components/StepLayout.svelte';
@@ -33,6 +33,10 @@
   const hour = new Date().getHours();
   const late = hour >= 20 || hour < 4;
   const day = $derived(app.progress.started === null ? 1 : app.today - app.progress.started + 1);
+
+  // The friends' stage grows into a scene for the celebration (App.svelte), and shrinks back when she leaves.
+  app.celebrating = true;
+  onDestroy(() => (app.celebrating = false));
 
   sfx.fanfare();
   act([
@@ -82,14 +86,12 @@
       </dl>
     </div>
   {/snippet}
-  {#snippet extra()}
-    {#if phase === 'stamp'}
-      <button class="btn soft" onclick={onMore}>もっと練習する</button>
-    {/if}
-  {/snippet}
   {#snippet primary()}
     {#if phase === 'stamp'}
-      <button class="btn primary" onclick={thanks}><UiWord t={UI.thanks} /></button>
+      <div class="pair">
+        <button class="btn soft" onclick={onMore}>もっと練習する</button>
+        <button class="btn primary" onclick={thanks}><UiWord t={UI.thanks} /></button>
+      </div>
     {:else}
       <button class="btn primary" onclick={onClose}><UiWord t={late ? UI.night : UI.bye} /></button>
     {/if}
@@ -102,6 +104,15 @@
     font-size: 21px;
     margin-bottom: 2px;
   }
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .pair .soft {
+    min-height: 60px;
+  }
   .stamp-card {
     display: flex;
     align-items: center;
@@ -109,8 +120,8 @@
   }
   .stamp {
     flex: none;
-    width: 84px;
-    height: 84px;
+    width: 104px;
+    height: 104px;
     border-radius: 50%;
     border: 4px solid #e0607a;
     color: #e0607a;
@@ -129,7 +140,7 @@
     }
   }
   .stamp-day {
-    font-size: 32px;
+    font-size: 40px;
     font-weight: 900;
     line-height: 1;
   }

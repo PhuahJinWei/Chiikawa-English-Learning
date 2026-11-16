@@ -35,6 +35,8 @@ export const app = $state({
   offline: 'unknown' as 'unknown' | 'preparing' | 'ready',
   /** The running build's content version, from the service worker ('' in development). */
   build: '',
+  /** The end of a lesson is showing: the friends' stage grows for the celebration (App.svelte). */
+  celebrating: false,
 });
 
 /** The version as shown to her and in reports: '0.1.0' plus the build, when known. */
