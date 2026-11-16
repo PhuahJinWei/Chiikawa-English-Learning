@@ -91,7 +91,7 @@ iPhone's own English voice until you voice it:
 | `src/content/` | The learning path (`course/`), word blocks with readings (`blocks.ts`) and the voice's phonemes for them (`phonemes.json`), topics, the app's own words (Japanese and English), the English you voiced from her notes (`notes.ts`); `index.ts` turns the path into what the app uses |
 | `src/learn/` | Review schedule, daily lesson builder, practice, saved progress (including the lesson in progress and her notes), notes, backups, the Japanese → English shift, sound-alike wrong choices for the listening quiz (`contrast.ts`) |
 | `src/app/` | Screens (Svelte): Today, Notebook, Practice, Settings, Backup and the lesson (Meet, Shadow, Catch, Answer, Finish); sound with two ways of playing and self-recovery (`audio.svelte.ts`), pause and tap priority (`script.svelte.ts`); screen wake lock; errors (`errors.ts`); updates and offline status (`updates.ts`); install guide, self-check, first-run tour |
-| `src/stage/` | The 3D friends, copied from the Chiikawa RPG (`rpg/`) behind a small interface (`types.ts`) |
+| `src/stage/` | The 3D friends, copied from the Chiikawa RPG (`rpg/`) behind a small interface (`types.ts`), and the meadow they stand in (`Backdrop.ts`) |
 | `public/audio/` | Generated English clips: one per line and per block, Heart voice, natural speed only |
 | `art/` | Source art: the star portrait the icons are made from |
 | `tools/audio/` | The audio generator (Kokoro, runs locally); `phonemes.mjs` writes the phonemes the readings are checked against, without audio; `say-as.mjs` respells words the voice misreads; `pitch.mjs` measures each clip's pitch for the review page |

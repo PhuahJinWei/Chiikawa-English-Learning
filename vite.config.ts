@@ -16,8 +16,9 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   build: {
-    // three.js makes one ~850 KB chunk; it is downloaded once and then kept offline, so splitting it buys nothing.
-    chunkSizeWarningLimit: 1000,
+    // three.js and the app make one chunk of about 1 MB; it is downloaded once and then kept offline, so splitting it
+    // buys nothing.
+    chunkSizeWarningLimit: 1100,
   },
   server: {
     // The RPG uses 5173; this keeps both runnable at once.

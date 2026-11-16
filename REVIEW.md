@@ -6,6 +6,28 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## The stage's meadow (2026-11-16)
+
+You said the ground the friends stand on looked plain, not like Chiikawa's world.
+
+- **What the anime's fields look like** (from its scenes and the official game, looked at for style only; nothing was copied):
+  - A wide, light yellow-green field with small marks of grass and tiny pink, white and yellow flowers.
+  - Soft grey-mauve mountain ranges on the horizon, with a line along the ridge.
+  - A band of round, bumpy trees along the mountains' foot, and now and then one big puffy tree.
+  - A pale blue sky with small clouds.
+  - Background shapes have a light line in a darker shade of their own colour.
+- **The new meadow** (`src/stage/Backdrop.ts`):
+  - Painted once at start-up into a few small pictures: the field's marks (a repeating tile), one long painting of mountains and tree line, the clouds and two big trees.
+  - Seven draw calls and no fog. The WebKit self-check still measures about 60 fps.
+  - The two big trees frame the friends in a lesson's band. On Today's taller scene they peek in at the edges.
+  - The fallback 2D stage and the stage's colour before it draws use the same sky, mountains, trees and field, so nothing jumps.
+- **Checked:**
+  - The stage test page at the scene, band and strip sizes.
+  - Today and a lesson in the browser pane and in WebKit at iPhone 13 size.
+  - The fallback 2D stage in WebKit with 3D switched off.
+  - The tests (88), the type check, the build and the WebKit smoke test (26 of 26).
+- **Also:** the app's main file is now 1,002 KB, so the build's size warning moved from 1,000 to 1,100 KB. It is downloaded once and kept offline, so splitting it would buy nothing.
+
 ## Hand-drawn outlines (2026-11-16)
 
 You asked for thicker, uneven outlines to fit the Chiikawa look. The 2px lines were also thinner than the friends' own outlines on the stage, so the page and the friends did not match.

@@ -39,18 +39,65 @@ export function createFlatStage(): StageApi {
     });
   }
 
+  /**
+   * The meadow behind the friends, after the 3D stage's (src/stage/Backdrop.ts) in a few simple shapes: the sky, two
+   * mountain ranges, the tree line on the horizon and the field, so nothing jumps when the 3D stage takes over.
+   */
+  function scenery(pen: CanvasRenderingContext2D) {
+    const horizon = h * 0.38;
+    const sky = pen.createLinearGradient(0, 0, 0, horizon);
+    sky.addColorStop(0, '#a3d7f0');
+    sky.addColorStop(1, '#eaf5f0');
+    pen.fillStyle = sky;
+    pen.fillRect(0, 0, w, horizon + 1);
+    const range = (ridge: [number, number][], fill: string, line: string) => {
+      pen.beginPath();
+      ridge.forEach(([x, y], i) => (i ? pen.lineTo(x * w, y * h) : pen.moveTo(x * w, y * h)));
+      pen.lineTo(w, horizon + 1);
+      pen.lineTo(0, horizon + 1);
+      pen.closePath();
+      pen.fillStyle = fill;
+      pen.fill();
+      pen.beginPath();
+      ridge.forEach(([x, y], i) => (i ? pen.lineTo(x * w, y * h) : pen.moveTo(x * w, y * h)));
+      pen.strokeStyle = line;
+      pen.lineWidth = 1.5;
+      pen.stroke();
+    };
+    range(
+      [[0, 0.3], [0.12, 0.22], [0.25, 0.29], [0.38, 0.21], [0.52, 0.28], [0.66, 0.2], [0.8, 0.27], [0.92, 0.23], [1, 0.28]],
+      '#cdc8da',
+      '#aba3bd',
+    );
+    range([[0, 0.33], [0.18, 0.27], [0.34, 0.33], [0.5, 0.29], [0.7, 0.34], [0.86, 0.28], [1, 0.32]], '#b7b1c8', '#918aa6');
+    // The tree line: round crowns, outlined along the top.
+    const r = Math.max(5, h * 0.035);
+    const crowns: number[] = [];
+    for (let x = -r; x < w + r; x += r * 1.5) crowns.push(x);
+    pen.strokeStyle = '#5f9150';
+    pen.lineWidth = 3;
+    for (const x of crowns) {
+      pen.beginPath();
+      pen.arc(x, horizon - r * 0.4, r, 0, Math.PI * 2);
+      pen.stroke();
+    }
+    pen.fillStyle = '#93c47a';
+    for (const x of crowns) {
+      pen.beginPath();
+      pen.arc(x, horizon - r * 0.4, r, 0, Math.PI * 2);
+      pen.fill();
+    }
+    const field = pen.createLinearGradient(0, horizon, 0, h);
+    field.addColorStop(0, '#d4eab6');
+    field.addColorStop(1, '#c3e19c');
+    pen.fillStyle = field;
+    pen.fillRect(0, horizon, w, h - horizon);
+  }
+
   function draw(now: number) {
     if (!g || !canvas) return;
     g.clearRect(0, 0, w, h);
-    const sky = g.createLinearGradient(0, 0, 0, h);
-    sky.addColorStop(0, '#cfe9f6');
-    sky.addColorStop(1, '#fdf3e2');
-    g.fillStyle = sky;
-    g.fillRect(0, 0, w, h);
-    g.fillStyle = '#d8ecc4';
-    g.beginPath();
-    g.ellipse(w / 2, h * 1.02, w * 0.8, h * 0.24, 0, 0, Math.PI * 2);
-    g.fill();
+    scenery(g);
     const t = now / 1000;
     for (const f of cast) {
       if (f.gesture && ONE_SHOT[f.gesture] && t > f.gestureEnd) {

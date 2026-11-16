@@ -159,7 +159,8 @@
     height: var(--stage-now);
     transition: height 0.35s ease;
     overflow: hidden;
-    background: linear-gradient(#cfe9f6, #fdf3e2);
+    /* The meadow's sky and field (src/stage/Backdrop.ts), for the moment before the stage draws. */
+    background: linear-gradient(#a3d7f0, #eaf5f0 37%, #d4eab6 38%, #c3e19c);
   }
   .lower {
     position: relative;

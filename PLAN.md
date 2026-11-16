@@ -209,7 +209,12 @@ A short starter pack, ten weekly packs of about 10 exchanges each, then two week
 - **Layout ("Focus", chosen 2026-11-16):** the friends' stage is sized to what they do on each screen. Today is a large scene with Hachiware's greeting floating above the friends. In a lesson the friends get a band where they react, and below it one task at a time: the step's name in the top bar (新しいフレーズ, まねして言う, 聞き取りクイズ, 答えてみよう), the cards, and one row of buttons. The end of a lesson grows back into a scene for the celebration. The notebook, practice and settings are plain pages without the stage (the 3D stops drawing there).
 - **Word blocks** look like rounded stickers. Highlighted blocks carry the host friend's accent colour, like a marker pen.
 - **Type:** the rounded fonts already on the iPhone (Hiragino Maru Gothic for Japanese, SF Rounded for English), so nothing is downloaded.
-- **3D:** the same toon shading and ink outline as the RPG, on a simple meadow stage. Later the sky follows the phone's clock, so "Good morning" and "Good night" match the real time of day.
+- **3D:** the same toon shading and ink outline as the RPG. The friends stand in a meadow like the fields in the Chiikawa anime (since 2026-11-16, your request):
+  - A yellow-green field dotted with grass marks, clover and tiny flowers.
+  - A band of round trees at the foot of soft grey-mauve mountains, and a big round tree at each side.
+  - A pale blue sky with small outlined clouds.
+  - Each shape has a light line in a darker shade of its own colour, as the anime's backgrounds do. It is all painted once at start-up, so it costs nothing while the friends move.
+  - Later the sky follows the phone's clock, so "Good morning" and "Good night" match the real time of day.
 - **Motion:** the friends are always alive: breathing, blinking, looking toward the learner's finger. Buttons squash softly. A celebration is a friend cheering.
 - **Sound:** soft pops and chimes only.
 - **Thumb-first:** portrait only, large targets in the bottom half, clear of the notch and the home bar.
