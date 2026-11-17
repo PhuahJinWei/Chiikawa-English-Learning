@@ -7,6 +7,7 @@ import { PART3 } from './course/part3.ts';
 import { PART4 } from './course/part4.ts';
 import { PART5 } from './course/part5.ts';
 import { PART6 } from './course/part6.ts';
+import { PART7 } from './course/part7.ts';
 import { ORDER } from './course/order.ts';
 import { TALK_DEFS } from './talks.ts';
 import { TOPICS } from './topics.ts';
@@ -14,12 +15,12 @@ import { UI } from './ui.ts';
 import type { Act, Exchange, ExchangeKind, Line, StepDef, Talk, TalkDef, Topic } from './types.ts';
 
 /**
- * The course is one learning path, in the order of src/content/course/order.ts; the steps are written in part1.ts to part6.ts. Each step is one
+ * The course is one learning path, in the order of src/content/course/order.ts; the steps are written in part1.ts to part7.ts. Each step is one
  * thing she learns. This module turns the steps into what the app uses; the checks in tests/content.test.ts make sure
  * they link up, and tools/sheet/make-sheet.mjs shows them as a sheet for review.
  */
 /** Every step as written, in the files' order (the checks use this to find steps missing from the order). */
-export const WRITTEN: readonly StepDef[] = [...PART1, ...PART2, ...PART3, ...PART4, ...PART5, ...PART6];
+export const WRITTEN: readonly StepDef[] = [...PART1, ...PART2, ...PART3, ...PART4, ...PART5, ...PART6, ...PART7];
 
 // The path follows course/order.ts. A step missing from the order still comes at the end, so nothing is ever lost;
 // the checks name it.

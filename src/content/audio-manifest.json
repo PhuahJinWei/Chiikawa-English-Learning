@@ -16,6 +16,16 @@
     "end": 201
    }
   },
+  "a-hundred": {
+   "text": "A hundred.",
+   "ms": 890,
+   "phonemes": "ɐ hˈʌndɹɪd",
+   "pitch": {
+    "start": 224,
+    "low": 93,
+    "end": 204
+   }
+  },
   "a-little": {
    "text": "A little.",
    "ms": 710,
@@ -44,6 +54,16 @@
     "start": 233,
     "low": 167,
     "end": 232
+   }
+  },
+  "a-teacher": {
+   "text": "a teacher.",
+   "ms": 910,
+   "phonemes": "ɐ tˈiːtʃɚ",
+   "pitch": {
+    "start": 195,
+    "low": 89,
+    "end": 174
    }
   },
   "a-week": {
@@ -216,6 +236,16 @@
     "end": 181
    }
   },
+  "are-you-q": {
+   "text": "are you?",
+   "ms": 810,
+   "phonemes": "ɑːɹ jˈuː",
+   "pitch": {
+    "start": 220,
+    "low": 176,
+    "end": 195
+   }
+  },
   "are-you-ready-q": {
    "text": "Are you ready?",
    "ms": 970,
@@ -256,6 +286,16 @@
     "end": 187
    }
   },
+  "at-a-bank": {
+   "text": "at a bank.",
+   "ms": 840,
+   "phonemes": "æɾə bˈæŋk",
+   "pitch": {
+    "start": 153,
+    "low": 109,
+    "end": 204
+   }
+  },
   "at-nine": {
    "text": "At nine.",
    "ms": 840,
@@ -294,6 +334,16 @@
     "start": 216,
     "low": 88,
     "end": 176
+   }
+  },
+  "beautiful-x": {
+   "text": "beautiful!",
+   "ms": 860,
+   "phonemes": "bjˈuːɾifəl",
+   "pitch": {
+    "start": 209,
+    "low": 83,
+    "end": 189
    }
   },
   "been-to": {
@@ -366,6 +416,16 @@
     "end": 176
    }
   },
+  "can-i-take-a-picture-q": {
+   "text": "Can I take a picture?",
+   "ms": 1430,
+   "phonemes": "kæn aɪ tˈeɪk ɐ pˈɪktʃɚ",
+   "pitch": {
+    "start": 234,
+    "low": 82,
+    "end": 172
+   }
+  },
   "can-you": {
    "text": "Can you",
    "ms": 770,
@@ -436,6 +496,16 @@
     "end": 88
    }
   },
+  "cold-x": {
+   "text": "cold!",
+   "ms": 750,
+   "phonemes": "kˈoʊld",
+   "pitch": {
+    "start": 265,
+    "low": 183,
+    "end": 231
+   }
+  },
   "come": {
    "text": "Come",
    "ms": 670,
@@ -464,6 +534,16 @@
     "start": 254,
     "low": 93,
     "end": 186
+   }
+  },
+  "cute-x": {
+   "text": "cute!",
+   "ms": 700,
+   "phonemes": "kjˈuːt",
+   "pitch": {
+    "start": 270,
+    "low": 189,
+    "end": 189
    }
   },
   "days": {
@@ -727,6 +807,16 @@
     "end": 172
    }
   },
+  "fifty": {
+   "text": "Fifty.",
+   "ms": 820,
+   "phonemes": "fˈɪfti",
+   "pitch": {
+    "start": 253,
+    "low": 174,
+    "end": 190
+   }
+  },
   "finished-x": {
    "text": "Finished!",
    "ms": 780,
@@ -785,6 +875,16 @@
     "start": 251,
     "low": 98,
     "end": 178
+   }
+  },
+  "forty": {
+   "text": "Forty.",
+   "ms": 780,
+   "phonemes": "fˈɔːɹɾi",
+   "pitch": {
+    "start": 248,
+    "low": 175,
+    "end": 202
    }
   },
   "four": {
@@ -1207,6 +1307,16 @@
     "end": 186
    }
   },
+  "hot-x": {
+   "text": "hot!",
+   "ms": 710,
+   "phonemes": "hˈɑːt",
+   "pitch": {
+    "start": 227,
+    "low": 197,
+    "end": 212
+   }
+  },
   "how": {
    "text": "How",
    "ms": 650,
@@ -1267,6 +1377,26 @@
     "end": 179
    }
   },
+  "how-long": {
+   "text": "How long",
+   "ms": 860,
+   "phonemes": "hˌaʊ lˈɔŋ",
+   "pitch": {
+    "start": 248,
+    "low": 81,
+    "end": 180
+   }
+  },
+  "how-long-are-you-staying-q": {
+   "text": "How long are you staying?",
+   "ms": 1370,
+   "phonemes": "hˌaʊ lˈɔŋ ɑːɹ juː stˈeɪɪŋ",
+   "pitch": {
+    "start": 193,
+    "low": 116,
+    "end": 181
+   }
+  },
   "how-many-q": {
    "text": "How many?",
    "ms": 850,
@@ -1275,6 +1405,26 @@
     "start": 241,
     "low": 90,
     "end": 134
+   }
+  },
+  "how-old": {
+   "text": "How old",
+   "ms": 890,
+   "phonemes": "hˌaʊ ˈoʊld",
+   "pitch": {
+    "start": 245,
+    "low": 82,
+    "end": 184
+   }
+  },
+  "how-old-are-you-q": {
+   "text": "How old are you?",
+   "ms": 1110,
+   "phonemes": "hˌaʊ ˈoʊld ɑːɹ juː",
+   "pitch": {
+    "start": 254,
+    "low": 80,
+    "end": 196
    }
   },
   "how-was": {
@@ -1397,6 +1547,16 @@
     "end": 187
    }
   },
+  "i-see": {
+   "text": "I see.",
+   "ms": 810,
+   "phonemes": "aɪ sˈiː",
+   "pitch": {
+    "start": 220,
+    "low": 80,
+    "end": 181
+   }
+  },
   "i-start-at-seven": {
    "text": "I start at seven.",
    "ms": 1190,
@@ -1507,6 +1667,16 @@
     "end": 176
    }
   },
+  "i-work-at-a-bank": {
+   "text": "I work at a bank.",
+   "ms": 1130,
+   "phonemes": "aɪ wˈɜːk æɾə bˈæŋk",
+   "pitch": {
+    "start": 216,
+    "low": 81,
+    "end": 220
+   }
+  },
   "i-work-five-days-a-week": {
    "text": "I work five days a week.",
    "ms": 1560,
@@ -1575,6 +1745,16 @@
     "start": 229,
     "low": 188,
     "end": 191
+   }
+  },
+  "im-a-teacher": {
+   "text": "I'm a teacher.",
+   "ms": 1030,
+   "phonemes": "aɪm ɐ tˈiːtʃɚ",
+   "pitch": {
+    "start": 183,
+    "low": 82,
+    "end": 166
    }
   },
   "im-from-japan": {
@@ -1717,6 +1897,16 @@
     "end": 202
    }
   },
+  "im-twenty-five": {
+   "text": "I'm twenty-five.",
+   "ms": 1200,
+   "phonemes": "aɪm twˈɛntifˈaɪv",
+   "pitch": {
+    "start": 179,
+    "low": 84,
+    "end": 201
+   }
+  },
   "im-yuki": {
    "text": "I'm Yuki.",
    "ms": 920,
@@ -1747,6 +1937,16 @@
     "end": 212
    }
   },
+  "in-english-q": {
+   "text": "in English?",
+   "ms": 900,
+   "phonemes": "ɪn ˈɪŋɡlɪʃ",
+   "pitch": {
+    "start": 225,
+    "low": 90,
+    "end": 190
+   }
+  },
   "in-japan": {
    "text": "In Japan.",
    "ms": 990,
@@ -1755,6 +1955,16 @@
     "start": 215,
     "low": 83,
     "end": 180
+   }
+  },
+  "in-malaysia-q": {
+   "text": "in Malaysia?",
+   "ms": 940,
+   "phonemes": "ɪn məlˈeɪʒə",
+   "pitch": {
+    "start": 225,
+    "low": 190,
+    "end": 195
    }
   },
   "is-fine-x": {
@@ -1807,6 +2017,16 @@
     "end": 170
    }
   },
+  "is-this": {
+   "text": "Is this",
+   "ms": 830,
+   "phonemes": "ɪz ðˈɪs",
+   "pitch": {
+    "start": 228,
+    "low": 91,
+    "end": 186
+   }
+  },
   "is-this-q": {
    "text": "is this?",
    "ms": 820,
@@ -1815,6 +2035,16 @@
     "start": 229,
     "low": 93,
     "end": 195
+   }
+  },
+  "is-this-your-first-time-in-malaysia-q": {
+   "text": "Is this your first time in Malaysia?",
+   "ms": 1960,
+   "phonemes": "ɪz ðɪs jʊɹ fˈɜːst tˈaɪm ɪn məlˈeɪʒə",
+   "pitch": {
+    "start": 223,
+    "low": 166,
+    "end": 179
    }
   },
   "it-was": {
@@ -1857,6 +2087,16 @@
     "end": 232
    }
   },
+  "its-beautiful-x": {
+   "text": "It's beautiful!",
+   "ms": 1060,
+   "phonemes": "ɪts bjˈuːɾifəl",
+   "pitch": {
+    "start": 237,
+    "low": 84,
+    "end": 174
+   }
+  },
   "its-chicken": {
    "text": "It's chicken.",
    "ms": 950,
@@ -1865,6 +2105,26 @@
     "start": 228,
     "low": 83,
     "end": 171
+   }
+  },
+  "its-cold-x": {
+   "text": "It's cold!",
+   "ms": 920,
+   "phonemes": "ɪts kˈoʊld",
+   "pitch": {
+    "start": 244,
+    "low": 85,
+    "end": 183
+   }
+  },
+  "its-cute-x": {
+   "text": "It's cute!",
+   "ms": 880,
+   "phonemes": "ɪts kjˈuːt",
+   "pitch": {
+    "start": 227,
+    "low": 90,
+    "end": 138
    }
   },
   "its-delicious-x": {
@@ -1885,6 +2145,16 @@
     "start": 231,
     "low": 82,
     "end": 177
+   }
+  },
+  "its-hot-x": {
+   "text": "It's hot!",
+   "ms": 860,
+   "phonemes": "ɪts hˈɑːt",
+   "pitch": {
+    "start": 234,
+    "low": 97,
+    "end": 142
    }
   },
   "its-ok": {
@@ -2178,6 +2448,16 @@
     "end": 220
    }
   },
+  "my-second-time": {
+   "text": "My second time.",
+   "ms": 1200,
+   "phonemes": "maɪ sˈɛkənd tˈaɪm",
+   "pitch": {
+    "start": 209,
+    "low": 80,
+    "end": 169
+   }
+  },
   "next-one-x": {
    "text": "Next one!",
    "ms": 900,
@@ -2236,6 +2516,16 @@
     "start": 205,
     "low": 152,
     "end": 165
+   }
+  },
+  "nice-x": {
+   "text": "nice!",
+   "ms": 750,
+   "phonemes": "nˈaɪs",
+   "pitch": {
+    "start": 211,
+    "low": 192,
+    "end": 221
    }
   },
   "night-x": {
@@ -2416,6 +2706,16 @@
     "start": 197,
     "low": 161,
     "end": 167
+   }
+  },
+  "one-week": {
+   "text": "One week.",
+   "ms": 870,
+   "phonemes": "wˈʌn wˈiːk",
+   "pitch": {
+    "start": 222,
+    "low": 92,
+    "end": 94
    }
   },
   "or": {
@@ -2818,6 +3118,16 @@
     "end": 184
    }
   },
+  "staying-q": {
+   "text": "staying?",
+   "ms": 790,
+   "phonemes": "stˈeɪɪŋ",
+   "pitch": {
+    "start": 267,
+    "low": 163,
+    "end": 174
+   }
+  },
   "sunday": {
    "text": "Sunday.",
    "ms": 780,
@@ -2846,6 +3156,16 @@
     "start": 280,
     "low": 179,
     "end": 199
+   }
+  },
+  "take-a-picture-q": {
+   "text": "take a picture?",
+   "ms": 1080,
+   "phonemes": "tˈeɪk ɐ pˈɪktʃɚ",
+   "pitch": {
+    "start": 242,
+    "low": 80,
+    "end": 159
    }
   },
   "take-pictures": {
@@ -2968,6 +3288,26 @@
     "end": 202
    }
   },
+  "thats": {
+   "text": "That's",
+   "ms": 720,
+   "phonemes": "ðˈæts",
+   "pitch": {
+    "start": 212,
+    "low": 192,
+    "end": 209
+   }
+  },
+  "thats-nice-x": {
+   "text": "That's nice!",
+   "ms": 960,
+   "phonemes": "ðæts nˈaɪs",
+   "pitch": {
+    "start": 222,
+    "low": 85,
+    "end": 193
+   }
+  },
   "the-beach": {
    "text": "the beach.",
    "ms": 850,
@@ -3006,6 +3346,16 @@
     "start": 238,
     "low": 171,
     "end": 187
+   }
+  },
+  "thirty": {
+   "text": "Thirty.",
+   "ms": 740,
+   "phonemes": "θˈɜːɾi",
+   "pitch": {
+    "start": 258,
+    "low": 175,
+    "end": 201
    }
   },
   "this-is": {
@@ -3328,6 +3678,26 @@
     "end": 204
    }
   },
+  "twenty": {
+   "text": "Twenty.",
+   "ms": 830,
+   "phonemes": "twˈɛnti",
+   "pitch": {
+    "start": 254,
+    "low": 171,
+    "end": 187
+   }
+  },
+  "twenty-five": {
+   "text": "twenty-five.",
+   "ms": 1040,
+   "phonemes": "twˈɛntifˈaɪv",
+   "pitch": {
+    "start": 263,
+    "low": 87,
+    "end": 204
+   }
+  },
   "two": {
    "text": "Two.",
    "ms": 680,
@@ -3618,6 +3988,16 @@
     "end": 180
    }
   },
+  "what-is-this-in-english-q": {
+   "text": "What is this in English?",
+   "ms": 1410,
+   "phonemes": "wˌʌt ɪz ðɪs ɪn ˈɪŋɡlɪʃ",
+   "pitch": {
+    "start": 206,
+    "low": 92,
+    "end": 188
+   }
+  },
   "what-is-this-q": {
    "text": "What is this?",
    "ms": 1000,
@@ -3809,6 +4189,16 @@
     "end": 205
    }
   },
+  "wow-x": {
+   "text": "Wow!",
+   "ms": 670,
+   "phonemes": "wˈaʊ",
+   "pitch": {
+    "start": 211,
+    "low": 182,
+    "end": 202
+   }
+  },
   "yes": {
    "text": "Yes.",
    "ms": 720,
@@ -3897,6 +4287,16 @@
     "start": 209,
     "low": 173,
     "end": 209
+   }
+  },
+  "your-first-time": {
+   "text": "your first time",
+   "ms": 1170,
+   "phonemes": "jʊɹ fˈɜːst tˈaɪm",
+   "pitch": {
+    "start": 200,
+    "low": 81,
+    "end": 169
    }
   },
   "your-hobby-q": {

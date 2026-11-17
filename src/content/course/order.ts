@@ -1,5 +1,5 @@
 /**
- * The order she learns the steps in: the learning path. The steps themselves are written in part1.ts to part6.ts,
+ * The order she learns the steps in: the learning path. The steps themselves are written in part1.ts to part7.ts,
  * grouped by when they were written; this list alone decides the order (2026-11-17, so introductions could move up
  * without moving any step between files). Two new steps a day by default, so each line below is about one day.
  *
@@ -28,17 +28,22 @@ export const ORDER: readonly string[] = [
   'toilet', 'youre-welcome',
   'lets-eat', 'try-this',
   'name-and-you', 'ask-name',
+  // Asking back, early (moved up from days 49 and 50 on 2026-11-17: these keep a conversation going).
+  'how-about-you', 'ask-what-do-you-do',
+  'im-a-teacher', // added 2026-11-17
 
   // ── Days 17–26: the rest of the first phrases (all in the app before part 2).
   'its-ok', 'wait',
   'dont-understand', 'good',
   'full', 'ready',
   'spicy', 'look',
+  'wow', // added 2026-11-17
   'lets-go', 'tired',
   'next', 'auntie',
   'done', 'gochisousama',
   'listen', 'a-drink',
   'say-it', 'can-i-help',
+  'can-i-take-a-picture', // added 2026-11-17
   'no-need', 'excuse-me',
 
   // ── Days 27–31: numbers, the time and the days, which the sentences about her work need.
@@ -59,6 +64,7 @@ export const ORDER: readonly string[] = [
   'my-name-is', 'name-and-from-japan', 'bakery-and-drawing', // more "and" (2026-11-17)
   'where-do-you-live',
   'do-you-like-malaysia', 'how-was-your-trip',
+  'first-time-in-malaysia', 'how-long-staying', // added 2026-11-17
 
   // ── Days 40–49: longer answers, built from the short ones.
   'nice-to-meet-you-too', 'and-you',
@@ -66,11 +72,11 @@ export const ORDER: readonly string[] = [
   'one-more-time-please', 'i-understand',
   'no-thank-you-im-full', 'see-you-tomorrow',
   'good-night-see-you-tomorrow', 'its-delicious',
+  'its-hot', 'its-cold', 'its-cute', 'its-beautiful', 'thats-nice', // added 2026-11-17
   'sorry-i-dont-know', 'thank-you-for-having-me',
   'from-japan', 'sorry-i-dont-understand',
   'im-full-thank-you', 'im-ready',
   'a-little-its-good', 'no-problem',
-  'how-about-you', 'ask-what-do-you-do',
 
   // ── Days 50–57: food and feelings, and asking things herself.
   'what-do-you-want-to-eat', 'chicken-and-rice', // more "and" (2026-11-17)
@@ -80,7 +86,8 @@ export const ORDER: readonly string[] = [
   'me-too', 'im-thirsty',
   'im-tired', 'im-happy', 'tired-and-hungry', // more "and" (2026-11-17)
   'ask-how-are-you', 'ask-like-it',
-  'what-is-this', 'help-me',
+  'what-is-this', 'i-see', 'in-english', // added 2026-11-17
+  'help-me',
   'lets-go-she', 'what-tomorrow',
 
   // ── Days 58–64: plans, what happened, and saying goodbye.
@@ -91,5 +98,6 @@ export const ORDER: readonly string[] = [
   'yesterday-went-shopping',
   'tomorrow-want-shopping', 'it-was-fun',
   'today-was-fun', 'been-to-japan',
+  'twenty-thirty-forty', 'fifty-hundred', 'how-old', // added 2026-11-17
   'see-you-next-year', 'come-again-next-year',
 ];
