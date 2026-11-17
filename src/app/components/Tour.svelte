@@ -39,7 +39,7 @@
           </li>
         {/each}
       </ol>
-      <p>覚えたフレーズがそろうと、「{STEP_NAMES.talk}」で短い会話もします。途中でやめたいときは⏸を押してください。</p>
+      <p>覚えたフレーズで「{STEP_NAMES.talk}」もします。やめたいときは⏸を押してください。</p>
     {:else}
       <h2 id="tour-title">音のチェック</h2>
       <p>▶を押して、英語が聞こえるか確かめてください。</p>
@@ -86,9 +86,15 @@
     border-top-width: 4px;
     border-radius: 26px 26px 0 0;
     border-image: var(--frame-edge);
-    overflow-y: auto;
+    overflow: hidden;
   }
+  /* The page's card scrolls, if it ever has to, and the buttons under it stay in place: they were pushed below the
+     screen on an iPhone SE (2026-11-17). */
   .body {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     display: grid;
     gap: 10px;
     align-content: start;
@@ -161,9 +167,33 @@
     content: '・';
   }
   .nav {
+    flex: none;
     margin-top: auto;
     display: grid;
     gap: 10px;
+  }
+  /* Most iPhones (the home-screen app of an iPhone 13 is 797px tall): tighter, so each page fits without scrolling. */
+  @media (max-height: 820px) {
+    .tour {
+      gap: 8px;
+      padding-top: 12px;
+      padding-bottom: calc(10px + var(--safe-bottom));
+    }
+    .body {
+      gap: 8px;
+    }
+    p {
+      line-height: 1.55;
+    }
+    .steps {
+      gap: 6px;
+    }
+    .steps li {
+      padding: 5px 12px;
+    }
+    .nav {
+      gap: 6px;
+    }
   }
   .dots {
     display: flex;

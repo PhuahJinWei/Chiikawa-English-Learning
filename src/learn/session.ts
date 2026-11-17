@@ -51,6 +51,9 @@ export function readyTalks(p: Progress, talks: readonly Talk[]): Talk[] {
 }
 /** A daily lesson aims at about ten minutes (PLAN.md section 4), topped up with practice (REVIEW 2.1). */
 export const TARGET_SECONDS = 9 * 60;
+/** New phrases are taught while the lesson's own steps (reviews, anything left part-way, a conversation and the new
+ * phrases) take at most this long. */
+export const LESSON_SECONDS = 10 * 60;
 export const MAX_REVIEWS = 30;
 export const MAX_PRACTICE = 40;
 
@@ -61,14 +64,30 @@ export const estimateMinutes = (steps: readonly Step[]) => Math.max(1, Math.roun
 /** Exchanges first met on this day: the new-phrase limit is per day, however often the lesson restarts. */
 export const metOn = (p: Progress, day: number) => Object.values(p.ex).filter((e) => e.met === day).length;
 
-export function newAllowance(p: Progress, today: number, reviews: number): number {
-  const left = Math.max(0, p.settings.newPerDay - metOn(p, today));
-  if (reviews >= 24) return 0;
-  if (reviews >= 14) return Math.min(left, 1);
-  return left;
-}
-
 export const unmet = (p: Progress, ordered: readonly Exchange[]) => ordered.filter((e) => !p.ex[e.id]);
+
+/**
+ * How many of the `waiting` phrases today's lesson teaches (2026-11-17): as many as her setting allows (counted per
+ * day, so restarting the lesson gives no more), while the lesson's own steps (`core`: reviews, anything left
+ * part-way, a conversation) and the new phrases take about ten minutes at most (LESSON_SECONDS). None while more
+ * reviews are due than one lesson holds (`backlog`): those come first.
+ *
+ * Until 2026-11-17 it went by the number of reviews (one new phrase from 14 reviews, none from 24). That halved the
+ * pace from about day 9, and the minutes it saved went to practice that does not move the schedule: a learner doing
+ * every lesson met all 128 phrases on day 105 instead of about day 70.
+ */
+export function newAllowance(
+  p: Progress,
+  today: number,
+  waiting: readonly Exchange[],
+  core: readonly Step[],
+  backlog: boolean,
+): number {
+  if (backlog) return 0;
+  let n = Math.min(Math.max(0, p.settings.newPerDay - metOn(p, today)), waiting.length);
+  while (n > 0 && estimateSeconds([...core, ...stepsForNew(waiting.slice(0, n))]) > LESSON_SECONDS) n--;
+  return n;
+}
 
 /** New exchanges, interleaved so each is checked a little after it was taught rather than at once (REVIEW 2.4):
  * every Meet first, then the Catches, then the Answers. */
@@ -86,7 +105,8 @@ export function stepsForNew(es: readonly Exchange[]): Step[] {
 
 const catchAsk = (e: Exchange, n: number): 'meaning' | 'reply' => (e.kind === 'reply' && n % 2 === 1 ? 'reply' : 'meaning');
 
-function reviewSteps(p: Progress, ordered: readonly Exchange[], today: number): Step[] {
+/** Every review due today, the longest overdue first (a lesson holds MAX_REVIEWS of them). */
+function dueSteps(p: Progress, ordered: readonly Exchange[], today: number): Step[] {
   const due: { step: Step; due: number }[] = [];
   for (const e of ordered) {
     const ep = p.ex[e.id];
@@ -99,7 +119,7 @@ function reviewSteps(p: Progress, ordered: readonly Exchange[], today: number): 
     }
   }
   due.sort((a, b) => a.due - b.due || (a.step.kind === 'catch' ? -1 : 1));
-  return due.slice(0, MAX_REVIEWS).map((d) => d.step);
+  return due.map((d) => d.step);
 }
 
 /** Learned exchanges, weakest first (lowest boxes, most misses), then least recently practised. */
@@ -119,11 +139,12 @@ const practiceStep = (e: Exchange, n: number, flip = false): Step =>
     ? { kind: 'catch', exId: e.id, review: false, ask: catchAsk(e, n >> 1) }
     : { kind: 'answer', exId: e.id, review: false };
 
-/** Today's lesson: due reviews (oldest first), anything left part-way, new exchanges, one conversation once any is
- * ready (the one done longest ago), then practice (today's new phrases first, then the weakest learned ones) until it
- * is about ten minutes long. */
+/** Today's lesson: due reviews (oldest first), anything left part-way, new exchanges (as many as fit: newAllowance),
+ * one conversation once any is ready (the one done longest ago), then practice (today's new phrases first, then the
+ * weakest learned ones) until it is about ten minutes long. */
 export function buildSession(p: Progress, ordered: readonly Exchange[], today: number, talks: readonly Talk[] = []): Plan {
-  const reviews = reviewSteps(p, ordered, today);
+  const due = dueSteps(p, ordered, today);
+  const reviews = due.slice(0, MAX_REVIEWS);
   // Left part-way: understood but never answered (the Answer shows the reply once she has tried), or (after a
   // skipped Catch) answered but never checked.
   const unfinished: Step[] = ordered.flatMap((e): Step[] => {
@@ -133,9 +154,12 @@ export function buildSession(p: Progress, ordered: readonly Exchange[], today: n
     if (e.kind !== 'understand' && !ep.say) return [{ kind: 'answer', exId: e.id, review: false }];
     return [];
   });
-  const fresh = unmet(p, ordered).slice(0, newAllowance(p, today, reviews.length));
   const talk = readyTalks(p, talks)[0];
-  const steps: Step[] = [...reviews, ...unfinished, ...stepsForNew(fresh), ...(talk ? [{ kind: 'talk' as const, talkId: talk.id }] : [])];
+  const talkSteps: Step[] = talk ? [{ kind: 'talk', talkId: talk.id }] : [];
+  const waiting = unmet(p, ordered);
+  const allowed = newAllowance(p, today, waiting, [...reviews, ...unfinished, ...talkSteps], due.length > MAX_REVIEWS);
+  const fresh = waiting.slice(0, allowed);
+  const steps: Step[] = [...reviews, ...unfinished, ...stepsForNew(fresh), ...talkSteps];
   const inLesson = new Set(steps.filter(isExchangeStep).map((s) => s.exId));
   const pool = [...fresh, ...byWeakness(p, ordered).filter((e) => !inLesson.has(e.id))];
   // Up to three passes over the pool, alternating saying and understanding, until about ten minutes.
@@ -155,7 +179,8 @@ export function buildSession(p: Progress, ordered: readonly Exchange[], today: n
  * More new phrases once today's lesson is done (もっと覚える, 2026-11-17): the next ones in the path, as many as a day's
  * lesson teaches, learned the same way (Meet, Catch, Answer) and recorded like today's lesson. There is no daily
  * limit: she can take one round after another. Each phrase comes back for review on the following days, and a lesson
- * with many reviews due teaches fewer new phrases (newAllowance), so a big day evens itself out.
+ * teaches new phrases only while it stays about ten minutes long (newAllowance), so the reviews of a big day come
+ * first.
  */
 export function buildMore(p: Progress, ordered: readonly Exchange[]): Plan {
   const fresh = unmet(p, ordered).slice(0, p.settings.newPerDay);

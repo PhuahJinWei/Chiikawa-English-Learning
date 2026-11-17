@@ -36,7 +36,7 @@ Smoke tests in WebKit, Safari's engine (after `npm run build`; the first two lin
 
 ```bash
 cd tools/smoke && npm install && npx playwright install webkit && cd ../..
-npm run smoke        # serves dist/ under /eigo-friends/ and checks start-up, lesson, backup, offline, sideways, start-up panel
+npm run smoke        # serves dist/ under /eigo-friends/ and checks start-up, lesson, backup, offline, sideways, start-up panel, and that Today and the tour fit the home-screen app
 ```
 
 WebKit on Windows has no Web Audio and cannot play MP3, so sound itself is only reported there ("info"), never

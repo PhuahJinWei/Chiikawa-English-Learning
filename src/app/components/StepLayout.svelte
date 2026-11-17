@@ -12,7 +12,17 @@
     extra,
     primary,
     onBack = null,
-  }: { top?: Snippet; body: Snippet; extra?: Snippet; primary?: Snippet; onBack?: (() => void) | null } = $props();
+    onFit = null,
+  }: {
+    top?: Snippet;
+    body: Snippet;
+    extra?: Snippet;
+    primary?: Snippet;
+    onBack?: (() => void) | null;
+    /** Told how many pixels the cards lack to show whole (negative: how many they have to spare), whenever that
+     * changes: Today gives them room from the friends' scene (src/app/scene-fit.svelte.ts). */
+    onFit?: ((lack: number) => void) | null;
+  } = $props();
 
   let content: HTMLDivElement | undefined = $state();
   let scroller: HTMLDivElement | undefined = $state();
@@ -45,7 +55,11 @@
       const last = cards.lastElementChild;
       more = !!last && last.getBoundingClientRect().bottom > box.getBoundingClientRect().bottom + 1;
     };
-    const ro = new ResizeObserver(check);
+    // The cards' own height against the room they have (a change of either size calls this; scrolling does not).
+    const ro = new ResizeObserver(() => {
+      check();
+      onFit?.(Math.ceil(cards.offsetHeight - box.clientHeight));
+    });
     ro.observe(box);
     ro.observe(cards);
     box.addEventListener('scroll', check, { passive: true });

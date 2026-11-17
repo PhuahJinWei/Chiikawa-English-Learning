@@ -12,6 +12,7 @@ import { devices, webkit } from 'playwright';
 import { preview } from 'vite';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { afterDays } from './profiles.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const PORT = 4175;
@@ -216,6 +217,105 @@ async function phoneChecks(browser, phone) {
   await context.close();
 }
 
+/**
+ * The home-screen app's own sizes (2026-11-17). Safari's page (the device profiles above) and the full screen are the
+ * wrong sizes for it: the app starts under the status bar, and the home bar is a safe area at the bottom. Checks made
+ * at the full screen's height had passed while Today's stamps and the tour's buttons were cut off on the phone.
+ */
+const HOME_SCREEN = [
+  { name: 'iPhone 13', device: 'iPhone 13', width: 390, height: 797, homeBar: 34 },
+  { name: 'iPhone SE', device: 'iPhone SE (3rd gen)', width: 375, height: 647, homeBar: 0 },
+].filter((p) => devices[p.device]);
+
+/** The app as opened from the home screen, at that size, with `progress` saved (none: a first start). */
+async function openInstalled(browser, phone, progress = null) {
+  const { context, page, errors } = await open(browser, phone.device, { viewport: { width: phone.width, height: phone.height } });
+  await context.addInitScript(
+    ([key, saved, homeBar]) => {
+      Object.defineProperty(Navigator.prototype, 'standalone', { get: () => true, configurable: true });
+      if (saved && !sessionStorage.getItem('smoke-seeded')) {
+        localStorage.setItem(key, saved);
+        sessionStorage.setItem('smoke-seeded', '1');
+      }
+      // WebKit here has no home bar: give the app the safe area an iPhone would.
+      addEventListener('DOMContentLoaded', () => {
+        const style = document.createElement('style');
+        style.textContent = `:root { --safe-bottom: ${homeBar}px !important; }`;
+        document.head.append(style);
+      });
+    },
+    ['eigo-friends/progress/v1', progress && JSON.stringify(progress), phone.homeBar],
+  );
+  await page.goto(BASE);
+  await booted(page);
+  return { context, page, errors };
+}
+
+/** Today's cards and its button show whole: no card runs under the bottom of the scrolling area. */
+async function todayFits(page) {
+  // The friends' scene changes height in 0.35 s, once the cards have been measured.
+  await page.waitForTimeout(900);
+  const r = await page.evaluate(() => {
+    const box = document.querySelector('.panel .scroll');
+    const last = document.querySelector('.panel .content')?.lastElementChild;
+    const button = [...document.querySelectorAll('.panel .actions .btn')].at(-1);
+    const tabs = document.querySelector('nav.tabs');
+    return {
+      cut: box && last ? Math.round(last.getBoundingClientRect().bottom - box.getBoundingClientRect().bottom) : null,
+      below: button && tabs ? Math.round(button.getBoundingClientRect().bottom - tabs.getBoundingClientRect().top) : null,
+      scene: Math.round(document.querySelector('.stage').getBoundingClientRect().height),
+    };
+  });
+  if (r.cut === null || r.cut > 1) throw new Error(`the last card is cut off by ${r.cut}px`);
+  if (r.below === null || r.below > 0) throw new Error(`the button is ${r.below}px under the menu bar`);
+  return `friends' scene ${r.scene}px`;
+}
+
+async function homeScreenChecks(browser, phone) {
+  console.log(`\n${phone.name}, opened from the home screen (${phone.width}x${phone.height})`);
+
+  await check('the tour: each page shows whole, with its buttons', async () => {
+    const { context, page } = await openInstalled(browser, phone);
+    const notes = [];
+    for (let i = 0; i < 3; i++) {
+      await page.waitForTimeout(700); // buttons ignore taps for a moment after they appear
+      const r = await page.evaluate(() => {
+        const body = document.querySelector('.tour .body');
+        const go = document.querySelector('.tour .nav .btn.primary');
+        return {
+          cut: body ? body.scrollHeight - body.clientHeight : null,
+          below: go ? Math.round(go.getBoundingClientRect().bottom - innerHeight) : null,
+        };
+      });
+      if (r.cut === null || r.cut > 1) throw new Error(`page ${i + 1}: its card is cut off by ${r.cut}px`);
+      if (r.below === null || r.below > 0) throw new Error(`page ${i + 1}: its button is ${r.below}px below the screen`);
+      if (i < 2) await page.getByRole('button', { name: '次へ' }).click();
+    }
+    await page.getByRole('button', { name: 'はじめよう！' }).click();
+    // The first Today, with the line about working offline (or getting ready to) under the cards.
+    await page.getByText(/ネットなしで/).waitFor({ timeout: 30_000 });
+    notes.push(`first day: ${await todayFits(page)}`);
+    await context.close();
+    return notes.join('; ');
+  });
+
+  for (const [label, progress] of [
+    ['a month in: reviews, new phrases, practice and a conversation', afterDays(30)],
+    ['a month in, today’s lesson done: the next phrases and もっと覚える', afterDays(30, { doneToday: true })],
+    ['a month in, done, a week after the last backup: the reminder', afterDays(30, { doneToday: true, backedUp: 8 })],
+  ]) {
+    await check(`Today shows whole, ${label}`, async () => {
+      const { context, page, errors } = await openInstalled(browser, phone, progress);
+      await page.getByText('今日のレッスン').first().waitFor();
+      if (label.includes('reminder')) await page.getByRole('button', { name: '保存する' }).waitFor();
+      const note = await todayFits(page);
+      if (errors.length) throw new Error(errors.join(' | '));
+      await context.close();
+      return note;
+    });
+  }
+}
+
 async function startupPanel(browser) {
   console.log('\nstart-up panel');
   // A broken app script (as on an iPhone too old for it): the panel must say so, with a reload button.
@@ -244,6 +344,7 @@ const browser = await webkit.launch();
 console.log(`WebKit ${browser.version()}, serving ${BASE}`);
 try {
   for (const phone of PHONES) await phoneChecks(browser, phone);
+  for (const phone of HOME_SCREEN) await homeScreenChecks(browser, phone);
   await startupPanel(browser);
 } finally {
   await browser.close();

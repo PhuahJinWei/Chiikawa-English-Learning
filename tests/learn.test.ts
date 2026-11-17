@@ -8,7 +8,9 @@ import {
   buildPractice,
   buildSession,
   estimateSeconds,
+  LESSON_SECONDS,
   MAX_REVIEWS,
+  newAllowance,
   newSaved,
   recordResult,
   resumable,
@@ -97,10 +99,11 @@ describe('daily lessons', () => {
     expect(next.steps.filter((s) => s.kind === 'meet').map(stepTarget)).toEqual(['nice-to-meet-you', 'whats-your-name']);
     playLesson(p, next.steps, 10);
     playLesson(p, buildMore(p, ORDERED).steps, 10);
-    // A big day evens itself out: the next lesson is busy with their reviews, so it teaches fewer new phrases.
+    // The next lesson holds all their reviews first (8 phrases, 16 reviews), and still teaches the day's two new
+    // phrases, since it stays within about ten minutes.
     const day2 = buildSession(p, ORDERED, 11);
-    expect(day2.reviews).toBeGreaterThanOrEqual(14);
-    expect(day2.fresh).toBeLessThanOrEqual(1);
+    expect(day2).toMatchObject({ reviews: 16, fresh: 2 });
+    expect(estimateSeconds(day2.steps.slice(0, 16 + 6))).toBeLessThanOrEqual(LESSON_SECONDS);
     // A round is the size of a lesson's new phrases (the setting), and there is none once everything is learned.
     p.settings.newPerDay = 3;
     expect(buildMore(p, ORDERED).fresh).toBe(3);
@@ -138,6 +141,26 @@ describe('daily lessons', () => {
     expect(plan.practice).toBeGreaterThan(0);
     expect(estimateSeconds(plan.steps)).toBeGreaterThanOrEqual(Math.min(TARGET_SECONDS, 6 * 60));
     expect(plan.steps.every((s) => s.kind === 'meet' || s.kind === 'talk' || !s.review)).toBe(true);
+  });
+
+  it('a lesson teaches its new phrases while it stays about ten minutes long, and none while reviews are waiting', () => {
+    const p = emptyProgress();
+    // "Hi!", "Sorry, what?" and "Thank you!": 68 seconds each to learn (Meet, Catch, Answer).
+    const waiting = ORDERED.slice(0, 3);
+    const answers = (n: number): Step[] => Array.from({ length: n }, () => ({ kind: 'answer', exId: 'hi', review: true }));
+    // Ten reviews (160 s): both of the day's new phrases.
+    expect(newAllowance(p, 10, waiting, answers(10), false)).toBe(2);
+    // Thirty (480 s): one more phrase fits in ten minutes, two do not.
+    expect(newAllowance(p, 10, waiting, answers(30), false)).toBe(1);
+    // With a conversation as well (540 s): none.
+    expect(newAllowance(p, 10, waiting, [...answers(30), { kind: 'talk', talkId: 'here-you-go' }], false)).toBe(0);
+    // More reviews due than one lesson holds: they come first.
+    expect(newAllowance(p, 10, waiting, answers(5), true)).toBe(0);
+    // The setting counts per day: a phrase met earlier today uses up one.
+    p.settings.newPerDay = 3;
+    expect(newAllowance(p, 10, waiting, [], false)).toBe(3);
+    p.ex['x'] = { met: 10 };
+    expect(newAllowance(p, 10, waiting, [], false)).toBe(2);
   });
 
   it('a big backlog is capped and new phrases wait', () => {

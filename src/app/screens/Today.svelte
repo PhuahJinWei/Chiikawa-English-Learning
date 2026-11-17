@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
   import { ORDERED, TALKS, UI, exchangeById, talkById } from '../../content/index.ts';
   import { dayNumber } from '../../learn/schedule.ts';
   import { buildMore, buildSession, estimateMinutes, resumable, type Step } from '../../learn/session.ts';
@@ -8,6 +9,7 @@
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
   import { FRIENDS } from '../friends.ts';
+  import { fitScene } from '../scene-fit.svelte.ts';
   import { act, calm, choosePartner, partnerOnStage, pick, withPartner } from '../scene.ts';
   import { lifetime, type Run } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
@@ -15,9 +17,11 @@
 
   /**
    * Today: what today's lesson holds and how long it takes (REVIEW 1.11), 「つづきから」 when it was left part-way,
-   * the week's stamps, and the 英語レベル meter (one level per ten phrases learned).
+   * the week's stamps, and the 英語レベル meter (one level per ten phrases learned). The friends' scene above gives
+   * the cards the room they need, so they and the button always show whole (src/app/scene-fit.svelte.ts).
    */
   const life = lifetime();
+  onDestroy(() => fitScene(null));
   // The greeting lies over the top of the stage: the friends are framed to stand below it, clear of its tail (18px).
   let greetEl: HTMLDivElement | undefined = $state();
   $effect(() => {
@@ -98,6 +102,7 @@
     if (going) return '続きからやろう！';
     if (first) return 'ハチワレだよ。一緒に英語を話そう！';
     if (partner.first && !doneToday) return `今日から${FRIENDS[partner.id].name}も一緒だよ！`;
+    if (remindBackup) return 'おつかれさま！記録をバックアップしよう。';
     if (doneToday) return moreTitles.length ? 'おつかれさま！もっと覚えてもいいよ。' : '今日はおしまい！ また明日ね。';
     if (!left.length) return '今日はお休み。「練習」で復習しよう！';
     return '今日のレッスン、準備できてるよ！';
@@ -180,7 +185,7 @@
   </ul>
 {/snippet}
 
-<StepLayout>
+<StepLayout onFit={fitScene}>
   {#snippet body()}
     <div class="card lesson">
       <div class="lesson-head">
@@ -194,8 +199,17 @@
       {#if going}
         <p class="line"><b>途中から</b>：あと{left.length}ステップ</p>
       {:else if doneToday}
-        <!-- 完了 ✓ and the pink stamp below already say it is done: the card shows what comes next, if anything. -->
-        {#if moreTitles.length}
+        <!-- 完了 ✓ and the pink stamp below already say it is done: the card shows what comes next, if anything. A
+             backup reminder comes first; the next phrases show again once she has saved or said あとで. -->
+        {#if remindBackup}
+          <!-- Hachiware asks for it in the greeting; the card keeps to a label and the two buttons, so it still fits
+               a small iPhone. The backup page says why it matters. -->
+          <p class="label">記録のバックアップ（{app.progress.backedUp === null ? 'まだありません' : '前回から1週間'}）</p>
+          <div class="row remind">
+            <button class="btn soft" onclick={() => (app.backupLater = app.today)}>あとで</button>
+            <button class="btn soft good" onclick={() => go('backup')}>保存する</button>
+          </div>
+        {:else if moreTitles.length}
           <p class="label">次の新しいフレーズ</p>
           {@render chips(moreTitles)}
         {:else}
@@ -204,9 +218,10 @@
       {:else if left.length}
         {#if newTitles.length}{@render chips(newTitles)}{/if}
         {#if rest.length}
-          <p class="meta">
-            {#each rest as r, i (r.name)}{#if i}<span class="sep">・</span>{/if}{r.name} <b>{r.n}</b>{r.unit}{/each}
-          </p>
+          <!-- Each count whole: when they do not fit on one line, the line breaks between them. -->
+          <ul class="meta">
+            {#each rest as r (r.name)}<li>{r.name} <b>{r.n}</b>{r.unit}</li>{/each}
+          </ul>
         {/if}
       {:else}
         <p class="line">今日の分はありません。</p>
@@ -250,18 +265,6 @@
       <p class="offline">✓ ネットなしでも使えます</p>
     {:else if app.offline === 'preparing'}
       <p class="offline">ネットなしで使う準備中…</p>
-    {/if}
-
-    {#if remindBackup}
-      <div class="card remind">
-        <p class="line">
-          <b>記録のバックアップ</b>：{app.progress.backedUp === null ? 'まだありません。' : '前回から1週間たちました。'}LINEやメモに保存しておくと、iPhoneを替えても続きから使えます。
-        </p>
-        <div class="row">
-          <button class="btn soft" onclick={() => (app.backupLater = app.today)}>あとで</button>
-          <button class="btn soft good" onclick={() => go('backup')}>保存する</button>
-        </div>
-      </div>
     {/if}
   {/snippet}
   {#snippet primary()}
@@ -316,14 +319,9 @@
     font-weight: 700;
     line-height: 1.5;
   }
-  .remind {
-    display: grid;
-    gap: 10px;
-    background: var(--sun);
-  }
-  .remind .line {
-    margin: 0;
-    font-size: 14px;
+  /* The backup reminder's buttons, in the lesson card once the lesson is done. */
+  .remind .btn {
+    min-height: 44px;
   }
   /* The new phrases: small labels that wrap whole, never in the middle of a title. */
   .label {
@@ -353,11 +351,19 @@
     line-height: 1.35;
   }
   .meta {
+    list-style: none;
     margin: 10px 0 0;
-    font-size: 14px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    font-size: 13.5px;
     font-weight: 700;
     line-height: 1.4;
     color: var(--ink-2);
+  }
+  .meta li {
+    white-space: nowrap;
   }
   .meta b,
   .to-next b,
@@ -365,9 +371,6 @@
     margin: 0 1px;
     font-size: 15px;
     color: var(--ink);
-  }
-  .sep {
-    margin: 0 3px;
   }
   /* Her progress in one card: the level, a dashed line (as between the items of a settings card), the stamps. */
   .progress {
@@ -476,9 +479,9 @@
   .pair .soft {
     min-height: 60px;
   }
-  /* On a short screen (an iPhone SE, or any iPhone in Safari with its bars), a slightly lower button and tighter
-     cards leave the lesson card and her progress room to show whole. */
-  @media (max-height: 700px) {
+  /* On all but the tallest iPhones (the home-screen app of an iPhone 13 is 797px tall: the status bar and the home
+     bar take their share), a slightly lower button and tighter cards, so the friends' scene above keeps its size. */
+  @media (max-height: 820px) {
     .btn.start,
     .pair .soft {
       min-height: 52px;

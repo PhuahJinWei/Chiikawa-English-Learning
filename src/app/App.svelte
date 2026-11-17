@@ -8,6 +8,7 @@
   import TabBar from './components/TabBar.svelte';
   import Tour from './components/Tour.svelte';
   import { isIOS, isStandalone } from './platform.ts';
+  import { scene, sceneBox } from './scene-fit.svelte.ts';
   import { choosePartner, partnerOnStage, withPartner } from './scene.ts';
   import ErrorScreen from './screens/ErrorScreen.svelte';
   import InstallGuide from './screens/InstallGuide.svelte';
@@ -68,6 +69,7 @@
   }
 
   onMount(() => {
+    sceneBox(stageEl ?? null);
     if (stageEl) {
       // Hachiware and today's partner (src/learn/partners.ts); a friend's first day as her partner, they walk in.
       const partner = choosePartner();
@@ -91,7 +93,11 @@
   });
 </script>
 
-<div class="app mode-{mode}" class:no-tabs={!withTabs} style="--overlap: {OVERLAP}px">
+<div
+  class="app mode-{mode}"
+  class:no-tabs={!withTabs}
+  style="--overlap: {OVERLAP}px{scene.fit === null ? '' : `; --scene-fit: ${scene.fit}px`}"
+>
   <div class="stage" bind:this={stageEl} aria-hidden={mode === 'none'}></div>
   <Notices />
   <div class="lower">
@@ -157,16 +163,18 @@
     flex-direction: column;
     background: var(--paper);
     --stage-now: 0px;
+    /* The scene's usual height, on Today and at the end of a lesson; a little less on a short screen (an iPhone SE). */
+    --scene: clamp(230px, 44dvh, 420px);
   }
-  .mode-scene {
-    --stage-now: clamp(230px, 44dvh, 420px);
-  }
-  /* On a short screen (an iPhone SE) the scene gives up a little room, so Today's lesson card and her progress card
-     show whole above the button. */
   @media (max-height: 700px) {
-    .mode-scene {
-      --stage-now: clamp(220px, 41dvh, 420px);
+    .app {
+      --scene: clamp(220px, 41dvh, 420px);
     }
+  }
+  /* On Today the scene gives up the room the cards below lack (src/app/scene-fit.svelte.ts), so they and the button
+     show whole: never more than its usual height, and never under 210px, where the cards scroll instead. */
+  .mode-scene {
+    --stage-now: clamp(210px, var(--scene-fit, var(--scene)), var(--scene));
   }
   /* In a lesson the friends react while she works on the cards below, so the cards get most of the room
      (2026-11-17: the band was 32dvh, which left a small iPhone about 250px for the cards). */

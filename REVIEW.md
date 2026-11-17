@@ -6,6 +6,30 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Fit on the home-screen app, and the pace of new phrases (2026-11-17)
+
+You chose these two from the fresh look at the whole app.
+
+**Fit.** Screens had been checked at the screen's full height (844px on an iPhone 13, 667px on an SE). The home-screen app is shorter, because the status bar takes its share, and on an iPhone 13 the home bar takes 34px more at the bottom: 390×797 and 375×647. At those sizes Today's stamps were cut off on both phones, and the tour's 次へ was below the screen on an SE.
+
+- **Today:** the friends' scene now gives up exactly the room the cards below lack, so the cards and the button always show whole, whatever the day holds and whatever the phone and its fonts. It never grows past its usual size (44% of the screen) and never shrinks under 210px. Below that the cards would scroll, but no Today screen needs that on these two phones. On an iPhone 13 the scene keeps its full size (351px) except on a reminder day (about 340px); on an SE it is about 225 to 265px.
+- **Tighter cards:** the compact spacing that only an SE had is now used up to 820px tall, which covers the home-screen app of every iPhone but the Plus and Max sizes. Today's counts (新しいフレーズ 2　復習 19問　練習 5問　会話 1) fit on one line, and when they do not, the line breaks between counts, never inside one.
+- **Backup reminder:** it was a card of its own, so on reminder days it went below the screen. Now Hachiware says 「おつかれさま！記録をバックアップしよう。」, and the lesson card shows 記録のバックアップ（前回から1週間） with あとで and 保存する in place of the next phrases, which come back after either. The longer explanation is on the backup page.
+- **Tour:** its buttons stay at the bottom and only the card can scroll; on these phones each page fits without scrolling. Page 2's last line is shorter: 「覚えたフレーズで「会話してみよう」もします。やめたいときは⏸を押してください。」
+- **Checked:** the WebKit smoke test now also opens the app at both home-screen sizes, with the home bar's safe area: every tour page, the first Today, and three Today screens from a month of lessons made by the app's own lesson code (a normal day, after today's lesson, and a reminder day). 36 of 36 pass. In Safari before installing, an SE's page is only 548px tall, and there Today scrolls by about 50px.
+
+**Pace.** A lesson taught the set number of new phrases (2) only while fewer than 14 reviews were due, then 1, and none from 24. That happened from about day 9, and the minutes it saved went to practice that does not move the schedule. Now a lesson teaches its new phrases as long as the reviews, any conversation and the new phrases fit in about ten minutes, and none while more reviews are due than one lesson holds (30). Lessons stay about 9 to 10 minutes. With the app's own lesson code over 200 days:
+
+| A learner who does every daily lesson | All 128 phrases met, before | After |
+|---|---|---|
+| Gets 85% of reviews right | day 105 | day 71 |
+| Gets 70% right | day 164 | day 104 |
+| Gets 97% right | about day 92 | day 64 |
+| 3 new phrases a day, 85% right | day 93 | day 61 |
+| 1 new phrase a day | day 129 | day 128 |
+
+The 70% learner's lessons average about 10.4 minutes, as before, because missed questions come back at the end. もっと覚える is unchanged.
+
 ## The stage's framing, small moments, and the quiz's wrong answers (2026-11-17)
 
 You asked whether the friends should walk around, and whether the zoom was right.
