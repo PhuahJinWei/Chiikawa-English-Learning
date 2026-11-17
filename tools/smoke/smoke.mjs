@@ -156,10 +156,18 @@ async function phoneChecks(browser, phone) {
     await page.getByRole('button', { name: '閉じる' }).click();
     await page.getByText('お水がほしいときに言う').waitFor();
     await page.getByText('Can I have some water?', { exact: true }).click();
+    // The bin deletes at once; 元に戻す brings it back, and deleting again removes it for good.
     await page.getByRole('button', { name: 'このメモを削除' }).click();
-    await page.getByRole('button', { name: '削除する' }).click();
     await page.getByText('Can I have some water?', { exact: true }).waitFor({ state: 'detached' });
-    return 'English tidied and read in katakana, kept on close, deleted after one confirmation';
+    await page.getByRole('button', { name: '元に戻す' }).click();
+    await page.getByText('Can I have some water?', { exact: true }).click();
+    await page.getByRole('button', { name: 'このメモを削除' }).click();
+    await page.getByText('Can I have some water?', { exact: true }).waitFor({ state: 'detached' });
+    // Deleted in what is saved too (until 2026-11-17 the closing editor wrote the note back, so it returned later).
+    await page.waitForTimeout(300);
+    const kept = await page.evaluate(() => JSON.parse(localStorage.getItem('eigo-friends/progress/v1')).notes.length);
+    if (kept !== 0) throw new Error(`the deleted note is still saved (${kept} notes)`);
+    return'English tidied and read in katakana, kept on close, deleted after one confirmation';
   });
 
   await check('works offline once ready, note readings too', async () => {

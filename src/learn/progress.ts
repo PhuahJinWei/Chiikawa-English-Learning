@@ -36,6 +36,8 @@ export interface Note {
   en: string;
   /** Her own Japanese: the meaning, when to use it, or her question. */
   ja: string;
+  /** Other meanings of the same English, each written on its own (2026-11-17): a word can mean several things. */
+  more?: string[];
   /** When it was written and last changed (ms since 1970). */
   created: number;
   updated: number;
@@ -46,6 +48,16 @@ export interface Note {
 export const NOTE_EN_MAX = 300;
 export const NOTE_JA_MAX = 500;
 export const NOTES_MAX = 500;
+/** How many other meanings one note may have. */
+export const NOTE_MORE_MAX = 5;
+
+/** A note's other meanings, tidy: trimmed, none empty, within the limits. */
+export const tidyMore = (more: unknown): string[] =>
+  (Array.isArray(more) ? more : [])
+    .filter((m): m is string => typeof m === 'string')
+    .map((m) => m.trim().slice(0, NOTE_JA_MAX))
+    .filter(Boolean)
+    .slice(0, NOTE_MORE_MAX);
 
 export interface ExchangeProgress {
   /** Day number she met it. */
@@ -149,7 +161,16 @@ function normalizeNote(n: unknown): Note | null {
   const ja = typeof n.ja === 'string' ? n.ja.slice(0, NOTE_JA_MAX) : '';
   if (!en.trim() && !ja.trim()) return null;
   const created = num(n.created);
-  return { id: n.id, en, ja, created, updated: num(n.updated, created), ...(typeof n.from === 'string' ? { from: n.from } : {}) };
+  const more = tidyMore(n.more);
+  return {
+    id: n.id,
+    en,
+    ja,
+    ...(more.length ? { more } : {}),
+    created,
+    updated: num(n.updated, created),
+    ...(typeof n.from === 'string' ? { from: n.from } : {}),
+  };
 }
 
 function normalizeNotes(raw: unknown): Note[] {

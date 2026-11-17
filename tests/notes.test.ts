@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { heartPath } from '../src/app/clips.ts';
 import { NOTE_CLIPS } from '../src/content/notes.ts';
 import { makeBackup, readBackup } from '../src/learn/backup.ts';
-import { looseEnglish, mergeNotes, newNote, noteFor, notesMessage, putNote, removeNote, tidyEnglish } from '../src/learn/notes.ts';
+import { looseEnglish, mergeNotes, newNote, noteFor, putNote, removeNote, tidyEnglish } from '../src/learn/notes.ts';
 import { emptyProgress, normalize, NOTES_MAX } from '../src/learn/progress.ts';
 
 describe('notes', () => {
@@ -56,27 +56,16 @@ describe('notes', () => {
     for (const text of NOTE_CLIPS) expect(heartPath(text), text).not.toBeNull();
   });
 
-  it('are sent to you questions first, with the English that has no Heart voice yet', () => {
-    const notes = [
-      newNote('Thank you!', 'お礼', 1),
-      newNote('Can I have some water?', 'お水\nのどが渇いたとき', 2),
-      newNote('', 'トイレはどこ？\n急いでいるとき', 3),
-    ];
-    const text = notesMessage(notes, (en) => en === 'Thank you!');
-    expect(text.split('\n')).toEqual([
-      '【えいごフレンズ】メモ（3件）',
-      '',
-      '・（英語で何て言う？）トイレはどこ？',
-      '　急いでいるとき',
-      '・Thank you!',
-      '　お礼',
-      '・Can I have some water?',
-      '　お水',
-      '　のどが渇いたとき',
-      '',
-      '--- for the app: no Heart voice yet ---',
-      'Can I have some water?',
-    ]);
+  it('keep other meanings of the same English: tidy, none empty, five at most, through a save', () => {
+    const p = emptyProgress();
+    const a = newNote('right', '右', 1);
+    expect(putNote(p, { ...a, more: [' 正しい ', '', '権利', 'a', 'b', 'c', 'd'] })).toBe(true);
+    expect(p.notes[0].more).toEqual(['正しい', '権利', 'a', 'b', 'c']);
+    expect(normalize(JSON.parse(JSON.stringify(p))).notes[0].more).toEqual(['正しい', '権利', 'a', 'b', 'c']);
+    // Taking them all away leaves no empty list behind.
+    expect(putNote(p, { ...p.notes[0], more: [] })).toBe(true);
+    expect('more' in p.notes[0]).toBe(false);
+    expect(normalize({ v: 1, notes: [{ id: 'x', en: 'Hi', ja: '', more: 'nonsense' }] }).notes[0].more).toBeUndefined();
   });
 
   it('are never lost to an older backup: both sets are kept, the later change wins', () => {

@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
+  import { onDestroy, untrack } from 'svelte';
   import { UI } from '../../content/index.ts';
   import type { Talk } from '../../content/types.ts';
   import { audioPath } from '../clips.ts';
   import Bubble from '../components/Bubble.svelte';
+  import RecordControls from '../components/RecordControls.svelte';
   import SorryButton from '../components/SorryButton.svelte';
   import SpeakerCard from '../components/SpeakerCard.svelte';
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
   import { act, calm, withPartner } from '../scene.ts';
+  import { forget, recorder, stopRecording } from '../recorder.svelte.ts';
   import { lifetime, type Run } from '../script.svelte.ts';
   import { sfx } from '../sfx.ts';
 
@@ -17,12 +19,15 @@
    * up like a chat, the other person on the left and her on the right. Their lines play with no text; on her turn
    * she sees in Japanese what she wants to say, says it in English out loud, and checks (答え合わせ): the model plays,
    * and her line and the one she answered show their English. She goes on when she is ready (続ける), and at the end
-   * she can hear the whole conversation again. Nothing is graded, and it never moves the review schedule.
+   * she can hear the whole conversation again. Nothing is graded, and it never moves the review schedule. On her turn
+   * she may record herself, and hear it beside the model after 答え合わせ (src/app/recorder.svelte.ts).
    */
   let { talk: talkProp, onDone, onBack }: { talk: Talk; onDone: () => void; onBack: (() => void) | null } = $props();
   const talk = untrack(() => talkProp);
   const turns = talk.turns;
   const life = lifetime();
+  forget();
+  onDestroy(forget);
 
   /** Turns on screen, and how many of them show their English (a line she is about to answer stays ♪). */
   let shown = $state(0);
@@ -85,12 +90,14 @@
     const t = turns[shown - 1];
     sfx.pop();
     life.run(async (s) => {
+      // The microphone is released before the model plays.
+      await stopRecording();
       calm(withPartner(talk.cast));
       act(t.acts);
       await s.wait(300);
       await s.play(audioPath(t.line.en), 'model');
       revealed = shown;
-      say = 'まねして、もう一度言ってみてね';
+      say = recorder.state === 'ready' ? '自分の声と、お手本を聞き比べてみてね' : 'まねして、もう一度言ってみてね';
       // The button changes under her finger: ignore it for a moment, so a double tap does not skip ahead.
       await s.wait(500);
       armed = true;
@@ -99,6 +106,7 @@
 
   function goOn() {
     if (phase !== 'check' || !armed) return;
+    forget();
     life.run(async (s) => {
       await s.wait(200);
       await onward(s);
@@ -150,7 +158,13 @@
   {#snippet extra()}
     {#if answering}
       <SorryButton line={answering.line} channel="other" />
-    {:else if phase === 'end'}
+    {/if}
+    {#if phase === 'me'}
+      <RecordControls mode="record" />
+    {:else if phase === 'check'}
+      <RecordControls mode="listen" />
+    {/if}
+    {#if phase === 'end'}
       <button class="btn light all" onclick={hearAll}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
         通して聞く

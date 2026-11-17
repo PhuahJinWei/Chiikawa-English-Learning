@@ -14,6 +14,7 @@
     onBack,
     onSkip,
     onQuit,
+    memo = null,
   }: {
     canBack: boolean;
     daily: boolean;
@@ -22,6 +23,8 @@
     onBack: () => void;
     onSkip: () => void;
     onQuit: () => void;
+    /** Keeping this step's phrase among her memos (2026-11-17), when the step is about a phrase. */
+    memo?: { noted: boolean; full: boolean; onAdd: () => void } | null;
   } = $props();
 
   // The note stays until the sheet closes: the tap on 「続ける」 clears audioState.stuck as the finger lands, and a
@@ -46,6 +49,11 @@
       <button class="btn soft" onclick={onRestart}>このステップを最初から</button>
       <button class="btn soft" onclick={onBack} disabled={!canBack}>前のステップに戻る</button>
       <button class="btn soft" onclick={onSkip}>このステップをとばす</button>
+      {#if memo}
+        <button class="btn soft" disabled={memo.noted || memo.full} onclick={memo.onAdd}>
+          {memo.noted ? 'メモにあります' : memo.full ? 'メモがいっぱいです' : 'このフレーズをメモに追加'}
+        </button>
+      {/if}
       <button class="btn soft quit" onclick={onQuit}>{daily ? '今日はここまでにする' : '練習をやめる'}</button>
     </div>
     {#if daily}<p class="note">途中でやめても大丈夫です。続きは「今日」から再開できます。</p>{/if}

@@ -53,7 +53,7 @@ table for Excel. Both are made from `src/content`, so don't edit them: run `npm 
 
 ## Adding content
 
-The course is one path. The steps are written in `src/content/course/part1.ts` to `part6.ts`; the order she learns
+The course is one path. The steps are written in `src/content/course/part1.ts` to `part7.ts`; the order she learns
 them in is the list in `src/content/course/order.ts` (two new steps a day by default, and more with もっと覚える after the lesson), and a new step goes in that
 list too (a test fails if a step is missing from it or named twice). Each step is one thing she learns: `hear` + `say` (she answers), `say` alone with a `cue` (she starts; `then` is what she may hear back), or
 `hear` alone (she only understands). `from` names the earlier step it is built from: the test then checks it reuses
@@ -80,8 +80,8 @@ Her notes (ノート → メモ) play in Heart when their English matches a less
 iPhone's own English voice until you voice it. (Every note gets a katakana reading on the phone, with nothing to do on
 your side: `src/app/reading.ts`.)
 
-1. She sends you her notes (ノート → メモ → メモを送る). The message ends with the English that has no Heart voice yet,
-   under `--- for the app: no Heart voice yet ---`.
+1. Ask her which English in her notes she wants in the lessons' voice (in the app, ▶ 聞く on a note says
+   「iPhoneの声」 when it has no Heart clip yet).
 2. Add those lines to `NOTE_CLIPS` in `src/content/notes.ts`, exactly as they should be spoken.
 3. Generate the audio: `cd tools/audio && node make-audio.mjs`.
 4. Push to `main`. After the update, those notes play in Heart.

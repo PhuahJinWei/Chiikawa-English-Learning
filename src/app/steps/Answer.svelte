@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
+  import { onDestroy, untrack } from 'svelte';
   import { UI, replyWord } from '../../content/index.ts';
   import type { Exchange } from '../../content/types.ts';
   import { audioPath } from '../clips.ts';
@@ -9,6 +9,7 @@
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
   import { act, calm, partnerOnStage, pick } from '../scene.ts';
+  import { canRecord, forget, playMine, recorder, startRecording, stopRecording } from '../recorder.svelte.ts';
   import { lifetime } from '../script.svelte.ts';
   import { sfx } from '../sfx.ts';
   import { stage } from '../stage.ts';
@@ -20,7 +21,8 @@
    * heard (REVIEW 1.9, 1.10). Hachiware asks her to say the model once more, in her own time (no timed turn since
    * 2026-11-17), and then, separately, how her first answer went. Once she checks, the question shrinks to one row
    * so the model is in full view. Longer answers are steps of their own, built from the short one. The phone does not
-   * judge her speech.
+   * judge her speech. She may record her answer (録音する, only if she taps it) and hear it beside the model once that
+   * has played: her own ears compare (src/app/recorder.svelte.ts).
    */
   let { ex: exProp, onDone, onBack }: { ex: Exchange; onDone: (r: StepResult) => void; onBack: (() => void) | null } = $props();
   const ex = untrack(() => exProp);
@@ -36,6 +38,9 @@
   let say = $state('');
   let shown = $state(0);
   let armed = $state(false);
+  const recordable = canRecord();
+  forget();
+  onDestroy(forget);
 
   function ask() {
     phase = 'ask';
@@ -71,6 +76,8 @@
     sfx.pop();
     say = 'お手本はこれ';
     life.run(async (s) => {
+      // The microphone is released before the model plays.
+      await stopRecording();
       for (const [i, l] of ex.short.entries()) {
         shown = i + 1;
         calm(cast);
@@ -81,7 +88,7 @@
       }
       // One thing at a time: say the model, then rate the first answer.
       phase = 'rate';
-      say = 'まねして、もう一度言ってみてね';
+      say = recorder.state === 'ready' ? '自分の声と、お手本を聞き比べてみてね' : 'まねして、もう一度言ってみてね';
       await s.wait(2200);
       say = '最初の答えはどうだった？';
       armed = true;
@@ -118,9 +125,32 @@
         <span class="cue-text">{ex.cue}</span>
       </div>
     {/if}
+    {#if recordable && phase === 'turn'}
+      <!-- Optional: her own voice, to hear beside the model after 答え合わせ. Never saved. -->
+      {#if recorder.state === 'recording'}
+        <button class="btn light rec on" onclick={() => void stopRecording()}><span class="dot" aria-hidden="true"></span>録音中…（タップで止める）</button>
+      {:else}
+        <button class="btn light rec" disabled={recorder.state === 'asking'} onclick={() => void startRecording()}>
+          <span class="dot" aria-hidden="true"></span>{recorder.state === 'ready' ? '録音しなおす' : '自分の声を録音する'}
+        </button>
+      {/if}
+      {#if recorder.state === 'denied'}
+        <p class="rec-note">マイクが使えませんでした。iPhoneの「設定」でマイクを許可すると録音できます。</p>
+      {:else if recorder.state === 'failed'}
+        <p class="rec-note">録音できませんでした。録音なしでも続けられます。</p>
+      {:else if recorder.state === 'ready'}
+        <p class="rec-note">録音できました。答え合わせのあとで聞けます。</p>
+      {/if}
+    {/if}
     {#each ex.short.slice(0, shown) as line (line.en)}
       <SpeakerCard kind="model" {line} badge={word} />
     {/each}
+    {#if phase === 'rate' && recorder.state === 'ready'}
+      <button class="btn light rec" class:on={recorder.playing} onclick={playMine}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
+        {recorder.playing ? '止める' : '自分の声を聞く'}
+      </button>
+    {/if}
   {/snippet}
   {#snippet extra()}
     {#if phase === 'failed'}
@@ -165,6 +195,44 @@
   .cue-text {
     font-size: 17px;
     font-weight: 800;
+  }
+  /* Recording her own voice: a light button like 聞き直す, with a red dot. */
+  .rec {
+    width: auto;
+    justify-self: center;
+    min-height: 44px;
+    padding: 6px 18px 6px 14px;
+    gap: 8px;
+    font-size: 15px;
+  }
+  .rec.on {
+    background: var(--blush);
+  }
+  .rec svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--ink);
+  }
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #e0607a;
+  }
+  .rec.on .dot {
+    animation: rec 1s ease-in-out infinite;
+  }
+  @keyframes rec {
+    50% {
+      opacity: 0.25;
+    }
+  }
+  .rec-note {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-2);
+    text-align: center;
   }
   .rates {
     display: grid;

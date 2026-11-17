@@ -5,6 +5,7 @@
 <script lang="ts">
   import { onDestroy, untrack } from 'svelte';
   import { ORDERED, TALKS, exchangeById, talkById } from '../../content/index.ts';
+  import { newNote, noteFor, putNote } from '../../learn/notes.ts';
   import { joinedBetween } from '../../learn/partners.ts';
   import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown, type Run, type StepResult } from '../../learn/run.ts';
   import { buildMore, buildSession, newSaved, resumable, unmet, type Step } from '../../learn/session.ts';
@@ -151,6 +152,15 @@
     go_(1);
   }
 
+  // Keeping the phrase of this step among her memos, from the pause menu (as メモに追加 does in the notebook).
+  const memoLine = $derived(ex ? (ex.kind === 'say' ? ex.short[0] : ex.heard[0]) : null);
+  let memoFull = $state(false);
+  function addMemo() {
+    if (!ex || !memoLine) return;
+    memoFull = !putNote(app.progress, newNote(memoLine.en, memoLine.ja, Date.now(), ex.id));
+    if (!memoFull) save();
+  }
+
   function leave() {
     resumeLesson();
     calm(cast);
@@ -201,6 +211,7 @@
       onBack={back}
       onSkip={() => go_(1)}
       onQuit={leave}
+      memo={memoLine ? { noted: !!noteFor(app.progress, memoLine.en), full: memoFull, onAdd: addMemo } : null}
     />
   {/if}
 </div>

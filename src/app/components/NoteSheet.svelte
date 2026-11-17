@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, untrack } from 'svelte';
-  import { newNote, putNote, removeNote, tidyEnglish } from '../../learn/notes.ts';
-  import { NOTE_EN_MAX, NOTE_JA_MAX, type Note } from '../../learn/progress.ts';
+  import { newNote, putNote, tidyEnglish } from '../../learn/notes.ts';
+  import { NOTE_EN_MAX, NOTE_JA_MAX, NOTE_MORE_MAX, tidyMore, type Note } from '../../learn/progress.ts';
   import { heartPath } from '../clips.ts';
   import { hearNote } from '../note-voice.ts';
   import { app, save } from '../state.svelte.ts';
@@ -12,17 +12,21 @@
    * Writing or changing one note (REVIEW section 7). The English is usually pasted from a LINE message: she cannot
    * spell it. A note may also be Japanese only, a "how do I say…?" question. What she writes is kept however she
    * leaves: ✕, 保存する, the menu bar, or the app going into the background (to copy English from LINE, say).
+   * A word can mean several things: ＋ ほかの意味を追加 gives each other meaning a box of its own (2026-11-17).
+   * Deleting is the bin beside 保存する: it deletes at once, and the list offers 元に戻す for a few seconds.
    */
-  let { note, onClose }: { note: Note | null; onClose: () => void } = $props();
+  let { note, onClose, onDelete }: { note: Note | null; onClose: () => void; onDelete: () => void } = $props();
   const editing = untrack(() => note);
   /** The note being written: an existing one, or a new one whose id is fixed now, so saving twice never adds two. */
   const base: Note = untrack(() => note) ?? newNote('', '', Date.now());
   let en = $state(base.en);
   let ja = $state(base.ja);
+  /** Other meanings, one box each (an empty box is not saved). */
+  let more = $state<string[]>([...(base.more ?? [])]);
+  const moreKey = () => tidyMore($state.snapshot(more)).join('\n');
   /** What was last saved, to save only what changed. */
-  let saved = { en: base.en, ja: base.ja.trim() };
+  let saved = { en: base.en, ja: base.ja.trim(), more: tidyMore(base.more).join('\n') };
   let problem = $state('');
-  let confirming = $state(false);
   /** Why it could not be read aloud, if it could not. */
   let voiceProblem = $state('');
 
@@ -46,9 +50,12 @@
 
   /** Saves what changed; an empty note is never saved. False only when there is no room for a new note. */
   function keep(): boolean {
-    const now = { en: english, ja: ja.trim() };
-    if ((now.en === saved.en && now.ja === saved.ja) || (!now.en && !now.ja)) return true;
-    if (!putNote(app.progress, { ...base, en: now.en, ja, updated: Date.now() })) return false;
+    // A deleted note is never written back: the editor is still closing when this runs once more (2026-11-17: the
+    // note came back, because the English on screen had not caught up with the deletion yet).
+    if (removed) return true;
+    const now = { en: english, ja: ja.trim(), more: moreKey() };
+    if ((now.en === saved.en && now.ja === saved.ja && now.more === saved.more) || (!now.en && !now.ja)) return true;
+    if (!putNote(app.progress, { ...base, en: now.en, ja, more: $state.snapshot(more), updated: Date.now() })) return false;
     saved = now;
     save();
     return true;
@@ -66,13 +73,14 @@
     onClose();
   }
 
+  let removed = false;
   function remove() {
-    saved = { en: '', ja: '' };
+    removed = true;
+    saved = { en: '', ja: '', more: '' };
     en = '';
     ja = '';
-    removeNote(app.progress, base.id);
-    save();
-    onClose();
+    more = [];
+    onDelete();
   }
 
   // Leaving by the menu bar destroys the editor without ✕; going into the background may be the last chance.
@@ -117,32 +125,38 @@
 
     <label class="field">
       <span class="label">メモ（日本語）</span>
-      <textarea rows="4" maxlength={NOTE_JA_MAX} placeholder="意味、使う場面、聞いてみたいことなど" bind:value={ja}></textarea>
+      <textarea rows="3" maxlength={NOTE_JA_MAX} placeholder="意味、使う場面、聞いてみたいことなど" bind:value={ja}></textarea>
     </label>
+    <!-- A word can mean several things: each other meaning in a box of its own. -->
+    {#each more as _, i (i)}
+      <div class="field">
+        <span class="label">ほかの意味 {i + 1}</span>
+        <div class="more-row">
+          <textarea rows="2" maxlength={NOTE_JA_MAX} placeholder="別の意味や使い方" aria-label="ほかの意味 {i + 1}" bind:value={more[i]}></textarea>
+          <button class="drop" onclick={() => (more = more.filter((_, k) => k !== i))} aria-label="ほかの意味 {i + 1} を消す">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+        </div>
+      </div>
+    {/each}
+    {#if more.length < NOTE_MORE_MAX}
+      <button class="add-more" onclick={() => (more = [...more, ''])}>＋ ほかの意味を追加</button>
+    {/if}
     {#if !english}
       <p class="hint">英語がなくても保存できます。「英語で何て言う？」として残しておいて、あとで聞いてみましょう。</p>
     {/if}
     {#if problem}<p class="warn">{problem}</p>{/if}
 
-    {#if editing}
-      {#if confirming}
-        <div class="confirm">
-          <p>このメモを削除しますか？</p>
-          <div class="row">
-            <button class="btn soft" onclick={() => (confirming = false)}>やめる</button>
-            <button class="btn soft oops" onclick={remove}>削除する</button>
-          </div>
-        </div>
-      {:else}
-        <button class="delete" onclick={() => (confirming = true)}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 4h4" /><path d="M7 7l1 12.5h8L17 7" /><path d="M10.5 10.5v6M13.5 10.5v6" /></svg>
-          このメモを削除
-        </button>
-      {/if}
-    {/if}
   </div>
   <div class="actions">
-    <button class="btn primary" disabled={!english && !ja.trim()} onclick={done}>保存する</button>
+    <div class="final">
+      {#if editing}
+        <button class="btn light bin" onclick={remove} aria-label="このメモを削除">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 4h4" /><path d="M7 7l1 12.5h8L17 7" /><path d="M10.5 10.5v6M13.5 10.5v6" /></svg>
+        </button>
+      {/if}
+      <button class="btn primary" disabled={!english && !ja.trim()} onclick={done}>保存する</button>
+    </div>
   </div>
 </div>
 
@@ -200,6 +214,49 @@
     font-size: 19px;
     font-weight: 800;
   }
+  /* The hint in an empty box: light and thin, so the box does not look filled in (2026-11-17). */
+  textarea::placeholder {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-3);
+    opacity: 1;
+  }
+  .more-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .drop {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--paper-2);
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .drop svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+  }
+  .add-more {
+    justify-self: start;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 2px dashed var(--ink-3);
+    border-radius: 12px;
+    background: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-2);
+  }
   .tools {
     grid-auto-flow: row;
     grid-template-columns: 1fr auto;
@@ -231,42 +288,28 @@
     font-weight: 700;
     line-height: 1.5;
   }
-  /* Deleting is rare: a quiet link under the note, not a button as big as 保存する. It still asks first. */
-  .delete {
-    justify-self: center;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 44px;
-    padding: 0 12px;
-    border: none;
-    background: none;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--ink-2);
+  .actions {
+    display: grid;
+    gap: 8px;
+    padding-top: 8px;
   }
-  .delete:active {
-    color: var(--ink);
+  .final {
+    display: flex;
+    gap: 10px;
   }
-  .delete svg {
-    width: 18px;
-    height: 18px;
+  /* Deleting is rare: a small bin beside 保存する. The list offers to undo it. */
+  .bin {
+    flex: none;
+    width: 60px;
+    padding: 0;
+  }
+  .bin svg {
+    width: 22px;
+    height: 22px;
     fill: none;
-    stroke: currentColor;
+    stroke: var(--ink-2);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-  }
-  .confirm {
-    display: grid;
-    gap: 8px;
-  }
-  .confirm p {
-    margin: 0;
-    font-weight: 800;
-    text-align: center;
-  }
-  .actions {
-    padding-top: 8px;
   }
 </style>

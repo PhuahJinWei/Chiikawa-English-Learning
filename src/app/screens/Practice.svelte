@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ORDERED, TALKS } from '../../content/index.ts';
+  import { ORDERED, SHELVES, TALKS } from '../../content/index.ts';
   import { buildPractice, readyTalks, type PracticeKind } from '../../learn/session.ts';
   import Ja from '../components/Ja.svelte';
   import StepLayout from '../components/StepLayout.svelte';
@@ -15,7 +15,24 @@
    * Each choice has an icon (the lesson's own for listening, speaking and conversations), and one is suggested
    * (おすすめ, 2026-11-17): her weak phrases once she has missed any, otherwise everything mixed. It is the one
    * sticker button on the page; the others are light, like the quiz's choices.
+   *
+   * 会話 and テーマで選ぶ open a list to choose from (2026-11-17): one conversation she wants (or three picked for her),
+   * or the phrases of one topic, such as ごはんの時間 before a dinner.
    */
+  let picking = $state<'talk' | 'topic' | null>(null);
+  let layout: StepLayout | undefined = $state();
+  /** Opens or closes a list to choose from, at its top. */
+  function pick(what: 'talk' | 'topic' | null) {
+    picking = what;
+    layout?.toTop();
+  }
+  const ready = $derived(readyTalks(app.progress, TALKS));
+  /** Topics with something learned, and how many phrases. */
+  const topics = $derived(
+    SHELVES.map((s) => ({ topic: s.topic, items: s.exchanges.filter((e) => app.progress.ex[e.id]?.hear) })).filter((t) => t.items.length),
+  );
+  /** Stacked books: a topic. */
+  const BOOKS = ['M5 5h4v14H5z', 'M9 7h4v12H9z', 'M14.2 8.2l3.7-1 3 11-3.7 1z'];
   const learnedCount = $derived(ORDERED.filter((e) => app.progress.ex[e.id]?.hear).length);
   const speakable = $derived(ORDERED.filter((e) => app.progress.ex[e.id]?.hear && e.kind !== 'understand').length);
   /** Conversations made only of phrases she has learned (src/content/talks.ts). */
@@ -37,7 +54,7 @@
     { kind: 'mixed', title: '全部まぜて', desc: '習ったフレーズをまんべんなく', icon: SHUFFLE },
     { kind: 'listen', title: '聞き取りだけ', desc: '英語を聞いて、|意味や答えを選ぶ', icon: STEP_ICONS.catch },
     { kind: 'speak', title: '話すだけ', desc: '聞かれたら、|声に出して答える', icon: STEP_ICONS.answer },
-    { kind: 'talk', title: '会話', desc: '覚えたフレーズで、|短い会話をする', icon: STEP_ICONS.talk },
+    { kind: 'talk', title: '会話', desc: '覚えたフレーズで、|短い会話をする。|好きな会話を選べます', icon: STEP_ICONS.talk },
   ];
   const off = (kind: PracticeKind) => (kind === 'speak' && !speakable) || (kind === 'talk' && !talkable);
 
@@ -51,12 +68,16 @@
   const suggested = $derived<PracticeKind>(missed ? 'weak' : 'mixed');
 
   function begin(kind: PracticeKind, title: string) {
+    if (kind === 'talk') {
+      pick('talk');
+      return;
+    }
     startPractice(buildPractice(app.progress, ORDERED, kind, 8, TALKS), title, 'practice');
   }
 
 </script>
 
-<StepLayout>
+<StepLayout bind:this={layout}>
   {#snippet top()}
     <header>
       <h1 class="page-title">練習</h1>
@@ -70,7 +91,38 @@
     </header>
   {/snippet}
   {#snippet body()}
-    {#if learnedCount}
+    <!-- One wrapper per view: opening a list is not "new cards", which StepLayout would scroll to. -->
+    {#if picking}
+      <div class="group">
+      <button class="btn light back" onclick={() => pick(null)}>← 練習にもどる</button>
+      {#if picking === 'talk'}
+        <button class="btn choice rec" onclick={() => startPractice(buildPractice(app.progress, ORDERED, 'talk', 8, TALKS), '会話', 'practice')}>
+          <span class="text">
+            <span class="title">おまかせ</span>
+            <span class="desc">しばらくやっていない会話を、3つまで</span>
+          </span>
+        </button>
+        {#each ready as t (t.id)}
+          <button class="btn choice light" onclick={() => startPractice([{ kind: 'talk', talkId: t.id }], t.title, 'practice')}>
+            <span class="text">
+              <span class="title">{t.title}</span>
+              <span class="desc">{t.cue}</span>
+            </span>
+          </button>
+        {/each}
+      {:else}
+        {#each topics as t (t.topic.id)}
+          <button class="btn choice light" onclick={() => startPractice(buildPractice(app.progress, t.items, 'mixed', 8), t.topic.title, 'practice')}>
+            <span class="text">
+              <span class="title">{t.topic.title}</span>
+              <span class="desc">習ったフレーズ {t.items.length}個</span>
+            </span>
+          </button>
+        {/each}
+      {/if}
+      </div>
+    {:else if learnedCount}
+      <div class="group">
       {#each choices as c (c.kind)}
         {@const rec = c.kind === suggested}
         <button class="btn choice {c.kind}" class:light={!rec} class:rec disabled={off(c.kind)} onclick={() => begin(c.kind, c.title)}>
@@ -83,7 +135,17 @@
           </span>
         </button>
       {/each}
+      <button class="btn choice light topic" onclick={() => pick('topic')}>
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">{#each BOOKS as d (d)}<path {d} />{/each}</svg>
+        </span>
+        <span class="text">
+          <span class="title">テーマで選ぶ</span>
+          <span class="desc"><Ja text="ごはん、|あいさつなど、|テーマを1つ|選んで練習" /></span>
+        </span>
+      </button>
       <p class="note">練習は、復習の予定には影響しません。</p>
+      </div>
     {/if}
   {/snippet}
 </StepLayout>
@@ -95,6 +157,20 @@
     min-height: 70px;
     padding: 10px 14px;
     text-align: left;
+  }
+  .group {
+    display: grid;
+    gap: inherit;
+  }
+  .back {
+    width: auto;
+    justify-self: start;
+    min-height: 44px;
+    padding: 6px 16px;
+    font-size: 15px;
+  }
+  .topic .icon {
+    background: var(--mint);
   }
   .choice.rec {
     background: var(--sun);

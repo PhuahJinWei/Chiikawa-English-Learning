@@ -6,6 +6,47 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Seven more conveniences (2026-11-17)
+
+From a look for what was still missing; you chose all seven.
+
+- **Search in the notebook:** a box under the two tabs finds learned phrases (title, English or Japanese, including other phrasings and replies) and memos (English, Japanese, other meanings).
+- **Choosing a conversation:** 練習 → 会話 now opens a list: おまかせ (three she has not done for a while, as before) or any one conversation she is ready for.
+- **Practising one topic:** 練習 → テーマで選ぶ lists the topics she has learned phrases in; one tap practises 8 of that topic's phrases.
+- **Undo after deleting a memo:** deleting (the memo's menu, or the bin in the editor) no longer asks first. A dark note 「メモを削除しました　元に戻す」 stays for 6 seconds and puts the memo back where it was.
+- **Recording in conversations:** on her turn in 会話してみよう, the same 「自分の声を録音する」 as in 答えてみよう; after 答え合わせ, 「自分の声を聞く」.
+- **A memo from a lesson:** the ⏸ menu has 「このフレーズをメモに追加」 for the phrase of the current step.
+- **Hold a learned phrase:** a menu with ▶ 聞く, 練習する, メモに追加, 詳しく見る, as memos have.
+- **Checked:** all seven walked in Edge at iPhone SE size with a day-31 profile and a pretend microphone; type check, tests, build, WebKit smoke test (its memo check now deletes, undoes, and deletes again). Not tried on a real iPhone.
+
+## Memos: lighter hint, more meanings, a menu, and a delete that sticks (2026-11-17)
+
+Five things you asked for, and one bug found on the way.
+
+- **Empty boxes look empty:** the hint text in a memo's boxes is thin and pale instead of bold and dark.
+- **Other meanings:** under メモ（日本語）, 「＋ ほかの意味を追加」 adds a box for another meaning (up to 5, each with ✕ to remove it). The list shows them numbered 2, 3, … under the first. They are kept in backups; empty boxes are not saved.
+- **Deleting from the editor:** a bin button now sits beside 保存する. No scrolling. (It first asked in that same row; later the same day the question was replaced by 元に戻す, see above.)
+- **A menu on each memo:** ⋯ at the right of a memo, or holding the memo for half a second, opens 書き直す, ▶ 聞く, メモを削除 (asks once) and 閉じる. A short tap still opens the editor.
+- **メモを送る is gone,** with its code and test. The README's steps for voicing a note no longer rely on it.
+- **Bug fixed: a memo deleted in the editor came back** the next time the app opened. The closing editor saved once more and wrote the note back. It was there before today's changes; the smoke test now checks that a deleted memo is gone from what is saved.
+- **Checked:** walked in Edge at iPhone SE size (new memo, extra meanings saved, both ways of deleting, hold and tap), type check, tests, build, WebKit smoke test. Holding a memo on a real iPhone is not tried.
+
+## The rest of the list: drafts, earlier questions, her own voice (2026-11-17)
+
+You said to go ahead with everything left from the whole-app review.
+
+- **12 new phrases** (drafted, then approved by you the same day; voiced and in the app):
+  - Reactions: "Wow!" (to "Look!"), "I see." (to "It's chicken."), "That's nice!". "Really?" is left out: the voice never rises on a question, and "Really." said flat sounds doubtful.
+  - Describing things, each "It's good!" with one word changed: "It's hot!", "It's cold!", "It's cute!", "It's beautiful!".
+  - For learning and her hobby: "What is this in English?", and "Can I take a picture?" with "Sure!" back.
+  - What she may hear when she asks "What do you do?": "I'm a teacher." / "I work at a bank." (to understand only). Once approved, a conversation can use her question.
+  - The tens, for ages and prices: "Twenty. / Thirty. / Forty." and "Fifty. / A hundred.".
+- **3 more drafts, with the facts you gave** (her second visit, one week, and 25 as a placeholder age for privacy, to be swapped for her own like the name Yuki): "Is this your first time in Malaysia?" → "My second time."; "How long are you staying?" → "One week."; "How old are you?" → "I'm twenty-five.". All 15 were approved, voiced (40 new clips) and put in the app; the path is now 149 steps.
+- **Asking back comes early:** "How about you?" and "What do you do?" moved from about days 49 and 50 to day 17, right after "What's your name?". No audio changed.
+- **"And" in conversations:** C15 自己紹介 now has "My name is Yuki, and I'm from Japan.", and C27 今日あったこと has "I went to the beach and took pictures." (both lines already had audio).
+- **Her own voice:** in 答えてみよう there is a small 「自分の声を録音する」 button. Only if she taps it, the iPhone asks for the microphone; her answer is recorded until 答え合わせ (20 seconds at most), and after the model has played, 「自分の声を聞く」 plays it back beside the model's ▶. The recording is kept in memory for that step only, never saved or sent. The microphone is released before the model plays. Checked in Edge with a pretend microphone at both phone sizes (record, play back, a clean next step). **Not tried on a real iPhone**, where the microphone is the risky part: if sound turns quiet or moves to the earpiece after recording, tell me.
+- **Checked:** type check, 120 tests, build, and the WebKit smoke test.
+
 ## More "and": 6 new phrases (2026-11-17)
 
 You said she often forgets "and". Only 4 of the 128 phrases had it, and two of those are the fixed "And you?".
