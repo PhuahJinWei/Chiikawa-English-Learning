@@ -70,12 +70,15 @@
     };
   });
 
+  // A new card scrolls just into view. When cards go (a quiz's choices once it is answered), the page goes back to
+  // its first card: left where it was, the main card would stay half under the bubble (2026-11-17, iPhone SE).
   $effect(() => {
     if (!content) return;
     const box = content;
     let count = box.childElementCount;
     const mo = new MutationObserver(() => {
       if (box.childElementCount > count) box.lastElementChild?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      else if (box.childElementCount < count) scroller?.scrollTo({ top: 0, behavior: 'smooth' });
       count = box.childElementCount;
     });
     mo.observe(box, { childList: true });

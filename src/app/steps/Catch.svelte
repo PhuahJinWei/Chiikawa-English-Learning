@@ -23,7 +23,8 @@
    * Catch: she hears a line with no text, and only then do the choices appear (REVIEW 2.4). Either "what does it
    * mean?" (Japanese choices) or, for an exchange with a reply, "what would you answer?" (reply choices she can play).
    * A miss gets a worried Chiikawa, the key part again, and another try. Passed = right on the first try. The choices
-   * are light buttons in a thin line, so the sound card stays the main thing on the page (2026-11-17).
+   * are light buttons in a thin line, so the sound card stays the main thing on the page (2026-11-17). Once answered,
+   * the choices go and the page returns to its top (StepLayout).
    */
   let {
     ex: exProp,
@@ -175,7 +176,9 @@
     {/if}
   {/snippet}
   {#snippet body()}
-    <SpeakerCard kind="other" {line} reveal={solved} />
+    <!-- Once a "what would you answer?" quiz is answered, the question shrinks to one row, so the right answer shows
+         whole under it, as the model does in 答えてみよう (2026-11-17: on a small iPhone it stayed half hidden). -->
+    <SpeakerCard kind="other" {line} reveal={solved} compact={solved && ask === 'reply'} />
     {#if !failed && !solved}
       <!-- Asking again sits by the sound it replays; it reads "Sorry, what?" once she has learned that phrase. -->
       <SorryButton {line} channel="other" disabled={!heard || busy} />

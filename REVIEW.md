@@ -6,6 +6,17 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Lesson cards on small iPhones (2026-11-17)
+
+You asked me to fix cards sliding under Hachiware's bubble in lessons. I walked two lessons at both home-screen sizes and measured every moment of every step: a first lesson, and one with the tallest cards (the longest lines she hears and says, quizzes answered with long replies, a new phrase with three phrasings and two replies, a long conversation).
+
+- **What was wrong:** it was not only a few pixels on an SE. Of 263 moments on an SE, 105 hid the top of a card by more than the 12px fade at the top of the page, 88 of them outside conversations, and 4 at the end of a quiz or step, the screen she looks at before 次へ. On an iPhone 13: 48 of 231, 32 outside conversations, 2 at an end. The worst was a "what would you answer?" quiz once answered: the question card stayed mostly hidden, because the page kept the place it had scrolled to for the choices.
+- **When cards go away** (a quiz's choices, once it is answered), the page now scrolls back to its first card.
+- **A "what would you answer?" quiz, once answered,** shows its question in one row, so the right answer shows whole under it, as 答えてみよう does after 答え合わせ.
+- **On short screens** (under 700px tall, such as an SE's home-screen app) the friends' strip in lessons is 20% of the screen instead of 24%: 129px instead of 155px on an SE, which gives the cards 26px more.
+- **After:** no quiz or step ends with a card half hidden on either phone. Moments with a card's top hidden, outside conversations: SE 88 to 31, iPhone 13 32 to 9. What is left is scrolling by design: while she chooses among long replies, the page shows the choices and the replay button, so the question card (still only ♪ ♪ ♪) scrolls up, on an SE out of sight; and when the model of her longest sentence ("I work at a bakery from seven to four, five days a week.") appears, its situation card scrolls up. Conversations scroll up like a chat, as before.
+- **Checked:** the same two lessons walked again in Edge at both sizes (WebKit on this PC has no sound, so its lessons stop at 「音が出なかったみたい」 and cannot be walked), the type check, 120 tests, and the WebKit smoke test (36 of 36). Not checked on a real iPhone.
+
 ## 18 more conversations, C12 to C29 (2026-11-17)
 
 You said "Yes, draft them". The 11 conversations in the app used only phrases #1 to #51, so nothing she learns from about day 26 on came up in one.

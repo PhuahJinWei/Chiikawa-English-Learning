@@ -181,6 +181,13 @@
   .mode-band {
     --stage-now: clamp(140px, 24dvh, 230px);
   }
+  /* On a short screen (an iPhone SE's home-screen app is 647px tall) a little lower still, so a quiz's card and its
+     answer fit under a three-line bubble instead of sliding under it (2026-11-17). */
+  @media (max-height: 700px) {
+    .mode-band {
+      --stage-now: clamp(120px, 20dvh, 230px);
+    }
+  }
   .mode-strip {
     --stage-now: clamp(120px, 18dvh, 170px);
   }
