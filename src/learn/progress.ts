@@ -154,28 +154,66 @@ function normalizeSkill(s: unknown): SkillState | undefined {
   };
 }
 
+/** Far more steps than a lesson ever has (about 60 with its retries, a few hundred at the very most): a saved lesson
+ * with more is not one (2026-11-18: a restored backup could hold one of any length). */
+const MOST_STEPS = 1000;
+
+/** A saved step: a known shape, with a name of a sensible length. */
+const isStep = (x: unknown): x is Step =>
+  isObj(x) &&
+  typeof x.kind === 'string' &&
+  (x.kind === 'talk'
+    ? typeof x.talkId === 'string' && x.talkId.length <= LONGEST_KEY
+    : typeof x.exId === 'string' && x.exId.length <= LONGEST_KEY);
+
+/** A step with only what a step has, whatever else a restored backup put on it. */
+function cleanStep(x: Step): Step {
+  switch (x.kind) {
+    case 'talk':
+      return { kind: 'talk', talkId: x.talkId };
+    case 'meet':
+      return { kind: 'meet', exId: x.exId };
+    case 'answer':
+      return { kind: 'answer', exId: x.exId, review: x.review === true };
+    case 'catch':
+      return {
+        kind: 'catch',
+        exId: x.exId,
+        review: x.review === true,
+        ...(x.ask === 'meaning' || x.ask === 'reply' ? { ask: x.ask } : {}),
+      };
+  }
+}
+
 function normalizeSession(s: unknown): SavedSession | null {
-  if (!isObj(s) || typeof s.day !== 'number' || typeof s.index !== 'number' || !Array.isArray(s.steps)) return null;
-  const all = s.steps.filter(
-    (x): x is Step =>
-      isObj(x) && typeof x.kind === 'string' && (typeof x.exId === 'string' || (x.kind === 'talk' && typeof x.talkId === 'string')),
-  );
-  if (all.length !== s.steps.length) return null;
+  if (!isObj(s) || !isDay(s.day) || typeof s.index !== 'number' || !Array.isArray(s.steps)) return null;
+  if (s.steps.length > MOST_STEPS || !s.steps.every(isStep)) return null;
+  const all: Step[] = s.steps;
   // A lesson saved by an older version can hold steps the app no longer has (the repeat-after-me step, removed
-  // 2026-11-17): they are dropped, and her place and the recorded steps move with the steps that stay.
+  // 2026-11-17): they are dropped, and her place and the recorded steps move with the steps that stay. `before[i]`
+  // is where step i moves to: the steps kept before it (counted once, 2026-11-18: counting again for every recorded
+  // step took seconds with a hand-made one).
   const keep = all.map((x) => STEP_KINDS.includes(x.kind));
-  const steps = all.filter((_, i) => keep[i]);
-  const moved = (i: number) => keep.slice(0, i).filter(Boolean).length;
+  const before: number[] = [];
+  let kept = 0;
+  for (const k of keep) {
+    before.push(kept);
+    if (k) kept++;
+  }
+  before.push(kept);
   const counts = isObj(s.counts) ? s.counts : {};
+  const count = (x: unknown) => Math.min(MOST_STEPS, Math.max(0, whole(x)));
   return {
-    day: s.day,
-    steps,
-    index: moved(Math.max(0, Math.min(s.index, all.length))),
+    day: Math.round(s.day),
+    steps: all.filter((_, i) => keep[i]).map(cleanStep),
+    index: before[Math.max(0, Math.min(whole(s.index), all.length))],
     recorded: Array.isArray(s.recorded)
-      ? s.recorded.filter((x): x is number => typeof x === 'number' && keep[x] === true).map(moved)
+      ? [...new Set(s.recorded.filter((x): x is number => typeof x === 'number' && keep[x] === true).map((x) => before[x]))]
       : [],
-    retried: Array.isArray(s.retried) ? s.retried.filter((x): x is string => typeof x === 'string') : [],
-    counts: { fresh: num(counts.fresh), reviews: num(counts.reviews), practice: num(counts.practice) },
+    retried: Array.isArray(s.retried)
+      ? [...new Set(s.retried.filter((x): x is string => typeof x === 'string' && x.length <= LONGEST_KEY))].slice(0, MOST_STEPS)
+      : [],
+    counts: { fresh: count(counts.fresh), reviews: count(counts.reviews), practice: count(counts.practice) },
   };
 }
 

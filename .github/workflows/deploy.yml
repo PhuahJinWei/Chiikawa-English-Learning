@@ -8,7 +8,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# The build job (which installs and runs dependencies) can only read the code; only the deploy job may publish.
+# Every job can only read the code, unless it has its own permissions (which then replace these): the build job,
+# which installs and runs dependencies, cannot publish; only the deploy job can. This limits what a bad dependency
+# could do with the build job's token. What the build job uploads is still what gets published.
 permissions:
   contents: read
 
@@ -17,12 +19,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # No configure-pages step: it only reads the Pages settings, and nothing used what it found (the app's paths are
+  # relative: vite.config.ts, base './'). Without it, this job needs nothing but the code.
   build:
     runs-on: ubuntu-latest
-    # Reading the Pages settings (configure-pages) is all this job needs beyond the code.
-    permissions:
-      contents: read
-      pages: read
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -31,7 +31,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

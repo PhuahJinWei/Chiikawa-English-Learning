@@ -66,6 +66,9 @@
         font: inherit;
         font-size: 18px;
       }
+      #boot button[disabled] {
+        opacity: 0.6;
+      }
       #boot pre {
         margin: 16px 0 0;
         font-size: 11px;
@@ -84,7 +87,7 @@
       <div class="boot-card">
         <p class="boot-title" id="boot-title">読み込みに時間がかかっています</p>
         <p>電波のよいところで「もう一度読み込む」を押してください。何度やっても開かないときは、この画面のスクリーンショットを送ってください。</p>
-        <button type="button" onclick="window.__bootReload()">もう一度読み込む</button>
+        <button type="button" onclick="window.__bootReload(this)">もう一度読み込む</button>
         <pre id="boot-detail"></pre>
       </div>
     </div>
@@ -106,35 +109,51 @@
         window.__bootFailed = function (detail) {
           show(detail, true);
         };
-        // もう一度読み込む: a plain reload would open the same broken version again, because a newer one waits until
-        // the app (which did not start) tells it to take over. So: ask for a newer version, tell any that is waiting
-        // or arrives to take over, and reload when it has, or after 4 seconds (2026-11-17).
-        window.__bootReload = function () {
+        // もう一度読み込む (2026-11-17, reworked 2026-11-18): a plain reload would open the same broken version again,
+        // because a newer one waits until the app (which did not start) tells it to take over. So the button asks for
+        // a newer version and tells it to take over as soon as it is downloaded, including one the phone was already
+        // downloading, and the page reloads once it has. With nothing newer, or no connection, it reloads at once. It
+        // says it is working, never takes longer than 20 seconds, and leaves the app alone if it has started meanwhile.
+        // The message must be the one the service worker listens for (src/worker-message.ts; tests/boot.test.ts).
+        window.__bootReload = function (button) {
           var done = false;
           function go() {
             if (done) return;
             done = true;
-            location.reload();
+            if (!window.__booted) location.reload();
           }
-          function takeOver(worker) {
-            if (worker) worker.postMessage({ type: 'activate' });
+          if (button) {
+            button.disabled = true;
+            button.textContent = '読み込み中…';
           }
+          setTimeout(go, 20000);
           try {
             var sw = navigator.serviceWorker;
-            if (!sw) return go();
+            if (!sw || !sw.controller) return go();
             sw.addEventListener('controllerchange', go);
             sw.getRegistration().then(function (reg) {
               if (!reg) return go();
-              takeOver(reg.waiting);
-              reg.addEventListener('updatefound', function () {
-                var fresh = reg.installing;
-                if (!fresh) return;
-                fresh.addEventListener('statechange', function () {
-                  if (fresh.state === 'installed') takeOver(fresh);
+              // Nothing newer on its way (the check found none, or a download failed): reload now. A moment's wait
+              // first, so a download the check has just started is seen.
+              function settle() {
+                setTimeout(function () {
+                  if (!reg.installing && !reg.waiting) go();
+                }, 300);
+              }
+              function watch(worker) {
+                if (!worker) return;
+                if (worker.state === 'installed') return worker.postMessage({ type: 'activate' });
+                worker.addEventListener('statechange', function () {
+                  if (worker.state === 'installed') worker.postMessage({ type: 'activate' });
+                  if (worker.state === 'redundant') settle();
                 });
+              }
+              watch(reg.waiting);
+              watch(reg.installing);
+              reg.addEventListener('updatefound', function () {
+                watch(reg.installing);
               });
-              reg.update()['catch'](function () {});
-              setTimeout(go, 4000);
+              reg.update().then(settle, settle);
             }, go);
           } catch (e) {
             go();

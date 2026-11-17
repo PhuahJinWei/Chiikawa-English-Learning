@@ -1,6 +1,7 @@
 // The generated service worker (tools/build/service-worker.ts), run against fake caches and a fake server: what it
 // keeps on her phone decides whether the app opens offline, so its install and update paths are checked here.
 import { describe, expect, it } from 'vitest';
+import { TAKE_OVER } from '../src/worker-message.ts';
 import { hashOf, swSource } from '../tools/build/service-worker.ts';
 
 type Handler = (event: Record<string, unknown>) => void;
@@ -9,6 +10,8 @@ type Handler = (event: Record<string, unknown>) => void;
 function world(server: Record<string, string>) {
   const caches = new Map<string, Map<string, Response>>();
   const fetched: string[] = [];
+  /** The versions that stopped waiting and took over. */
+  const skipped: string[] = [];
   const cacheApi = {
     async open(name: string) {
       if (!caches.has(name)) caches.set(name, new Map());
@@ -47,7 +50,11 @@ function world(server: Record<string, string>) {
   /** Installs (and optionally activates) the worker for this version of the files. */
   async function install(version: string, files: Record<string, string>, activate = true) {
     const on: Record<string, Handler> = {};
-    const self = { addEventListener: (t: string, cb: Handler) => (on[t] = cb), clients: { claim: async () => {} }, skipWaiting() {} };
+    const self = {
+      addEventListener: (t: string, cb: Handler) => (on[t] = cb),
+      clients: { claim: async () => {} },
+      skipWaiting: () => void skipped.push(version),
+    };
     const hashes = Object.fromEntries(Object.entries(files).map(([p, body]) => [p, hashOf(body)]));
     new Function('self', 'caches', 'fetch', 'Request', 'crypto', swSource(version, hashes))(self, cacheApi, fetchApi, Req, crypto);
     let done: Promise<unknown> = Promise.resolve();
@@ -59,7 +66,7 @@ function world(server: Record<string, string>) {
     }
     return on;
   }
-  return { caches, fetched, install };
+  return { caches, fetched, skipped, install };
 }
 
 const V1 = { './': '<html>1</html>', 'index.html': '<html>1</html>', 'assets/app-1.js': 'one', 'audio/hi.mp3': 'hi' };
@@ -99,6 +106,16 @@ describe('service worker', () => {
     w.caches.set('eigo-friends-old', new Map([['audio/hi.mp3', new Response('hi')]]));
     await w.install('v2', V2);
     expect(w.fetched.sort()).toEqual(Object.keys(V2).sort());
+  });
+
+  it('a downloaded version waits, and takes over when told to by the message the app and the start-up panel send', async () => {
+    const w = world(V2);
+    const on = await w.install('v2', V2, false);
+    expect(w.skipped).toEqual([]);
+    on.message({ data: { type: 'status' }, waitUntil() {} });
+    expect(w.skipped).toEqual([]);
+    on.message({ data: TAKE_OVER, waitUntil() {} });
+    expect(w.skipped).toEqual(['v2']);
   });
 
   it('answers the app about its offline copy', async () => {

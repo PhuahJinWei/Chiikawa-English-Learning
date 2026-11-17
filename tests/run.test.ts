@@ -2,7 +2,8 @@
 import { describe, expect, it } from 'vitest';
 import { ORDERED, exchangeById } from '../src/content/index.ts';
 import { emptyProgress } from '../src/learn/progress.ts';
-import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown } from '../src/learn/run.ts';
+import { finishStep, fromSaved, leaveRun, missStep, move, practiceRun, skipKnown } from '../src/learn/run.ts';
+import { learned } from '../src/learn/schedule.ts';
 import { buildSession, newSaved, resumable, stepTarget, type Step } from '../src/learn/session.ts';
 
 const find = (id: string) => exchangeById(id);
@@ -107,6 +108,65 @@ describe('lesson bookkeeping', () => {
     leaveRun(r, p);
     expect(resumable(p, 10, exists)?.index).toBe(2);
     expect(resumable(p, 11, exists)).toBeNull();
+  });
+
+  it('a wrong answer in a quiz is its result at once: stopping for today and continuing cannot undo it', () => {
+    const p = emptyProgress();
+    p.ex['hi'] = { met: 1, hear: learned(1), say: learned(1) };
+    const { r } = startDay(p, 30);
+    const quiz = r.steps.findIndex((s) => s.kind === 'catch' && s.exId === 'hi' && s.review);
+    const planned = r.steps.length;
+    move(r, p, quiz);
+    missStep(r, p, find, 'Hello!', 1);
+    const missed = structuredClone(p.ex['hi'].hear);
+    expect(missed?.misses).toBe(1);
+    // 今日はここまでにする before 次へ, then 続きから the same day: the quiz is still a miss.
+    leaveRun(r, p);
+    const again = fromSaved(resumable(p, 30, exists)!);
+    expect(again.index).toBe(quiz);
+    finishStep(again, p, find, { grade: 'good' }, 2);
+    expect(p.ex['hi'].hear).toEqual(missed);
+    // A wrong answer in a later try notes the line that try played, and adds no second retry.
+    missStep(again, p, find, 'Hey!', 3);
+    expect(p.missedLines).toEqual({ 'Hello!': 1, 'Hey!': 1 });
+    expect(again.steps).toHaveLength(planned + 1);
+  });
+
+  it('a missed quiz stays with its own phrase when もう知ってる drops an earlier one', () => {
+    const { p, r } = startDay();
+    const at = (kind: Step['kind'], id: string) => r.steps.findIndex((s) => s.kind === kind && stepTarget(s) === id);
+    // She misses the quiz on "Sorry, what?", goes back to the first new phrase, and says she knew that one.
+    move(r, p, at('catch', 'sorry-what'));
+    missStep(r, p, find, 'Sorry, what?', 1);
+    move(r, p, -r.index);
+    skipKnown(r, p, find('hi')!);
+    // The quiz moved up with the steps dropped before it, and its miss went with it.
+    move(r, p, at('catch', 'sorry-what') - r.index);
+    expect(r.recorded).toContain(r.index);
+    finishStep(r, p, find, { grade: 'good' }, 2);
+    expect(p.missedLines).toEqual({ 'Sorry, what?': 1 });
+    expect(r.retried).toEqual(['catch:sorry-what']);
+  });
+
+  it('a quiz that takes the place of a missed one is not marked by it', () => {
+    const { p, r } = startDay();
+    const at = (kind: Step['kind'], id: string) => r.steps.findIndex((s) => s.kind === kind && stepTarget(s) === id);
+    // She misses the quiz on "hi", goes back to its new phrase and says she knows it: its quiz and retry go.
+    move(r, p, at('catch', 'hi'));
+    missStep(r, p, find, 'Hi!', 1);
+    const practice = r.counts.practice;
+    const later = r.steps.filter((s, i) => i > 0 && stepTarget(s) === 'hi').length;
+    move(r, p, -r.index);
+    skipKnown(r, p, find('hi')!);
+    expect(r.steps.filter((s) => stepTarget(s) === 'hi')).toHaveLength(1);
+    // Its own two checks and the retry were never counted as practice.
+    expect(r.counts.practice).toBe(practice - (later - 2 - 1));
+    // "Sorry, what?" is now where the missed quiz was: right the first time, it passes.
+    move(r, p, at('catch', 'sorry-what') - r.index);
+    expect(r.recorded).not.toContain(r.index);
+    finishStep(r, p, find, { grade: 'good' }, 2);
+    expect(r.retried).toEqual(['catch:hi']);
+    expect(p.missedLines).toEqual({ 'Hi!': 1 });
   });
 
   it('a missed check gets exactly one retry at the end', () => {

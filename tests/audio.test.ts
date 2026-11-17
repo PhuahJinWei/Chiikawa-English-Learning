@@ -134,6 +134,16 @@ describe('sound recovery', () => {
     expect(a.soundInfo.ended).toBe(1);
   });
 
+  it('counts the clips she starts herself, not the lesson’s own (a quiz waits for 次へ after her tap)', async () => {
+    const a = await fresh();
+    a.unlock();
+    expect(a.manualPlays()).toBe(0);
+    await settle(a.play('audio/hi.mp3', 'other', 'script'));
+    expect(a.manualPlays()).toBe(0);
+    await settle(a.play('audio/hi.mp3', 'other'));
+    expect(a.manualPlays()).toBe(1);
+  });
+
   it('a resume that never answers pauses the lesson instead of hanging; the next tap rebuilds sound', async () => {
     const a = await fresh();
     const paused = vi.fn();

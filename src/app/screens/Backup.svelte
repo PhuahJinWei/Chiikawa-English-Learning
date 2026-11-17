@@ -4,7 +4,7 @@
   import { emptyProgress, type Progress } from '../../learn/progress.ts';
   import SheetHead from '../components/SheetHead.svelte';
   import { shareText } from '../platform.ts';
-  import { app, go, save } from '../state.svelte.ts';
+  import { app, go, replaceProgress, save } from '../state.svelte.ts';
 
   /**
    * The record's backup (REVIEW 1.14, 4.5): her progress lives only on this phone, inside the home-screen app.
@@ -18,13 +18,18 @@
   let found = $state<Progress | null>(null);
   let erase = $state<0 | 1 | 2>(0);
   let done = $state('');
+  /** Done (mint) or not done (the warning colour): a failure never shows in the box that means it worked. */
+  let doneOk = $state(true);
   let scroller: HTMLDivElement | undefined = $state();
 
   /** The result is shown at the top, where she may have scrolled away from. */
-  function tell(text: string) {
+  function tell(text: string, ok = true) {
     done = text;
+    doneOk = ok;
     scroller?.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  const NOT_SAVED = '保存できなかったので、記録は前のままです。iPhoneの空き容量を確かめて、もう一度ためしてください。';
 
   const phrases = (p: Progress) => Object.keys(p.ex).length;
 
@@ -67,21 +72,27 @@
 
   function restore() {
     if (!found) return;
+    const backup = $state.snapshot(found) as Progress;
     // Her notes are never lost to an older backup: the two sets are put together.
-    const notes = mergeNotes($state.snapshot(app.progress.notes) as Progress['notes'], found.notes);
-    app.progress = { ...found, notes, backedUp: app.today };
-    save();
+    const notes = mergeNotes($state.snapshot(app.progress.notes) as Progress['notes'], backup.notes);
+    // Written before it is used: on a phone too full to save it, nothing changes, and the backup stays here to try
+    // again (2026-11-18: the app went on with a record that was not saved).
+    if (!replaceProgress({ ...backup, notes, backedUp: app.today })) {
+      tell(NOT_SAVED, false);
+      return;
+    }
     found = null;
     pasted = '';
-    // Only when it was really written: a full phone leaves the old record on it.
-    tell(app.saved ? '記録を戻しました！' : '保存できませんでした。iPhoneの空き容量を確かめて、もう一度ためしてください。');
+    tell('記録を戻しました！');
   }
 
   function eraseAll() {
     // Starting the course again keeps her own notes and settings.
     const keep = $state.snapshot(app.progress) as Progress;
-    app.progress = { ...emptyProgress(), notes: keep.notes, settings: { ...keep.settings, toured: true } };
-    save();
+    if (!replaceProgress({ ...emptyProgress(), notes: keep.notes, settings: { ...keep.settings, toured: true } })) {
+      tell(NOT_SAVED, false);
+      return;
+    }
     erase = 0;
     tell('記録をすべて消しました。');
   }
@@ -94,7 +105,7 @@
     <p class="intro">
       記録はこのiPhoneの中だけにあります。アプリを消したりiPhoneを替えたりすると消えてしまうので、ときどきバックアップをLINEやメモに保存してください。
     </p>
-    {#if done}<p class="note done">{done}</p>{/if}
+    {#if done}<p class="note done" class:warn={!doneOk} role={doneOk ? 'status' : 'alert'}>{done}</p>{/if}
 
     <h2>バックアップする</h2>
     <section class="card soft box">
@@ -215,5 +226,8 @@
     padding: 8px;
     border-radius: 12px;
     background: var(--mint);
+  }
+  .done.warn {
+    background: var(--alert);
   }
 </style>

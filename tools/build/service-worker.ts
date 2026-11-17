@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 import type { Plugin } from 'vite';
+import { TAKE_OVER } from '../../src/worker-message.ts';
 
 /**
  * Writes dist/sw.js and dist/precache.json after a production build. The service worker keeps every file of the
@@ -97,7 +98,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('message', (event) => {
   const msg = event.data || {};
-  if (msg.type === 'activate') self.skipWaiting();
+  if (msg.type === '${TAKE_OVER.type}') self.skipWaiting();
   // The self-check and the Today screen ask whether everything is kept offline.
   if (msg.type === 'status' && event.ports && event.ports[0]) {
     event.waitUntil(

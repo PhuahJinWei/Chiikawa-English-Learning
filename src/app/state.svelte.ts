@@ -51,6 +51,17 @@ export function save(): void {
   app.saved = saveProgress($state.snapshot(app.progress) as Progress);
 }
 
+/**
+ * Puts a whole other record in place (a restore, or starting over), written first (2026-11-18): when the phone is too
+ * full to save it, the record in use and the one on the phone both stay as they were, and it says false.
+ */
+export function replaceProgress(next: Progress): boolean {
+  if (!saveProgress(next)) return false;
+  app.progress = next;
+  app.saved = true;
+  return true;
+}
+
 export function go(screen: Screen): void {
   app.screen = screen;
 }

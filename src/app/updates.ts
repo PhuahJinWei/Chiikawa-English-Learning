@@ -1,3 +1,4 @@
+import { TAKE_OVER } from '../worker-message.ts';
 import { noteError } from './errors.ts';
 import { app } from './state.svelte.ts';
 
@@ -102,7 +103,7 @@ async function watchUpdates(reg: ServiceWorkerRegistration): Promise<void> {
     app.updating = true;
     clearTimeout(noteTimer);
     noteTimer = setTimeout(() => (app.updating = false), SWITCH_WAIT_MS);
-    waiting.postMessage({ type: 'activate' });
+    waiting.postMessage(TAKE_OVER);
   };
 
   reg.addEventListener('updatefound', () => {

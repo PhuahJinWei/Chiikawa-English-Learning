@@ -91,6 +91,10 @@ function within<T>(p: Promise<T>, ms: number, what: string): Promise<T> {
 
 let gen = 0;
 let manualGen = 0;
+let manualCount = 0;
+/** How many clips she has started herself so far (her taps; the lesson's own clips are not counted): a step compares
+ * two counts to tell whether she tapped one in between (2026-11-18). */
+export const manualPlays = (): number => manualCount;
 /** The clip playing now. Stopping it settles its play() as 'stopped'. */
 let current: { stop: () => void } | null = null;
 const interruptions = new Set<() => void>();
@@ -394,6 +398,7 @@ export async function play(path: string, channel: Channel, owner: Owner = 'manua
   // What was playing has stopped, even if this request never gets to start.
   audioState.playing = null;
   if (owner === 'manual') {
+    manualCount++;
     manualGen = my;
     audioState.manual = true;
   }
@@ -469,6 +474,7 @@ export function speak(text: string, channel: Channel = 'model'): Promise<PlayRes
   current?.stop();
   current = null;
   audioState.playing = null;
+  manualCount++;
   manualGen = my;
   audioState.manual = true;
   const key = `speech:${text}`;

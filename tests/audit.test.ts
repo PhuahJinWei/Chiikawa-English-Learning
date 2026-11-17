@@ -1,8 +1,10 @@
-// Fixes from the code audit of 2026-11-17 (REVIEW.md): each defect found has a test here.
-import { describe, expect, it } from 'vitest';
+// Fixes from the code audit of 2026-11-17 (REVIEW.md), and from the review of those fixes (2026-11-18): each defect
+// found has a test here, or in the test file of the code it was in (run, boot, service worker, audio).
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ORDERED, TALKS, exchangeById } from '../src/content/index.ts';
 import { BACKUP_MAX_BYTES, makeBackup, readBackup } from '../src/learn/backup.ts';
-import { emptyProgress, normalize } from '../src/learn/progress.ts';
+import { newNote, putNote } from '../src/learn/notes.ts';
+import { emptyProgress, normalize, NOTE_EN_MAX, NOTE_JA_MAX, NOTE_MORE_MAX, NOTES_MAX } from '../src/learn/progress.ts';
 import { finishStep, fromSaved, move, skipKnown } from '../src/learn/run.ts';
 import { learned } from '../src/learn/schedule.ts';
 import { buildSession, MAX_REVIEWS, newSaved, stepTarget, type Step } from '../src/learn/session.ts';
@@ -36,23 +38,21 @@ describe('a running lesson', () => {
     expect(p.ex['hi'].hear?.box).toBe(3);
   });
 
-  it('retries a missed step before the closing conversation, which stays last', () => {
+  it('retries a missed step before the closing conversation, which stays last, or at the end without one', () => {
     const p = emptyProgress();
+    p.ex['hi'] = { met: 1, hear: learned(1), say: learned(1) };
     const steps: Step[] = [
       { kind: 'catch', exId: 'hi', review: true },
       { kind: 'answer', exId: 'hi', review: true },
-      { kind: 'talk', talkId: TALKS[0].id },
     ];
-    p.ex['hi'] = { met: 1, hear: learned(1), say: learned(1) };
-    const run = fromSaved({ day: 10, steps, index: 0, recorded: [], retried: [], counts: { fresh: 0, reviews: 2, practice: 1 } });
-    finishStep(run, p, exchangeById, { grade: 'again' }, 1);
-    expect(run.steps.map((s) => s.kind)).toEqual(['catch', 'answer', 'catch', 'talk']);
-    // On the conversation itself there is nothing left to put a retry before: a late miss goes to the end.
-    run.index = 3;
-    run.steps.push({ kind: 'answer', exId: 'hi', review: false });
-    run.index = 4;
-    finishStep(run, p, exchangeById, { grade: 'again' }, 2);
-    expect(run.steps.at(-1)).toMatchObject({ kind: 'answer', exId: 'hi' });
+    const counts = { fresh: 0, reviews: 2, practice: 0 };
+    const talk = fromSaved({ day: 10, steps: [...steps, { kind: 'talk', talkId: TALKS[0].id }], index: 0, recorded: [], retried: [], counts });
+    finishStep(talk, p, exchangeById, { grade: 'again' }, 1);
+    expect(talk.steps.map((s) => s.kind)).toEqual(['catch', 'answer', 'catch', 'talk']);
+    // A round of もっと覚える has no conversation: the retry is its last step.
+    const round = fromSaved({ day: 10, steps, index: 1, recorded: [], retried: [], counts });
+    finishStep(round, p, exchangeById, { grade: 'again' }, 2);
+    expect(round.steps).toEqual([...steps, { kind: 'answer', exId: 'hi', review: false }]);
   });
 });
 
@@ -86,17 +86,88 @@ describe('saved progress from a hand-edited save or backup', () => {
     expect(normalize(JSON.parse(JSON.stringify(p)))).toEqual(p);
   });
 
-  it('a backup that unpacks to more than a backup can hold is refused, not unpacked whole', async () => {
-    const big = emptyProgress();
-    big.notes = Array.from({ length: 500 }, (_, i) => ({ id: `n${i}`, en: 'a'.repeat(300), ja: 'あ'.repeat(500), created: i, updated: i }));
-    // 500 full notes: a real backup, well under the limit.
-    const real = await readBackup(await makeBackup(big, 10));
-    expect(real.ok).toBe(true);
-    const zeros = new Uint8Array(BACKUP_MAX_BYTES + 1024);
-    const packed = new Uint8Array(await new Response(new Blob([zeros]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer());
-    let s = '';
-    for (const b of packed) s += String.fromCharCode(b);
-    const text = (await makeBackup(emptyProgress(), 10)).replace(/:[^~]*~/, `:${btoa(s)}~`);
-    expect(await readBackup(text)).toMatchObject({ ok: false, why: 'broken' });
+  it('keeps a saved lesson only within what a lesson can be (2026-11-18)', () => {
+    const endless = Array.from({ length: 30_000 }, (): Step => ({ kind: 'catch', exId: 'hi', review: false }));
+    const session = (s: Record<string, unknown>) => normalize({ v: 1, session: { day: 10, index: 0, recorded: [], retried: [], ...s } }).session;
+    expect(session({ steps: endless, recorded: endless.map((_, i) => i) })).toBeNull();
+    expect(
+      session({
+        index: 1.4,
+        steps: [
+          { kind: 'meet', exId: 'hi', extra: 'x'.repeat(100) },
+          { kind: 'catch', exId: 'hi', review: 'yes', ask: 'loud' },
+          { kind: 'talk', talkId: TALKS[0].id },
+        ],
+        recorded: [0, 0, 1, 1.5, 7],
+        retried: ['catch:hi', 'catch:hi', 3],
+        counts: { fresh: 1.5, reviews: 1e300, practice: -2 },
+      }),
+    ).toEqual({
+      day: 10,
+      index: 1,
+      steps: [
+        { kind: 'meet', exId: 'hi' },
+        { kind: 'catch', exId: 'hi', review: false },
+        { kind: 'talk', talkId: TALKS[0].id },
+      ],
+      recorded: [0, 1],
+      retried: ['catch:hi'],
+      counts: { fresh: 2, reviews: 1000, practice: 0 },
+    });
+  });
+});
+
+describe('backups at the limits', () => {
+  it('her own backup comes back even with every note full (2026-11-18: the 4 MB limit refused it)', async () => {
+    // 500 notes at every limit, in Japanese (3 bytes a character) in every box: about 5 MB unpacked.
+    const full = emptyProgress();
+    const ja = 'あ'.repeat(NOTE_JA_MAX);
+    for (let i = 0; i < NOTES_MAX; i++) {
+      const note = { ...newNote('あ'.repeat(NOTE_EN_MAX), ja, i, 'how-are-you'), id: `n${i}`, more: Array<string>(NOTE_MORE_MAX).fill(ja) };
+      expect(putNote(full, note)).toBe(true);
+    }
+    const size = new TextEncoder().encode(JSON.stringify(full)).length;
+    expect(size).toBeGreaterThan(4.5e6);
+    expect(size).toBeLessThan(BACKUP_MAX_BYTES);
+    const r = await readBackup(await makeBackup(full, 10));
+    expect(r.ok && r.progress.notes).toEqual(full.notes);
+  });
+
+  it('a backup that unpacks to more than any record can be is refused, not unpacked whole', async () => {
+    // A save padded past the limit: it would be read (the padding cut off) if only its size did not stop it.
+    // (2026-11-18: the test packed zero bytes, which are refused as not being a save at all, limit or not.)
+    const padded = emptyProgress();
+    padded.notes = [{ id: 'n1', en: 'Hi', ja: ' '.repeat(BACKUP_MAX_BYTES), created: 1, updated: 1 }];
+    expect(await readBackup(await makeBackup(padded, 10))).toEqual({ ok: false, why: 'broken' });
+  });
+});
+
+describe('a restore or a fresh start (2026-11-18)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  it('is written before it is used: on a phone too full to save it, nothing changes', async () => {
+    const stored = new Map<string, string>();
+    let full = true;
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => stored.get(k) ?? null,
+      setItem: (k: string, v: string) => {
+        if (full) throw new DOMException('full', 'QuotaExceededError');
+        stored.set(k, v);
+      },
+    });
+    vi.resetModules();
+    const { app, replaceProgress } = await import('../src/app/state.svelte.ts');
+    const restored = { ...emptyProgress(), days: [1, 2, 3] };
+    expect(replaceProgress(restored)).toBe(false);
+    expect(app.progress.days).toEqual([]);
+    expect(stored.size).toBe(0);
+    full = false;
+    expect(replaceProgress(restored)).toBe(true);
+    expect(app.progress.days).toEqual([1, 2, 3]);
+    expect(app.saved).toBe(true);
+    expect(JSON.parse([...stored.values()][0]).days).toEqual([1, 2, 3]);
   });
 });

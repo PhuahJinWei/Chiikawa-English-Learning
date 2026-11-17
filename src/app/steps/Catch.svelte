@@ -4,7 +4,7 @@
   import type { Exchange, Line } from '../../content/types.ts';
   import { closest, quizCandidates } from '../../learn/contrast.ts';
   import type { Step } from '../../learn/session.ts';
-  import { audioState, play } from '../audio.svelte.ts';
+  import { manualPlays, play } from '../audio.svelte.ts';
   import { audioPath } from '../clips.ts';
   import Blocks from '../components/Blocks.svelte';
   import Bubble from '../components/Bubble.svelte';
@@ -22,7 +22,8 @@
   /**
    * Catch: she hears a line with no text, and only then do the choices appear (REVIEW 2.4). Either "what does it
    * mean?" (Japanese choices) or, for an exchange with a reply, "what would you answer?" (reply choices she can play).
-   * A miss gets a worried Chiikawa, the key part again, and another try. Passed = right on the first try. The choices
+   * A miss gets a worried Chiikawa, the key part again, and another try; the lesson records the step as missed at
+   * once (onMiss), so no later try counts as a first one (2026-11-18). Passed = right on the first try. The choices
    * are light buttons in a thin line, so the sound card stays the main thing on the page (2026-11-17). Once answered,
    * the choices go and the page returns to its top (StepLayout). Right the first time, it goes on to the next step by
    * itself after a moment (2026-11-17; a setting turns that off): 次へ after every right answer was one tap too many.
@@ -32,26 +33,22 @@
     ex: exProp,
     step: stepProp,
     onDone,
+    onMiss,
     onBack,
     intro = false,
-    missed = false,
-    onMiss = null,
   }: {
     ex: Exchange;
     step: Extract<Step, { kind: 'catch' }>;
     onDone: (r: StepResult) => void;
+    /** Her first wrong answer in this try, with the line she heard: the lesson records the step as missed. */
+    onMiss: (line: string) => void;
     onBack: (() => void) | null;
     /** The step before was another stage: Hachiware names this one first, and leaves a moment to read it. */
     intro?: boolean;
-    /** She already missed this step before it was restarted: it cannot be passed first time any more. */
-    missed?: boolean;
-    onMiss?: (() => void) | null;
   } = $props();
   const ex = untrack(() => exProp);
   const step = untrack(() => stepProp);
   let naming = untrack(() => intro);
-  const missedBefore = untrack(() => missed);
-  const slipped = () => missedBefore || wrong.length > 0;
 
   const life = lifetime();
   const cast = ex.cast;
@@ -142,16 +139,12 @@
   listen();
 
   let finished = false;
-  /** She played a clip herself after answering (▶ or a word block). */
-  let touched = false;
-  $effect(() => {
-    if (audioState.manual && solved) touched = true;
-  });
-  /** On to the next step (her tap on 次へ, or by itself after a right first answer): once. */
+  /** On to the next step (her tap on 次へ, or by itself after a right first answer): once. A miss was recorded when it
+   * happened (onMiss), so this grade only counts for a step with nothing recorded yet. */
   function finish() {
     if (finished) return;
     finished = true;
-    onDone({ grade: slipped() ? 'again' : 'good', missedLine: slipped() ? line.en : undefined });
+    onDone({ grade: wrong.length ? 'again' : 'good', missedLine: wrong.length ? line.en : undefined });
   }
 
   function choose(i: number) {
@@ -165,21 +158,24 @@
         { who: ex.host, gesture: 'cheer', face: 'happy' },
         { who: 'chiikawa', face: 'happy', mark: 'heart' },
       ]);
-      const first = !slipped();
-      touched = false;
+      const first = wrong.length === 0;
+      // Clips she starts herself from now on. One still playing from before her answer only delays the next step
+      // (the script waits for it to end); one she starts after answering means she is studying the card (2026-11-18:
+      // a flag set while any clip of hers played also caught the one she had started before answering).
+      const plays = manualPlays();
       life.run(async (s) => {
         // The right reply is heard; then, right the first time, a moment to see the English, and on.
         if (o.reply) await s.play(audioPath(o.reply.en), 'model');
         if (!first || !app.progress.settings.autoNext) return;
         await s.wait(o.reply ? 600 : 1300);
-        // She tapped something to hear it again: she is studying the card, so the step waits for 次へ.
-        if (touched) return;
+        // She tapped something to hear it again: the step waits for 次へ.
+        if (manualPlays() !== plays) return;
         finish();
       });
       return;
     }
     wrong = [...wrong, i];
-    onMiss?.();
+    if (wrong.length === 1) onMiss(line.en);
     sfx.boing();
     busy = true;
     // Her partner worries with her (each in character: src/app/scene.ts).

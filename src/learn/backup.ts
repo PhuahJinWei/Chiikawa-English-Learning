@@ -1,4 +1,4 @@
-import { normalize, type Progress } from './progress.ts';
+import { NOTE_EN_MAX, NOTE_JA_MAX, NOTE_MORE_MAX, NOTES_MAX, normalize, type Progress } from './progress.ts';
 
 /**
  * Backups as text (REVIEW 1.14, 4.5). She sends it to herself in LINE or Notes, and pastes it back after deleting
@@ -20,19 +20,47 @@ function toBase64(bytes: Uint8Array): string {
   return btoa(s);
 }
 
-function fromBase64(text: string): Uint8Array {
+function fromBase64(text: string): Uint8Array<ArrayBuffer> {
   const s = atob(text);
   const out = new Uint8Array(s.length);
   for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
   return out;
 }
 
-/** The most a backup may unpack to: a full course with 500 long notes is under 1 MB. A pasted text that unpacks to
- * more is not a backup, and unpacking it whole could use up the phone's memory (2026-11-17). */
-export const BACKUP_MAX_BYTES = 4 * 1024 * 1024;
+/** The most one note can take in a save: every box full, in Japanese (3 bytes a character, in the English box too),
+ * and its id, times and the phrase it came from. */
+const NOTE_MOST_BYTES = (NOTE_EN_MAX + NOTE_JA_MAX * (1 + NOTE_MORE_MAX)) * 3 + 300;
 
-async function through(data: Uint8Array, stream: CompressionStream | DecompressionStream): Promise<Uint8Array> {
-  const reader = new Blob([data as BlobPart]).stream().pipeThrough(stream).getReader();
+/**
+ * The most a backup may unpack to (2026-11-17): a pasted text that unpacks to more is not a backup, and unpacking it
+ * whole could use up the phone's memory. Sized from the note limits (2026-11-18; it was 4 MB, and her own backup
+ * with every note full, about 5 MB, was refused): all of them full, and a megabyte for the rest of the record, which
+ * with the whole course and two years of lessons is under 50 KB.
+ */
+export const BACKUP_MAX_BYTES = NOTES_MAX * NOTE_MOST_BYTES + 1024 * 1024;
+
+/** The data in small pieces: an engine that unpacks a piece in one go (Safari's turned a whole pasted backup into
+ * one piece of hundreds of MB before the size was checked) never gets far past the limit (2026-11-18). */
+const PIECE = 1024;
+function pieces(data: Uint8Array<ArrayBuffer>): ReadableStream<Uint8Array<ArrayBuffer>> {
+  let at = 0;
+  return new ReadableStream<Uint8Array<ArrayBuffer>>({
+    pull(controller) {
+      if (at >= data.length) {
+        controller.close();
+        return;
+      }
+      controller.enqueue(data.subarray(at, at + PIECE));
+      at += PIECE;
+    },
+  });
+}
+
+async function through(
+  data: Uint8Array<ArrayBuffer>,
+  stream: CompressionStream | DecompressionStream,
+): Promise<Uint8Array<ArrayBuffer>> {
+  const reader = pieces(data).pipeThrough(stream).getReader();
   const chunks: Uint8Array[] = [];
   let size = 0;
   for (;;) {

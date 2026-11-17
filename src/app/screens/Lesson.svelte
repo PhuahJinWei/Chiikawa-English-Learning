@@ -7,7 +7,17 @@
   import { ORDERED, TALKS, exchangeById, talkById } from '../../content/index.ts';
   import { newNote, noteFor, putNote } from '../../learn/notes.ts';
   import { joinedBetween } from '../../learn/partners.ts';
-  import { finishStep, fromSaved, leaveRun, move, practiceRun, skipKnown, type Run, type StepResult } from '../../learn/run.ts';
+  import {
+    finishStep,
+    fromSaved,
+    leaveRun,
+    missStep,
+    move,
+    practiceRun,
+    skipKnown,
+    type Run,
+    type StepResult,
+  } from '../../learn/run.ts';
   import { buildMore, buildSession, newSaved, resumable, unmet, type Step } from '../../learn/session.ts';
   import { englishLevel } from '../../learn/shift.ts';
   import { onInterruption } from '../audio.svelte.ts';
@@ -56,9 +66,6 @@
   );
 
   let restart = $state(0);
-  /** Quiz steps she has missed in this lesson, by place: restarting the step, or going back and forward, does not
-   * make the next try a first try (2026-11-17). */
-  const missed = new Set<number>();
 
   const step = $derived(run.steps[run.index] as Step | undefined);
   const ex = $derived(step && step.kind !== 'talk' ? exchangeById(step.exId) : undefined);
@@ -155,6 +162,12 @@
 
   const back = () => go_(-1);
 
+  /** A wrong answer in a quiz is the step's result at once, saved with the lesson (run.ts missStep, 2026-11-18). */
+  function missed(line: string) {
+    missStep(run, app.progress, exchangeById, line, Date.now());
+    save();
+  }
+
   /** もう知ってる on a new phrase (today's lesson only): it counts as known, and today's steps for it are dropped. */
   function known() {
     if (!ex) return;
@@ -191,15 +204,7 @@
         {:else if ex && step.kind === 'meet'}
           <Meet {ex} onDone={() => next()} onBack={run.index > 0 ? back : null} onKnown={daily ? known : null} />
         {:else if ex && step.kind === 'catch'}
-          <Catch
-            {ex}
-            {step}
-            intro={turned}
-            missed={missed.has(run.index)}
-            onMiss={() => missed.add(run.index)}
-            onDone={next}
-            onBack={run.index > 0 ? back : null}
-          />
+          <Catch {ex} {step} intro={turned} onMiss={missed} onDone={next} onBack={run.index > 0 ? back : null} />
         {:else if ex}
           <Answer {ex} intro={turned} onDone={next} onBack={run.index > 0 ? back : null} />
         {/if}

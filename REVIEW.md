@@ -6,20 +6,38 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Review of the audit's fixes (2026-11-18)
+
+A review of the code audit's own changes (below) found 15 problems. All are fixed:
+
+- **A missed quiz could still be forgotten, or marked on the wrong quiz.** The lesson screen kept misses by the step's place, outside the saved lesson. So 今日はここまでにする then 続きから forgot a miss. もう知ってる on an earlier phrase moved it onto another quiz, which was then graded wrong though she answered it right (a review went back to box 1). A restart also noted whichever line the new try played, not the one she missed. Now a miss is recorded the moment it happens, with the line she heard, in the saved lesson (run.ts, missStep).
+- **Auto-next stopped** when a clip she had started before answering was still playing. Only a clip she starts after answering holds the step now.
+- **もう一度読み込む** missed a fixed version the phone was already downloading, and cut a slow download off after 4 seconds; either way it reloaded into the broken version. It made her wait 4 seconds with no sign of anything happening even when there was nothing newer, and it could reload the app after it had started. Now it waits for the download (20 seconds at most), reloads at once when there is nothing newer, shows 読み込み中…, and leaves a started app alone. In WebKit with the real service worker, a fix still downloading when she tapped now loads 2 seconds after the tap; nothing newer reloads in 0.4 seconds (was 4). The take-over message is defined once (src/worker-message.ts), and tests check that the panel sends it and the worker obeys it.
+- **Backups:**
+  - **Her own fullest backup was refused.** The 4 MB limit was smaller than a record the app lets her keep: about 5 MB with every note full. The limit is now worked out from the note limits (about 6 MB).
+  - **Safari unpacked a pasted text whole before checking its size.** It is now read in 1 KB pieces; in WebKit, peak memory rose 11 MB instead of about 190.
+  - **The unfinished lesson inside a backup had no limits.** A hand-made one could freeze the paste box for seconds. It is now limited and read in one pass.
+  - **The size test could not fail.** It can now.
+- **A restore or fresh start that could not be saved** left the app running on the unsaved record, and showed the failure in the green box that means success. Now nothing changes unless it is saved, and a failure shows in the warning colour.
+- **The publish workflow:** REVIEW's fallback advice below could not have worked, because a job's own permissions replace the ones at the top. The build job's own block is gone, and so is the configure-pages step (nothing used its result), so the build job can only read the code.
+- Smaller: a condition in finishStep that could never be false, and half a test that checked nothing.
+
+**Checked:** 15 new tests (142 in all); type check, build, WebKit smoke test; the backup and the start-up panel also in WebKit as above. Not yet on an iPhone.
+
 ## Code audit (2026-11-17)
 
 Mechanical checks (dependency audit, a search for code-injection patterns and unused code) and two independent reads: the lesson logic and saved data, and security, privacy and offline code. Clean: no known vulnerabilities, nothing pasted or restored can run as code, nothing leaves the phone, no secrets in the repo. Ten defects were found and fixed:
 
-1. **A broken release could not fix itself:** the start-up panel's もう一度読み込む only reloaded the same version, while a fixed one waited to be told to take over by an app that had not started. The button now asks for a newer version, tells a waiting or arriving one to take over, and reloads when it has (or after 4 seconds). Not tried against a real broken release.
-2. **A miss in a quiz could be erased** by restarting the step or going back and forward: the next try counted as a first try. The lesson now remembers which quiz steps she missed. (It does not survive closing the app mid-step.)
+1. **A broken release could not fix itself:** the start-up panel's もう一度読み込む only reloaded the same version, while a fixed one waited to be told to take over by an app that had not started. The button now asks for a newer version, tells a waiting or arriving one to take over, and reloads when it has (reworked 2026-11-18, above). Not tried against a real broken release.
+2. **A miss in a quiz could be erased** by restarting the step or going back and forward: the next try counted as a first try. The lesson now remembers which quiz steps she missed (since 2026-11-18 in the saved lesson, above).
 3. **Reviews due on the same day had no fixed order:** the sort's tie-break contradicted itself, so the order, and which 30 of more than 30 survived, depended on the browser (25 listening and 5 speaking in one test). Now oldest first, then path order, a phrase's two steps together.
 4. **Marking every new phrase もう知ってる earned no stamp,** and Today offered a second lesson. It counts as an answer now.
 5. **Retries came after the closing conversation.** They go before it.
 6. **The quiz's auto-next cut her off** when she tapped ▶ or a word to hear it again after answering. Her tap now holds the step until 次へ.
 7. **もっと覚える after 4 a.m.** started a round that took the new day's stamp and left its reviews out of reach. It now starts that day's lesson.
-8. **Restore trusted its input too much:** a backup could unpack to hundreds of megabytes (now refused above 4 MB), and a hand-edited one could hold numbers the schedule cannot use, or bloat storage (fractions, infinities, text where numbers belong, endless tables: now rounded, bounded or dropped). A restore that could not be saved no longer says 「記録を戻しました！」.
+8. **Restore trusted its input too much:** a backup could unpack to hundreds of megabytes (now refused above a limit; changed 2026-11-18, above), and a hand-edited one could hold numbers the schedule cannot use, or bloat storage (fractions, infinities, text where numbers belong, endless tables: now rounded, bounded or dropped). A restore that could not be saved no longer says 「記録を戻しました！」 (and since 2026-11-18 changes nothing).
 9. **A save in a format this version does not know** was replaced by an empty one at the next save. It is now kept aside first, like an unreadable save.
-10. **The publish workflow** gave the job that installs dependencies the right to publish. Only the deploy job has it now. The first push after this will show whether GitHub accepts the narrower permissions; if the build job fails at "configure-pages", restore the three lines at the top.
+10. **The publish workflow** gave the job that installs dependencies the right to publish. Only the deploy job has it now. The first push after this will show whether GitHub accepts the narrower permissions. If a job fails for lack of a permission, add the one it names to that job's own `permissions:`; a job's own list replaces the one at the top. (The advice here until 2026-11-18, to restore the lines at the top, would not have helped.)
 
 One unused function (sameSentence) was removed. Not code: your email is in every commit, the learner's job, hours and family are in public content, and in Safari (not the installed app) other sites published under the same GitHub Pages account share its storage.
 

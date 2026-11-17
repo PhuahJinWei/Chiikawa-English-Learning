@@ -16,7 +16,8 @@ import {
  * recording results, retries, saving, and the day's stamp.
  *
  * Rules (REVIEW section 1, and the second review of step A):
- * - A step's result is recorded once, however often she goes back and redoes it.
+ * - A step's result is recorded once, however often she goes back and redoes it. A wrong answer in a quiz is its
+ *   result at once (missStep), so no later try can turn it into a first try.
  * - Practice (mode 'practice') never changes the schedule: it only notes when a phrase was practised and what she
  *   missed. Only today's lesson records results.
  * - A missed Catch or Answer gets one practice retry at the end of the lesson, before its closing conversation.
@@ -86,10 +87,23 @@ export function finishStep(r: Run, p: Progress, find: (id: string) => Exchange |
   const key = `${s.kind}:${s.exId}`;
   if (res.grade === 'again' && !r.retried.includes(key)) {
     r.retried.push(key);
-    // The conversation stays the lesson's last step.
-    const end = r.steps.at(-1)?.kind === 'talk' && r.steps.length - 1 > r.index ? r.steps.length - 1 : r.steps.length;
+    // The conversation stays the lesson's last step (this step, a quiz or a speaking step, always comes before it).
+    const end = r.steps.at(-1)?.kind === 'talk' ? r.steps.length - 1 : r.steps.length;
     r.steps.splice(end, 0, { ...s, review: false });
   }
+}
+
+/**
+ * A wrong answer in a quiz (2026-11-18): the step is recorded as missed at once, with the line she heard, and the
+ * saved lesson with it. Until then a miss was only kept by the lesson screen, by the step's place, so leaving and
+ * coming back (続きから) forgot it, もう知ってる on an earlier phrase (which renumbers the steps) moved it onto
+ * another quiz, and a restart noted whichever line the new try happened to play. A miss in a later try of a step
+ * already recorded still notes the line she missed then.
+ */
+export function missStep(r: Run, p: Progress, find: (id: string) => Exchange | undefined, line: string, now: number): void {
+  if (r.recorded.includes(r.index)) recordMissedLine(p, line);
+  else finishStep(r, p, find, { grade: 'again', missedLine: line }, now);
+  if (r.daily && r.index < r.steps.length) p.session = toSaved(r);
 }
 
 /**
@@ -108,10 +122,11 @@ export function skipKnown(r: Run, p: Progress, e: Exchange): void {
   // Saying she knows a phrase is an answer too: a lesson of nothing but known phrases still earns its stamp (until
   // 2026-11-17 it did not, and the Today screen offered a second lesson).
   if (!r.recorded.includes(r.index)) r.recorded.push(r.index);
-  // Its own checks (a Catch, and an Answer unless it is only understood) were part of the new phrase; the rest
-  // were practice, which the end of the lesson counts.
+  // Its own checks (a Catch, and an Answer unless it is only understood) were part of the new phrase, and a retry of
+  // one she missed was never counted; the rest were practice, which the end of the lesson counts.
   const own = e.kind === 'understand' ? 1 : 2;
-  r.counts.practice = Math.max(0, r.counts.practice - Math.max(0, dropped - own));
+  const retries = ['catch', 'answer'].filter((k) => r.retried.includes(`${k}:${e.id}`)).length;
+  r.counts.practice = Math.max(0, r.counts.practice - Math.max(0, dropped - own - retries));
 }
 
 /** Moves by `by` steps (0 = restart this step). Returns true when the lesson has reached its end. */
