@@ -233,7 +233,9 @@
   }
   .mode-none .panel {
     border-top: none;
-    border-image: none;
+    /* The frame's picture is taken off through its variable: the build's minifier turns `border-image: none` here
+       into an empty value, which browsers ignore, so the line kept showing at the page's top corners (2026-11-17). */
+    --frame-edge: none;
     border-radius: 0;
     padding-top: calc(14px + var(--safe-top));
   }

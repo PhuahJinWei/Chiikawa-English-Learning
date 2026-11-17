@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EXCHANGES, ORDERED, UI, exchangeById } from '../src/content/index.ts';
+import { EXCHANGES, ORDERED, TALKS, UI, exchangeById } from '../src/content/index.ts';
 import type { Exchange } from '../src/content/types.ts';
 import { emptyProgress, normalize, type Progress } from '../src/learn/progress.ts';
 import { dayNumber, learned, reviewed } from '../src/learn/schedule.ts';
@@ -10,11 +10,13 @@ import {
   estimateSeconds,
   LESSON_SECONDS,
   MAX_REVIEWS,
+  mixReviews,
   newAllowance,
   newSaved,
   recordResult,
   resumable,
   TARGET_SECONDS,
+  WARM_UP,
   stepTarget,
   type Step,
 } from '../src/learn/session.ts';
@@ -161,6 +163,45 @@ describe('daily lessons', () => {
     expect(newAllowance(p, 10, waiting, [], false)).toBe(3);
     p.ex['x'] = { met: 10 };
     expect(newAllowance(p, 10, waiting, [], false)).toBe(2);
+  });
+
+  it('reviews alternate listening and speaking, with a phrase’s two steps a whole pass apart', () => {
+    const due: Step[] = ['a', 'b', 'c', 'd'].flatMap((id): Step[] => [
+      { kind: 'catch', exId: id, review: true },
+      { kind: 'answer', exId: id, review: true },
+    ]);
+    due.push({ kind: 'catch', exId: 'e', review: true }); // only understood: nothing to say
+    const mixed = mixReviews(due).map((s) => `${s.kind}:${stepTarget(s)}`);
+    expect(mixed).toEqual([
+      'catch:a', 'answer:b', 'catch:c', 'answer:d', 'catch:e',
+      'answer:a', 'catch:b', 'answer:c', 'catch:d',
+    ]);
+  });
+
+  it('new phrases are taught after a short warm-up, checked later among the reviews, and a conversation comes last', () => {
+    const p = emptyProgress();
+    for (let day = 10; day < 40; day++) playLesson(p, buildSession(p, ORDERED, day, TALKS).steps, day);
+    const plan = buildSession(p, ORDERED, 40, TALKS);
+    expect(plan.fresh).toBeGreaterThan(0);
+    expect(plan.reviews).toBeGreaterThan(WARM_UP + 6);
+    const steps = plan.steps;
+    const firstMeet = steps.findIndex((s) => s.kind === 'meet');
+    // The warm-up: reviews only.
+    expect(firstMeet).toBe(WARM_UP);
+    expect(steps.slice(0, WARM_UP).every((s) => s.kind !== 'meet' && s.kind !== 'talk' && s.review)).toBe(true);
+    // Each new phrase: taught, then its quiz after some reviews, then its speaking step after more.
+    for (const m of steps.filter((s) => s.kind === 'meet')) {
+      const id = stepTarget(m);
+      const quiz = steps.findIndex((s) => s.kind === 'catch' && s.exId === id);
+      const say = steps.findIndex((s) => s.kind === 'answer' && s.exId === id);
+      expect(quiz - steps.indexOf(m)).toBeGreaterThan(3);
+      if (say >= 0) expect(say - quiz).toBeGreaterThan(3);
+    }
+    // No more than two of a kind in a row among the reviews of the first pass.
+    const kinds = steps.slice(0, WARM_UP).map((s) => s.kind);
+    expect(new Set(kinds).size).toBe(2);
+    expect(steps.at(-1)?.kind).toBe('talk');
+    expect(steps.filter((s) => s.kind === 'talk')).toHaveLength(1);
   });
 
   it('a big backlog is capped and new phrases wait', () => {

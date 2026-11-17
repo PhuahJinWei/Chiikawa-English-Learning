@@ -311,7 +311,7 @@
     font-size: 16px;
   }
   .done {
-    color: #3e8a3a;
+    color: #347a31;
   }
   .line {
     margin: 4px 0 0;
@@ -466,7 +466,7 @@
   .day.done {
     border: none;
     background: var(--stamp-sm) center / 100% 100% no-repeat, #fff7f8;
-    color: #e0607a;
+    color: #c8405e;
     font-weight: 900;
   }
   /* After today's lesson: 練習する beside もっと覚える, as at the end of a lesson. */

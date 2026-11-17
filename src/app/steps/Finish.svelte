@@ -169,7 +169,7 @@
     border-radius: 50%;
     /* An unevenly inked rubber-stamp ring (tools/sketch/sketch.mjs), drawn just inside the circle. */
     background: var(--stamp) center / 100% 100% no-repeat, #fff7f8;
-    color: #e0607a;
+    color: #c8405e;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -64,6 +64,14 @@
   const label = $derived(
     !step ? '' : step.kind === 'answer' && ex?.kind === 'say' ? '言ってみよう' : STEP_NAMES[step.kind],
   );
+  /** A step's name, as the top bar shows it. */
+  const nameOf = (s: Step | undefined): string => {
+    if (!s) return '';
+    const e = s.kind === 'talk' ? undefined : exchangeById(s.exId);
+    return s.kind === 'answer' && e?.kind === 'say' ? '言ってみよう' : STEP_NAMES[s.kind];
+  };
+  /** This step is another stage than the one before it: Hachiware says so first (2026-11-17). */
+  const turned = $derived(run.index > 0 && nameOf(run.steps[run.index - 1]) !== nameOf(step));
   const tag = $derived(!daily ? '練習' : step && 'review' in step && step.review ? '復習' : '');
   const stamped = $derived(daily && app.progress.days.includes(run.day));
   // Her level when the lesson began, and where it ended: a level that went up is celebrated at the end, together
@@ -180,9 +188,9 @@
         {:else if ex && step.kind === 'meet'}
           <Meet {ex} onDone={() => next()} onBack={run.index > 0 ? back : null} onKnown={daily ? known : null} />
         {:else if ex && step.kind === 'catch'}
-          <Catch {ex} {step} onDone={next} onBack={run.index > 0 ? back : null} />
+          <Catch {ex} {step} intro={turned} onDone={next} onBack={run.index > 0 ? back : null} />
         {:else if ex}
-          <Answer {ex} onDone={next} onBack={run.index > 0 ? back : null} />
+          <Answer {ex} intro={turned} onDone={next} onBack={run.index > 0 ? back : null} />
         {/if}
       </div>
     {/key}
@@ -226,5 +234,17 @@
   .slot {
     flex: 1;
     min-height: 0;
+  }
+  /* The bottom buttons are one height on every step (2026-11-17): 答え合わせ was 60px, the three ratings 56px, the
+     stamp's buttons 64px, and "Next!" with its reading and Japanese 76px, so the row jumped from step to step. The
+     three-line label fits by giving up the button's own padding. */
+  .lesson :global(.actions .btn.primary),
+  .lesson :global(.actions .back),
+  .lesson :global(.actions .rates .btn),
+  .lesson :global(.actions .pair .btn) {
+    min-height: 64px;
+    height: 64px;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 </style>

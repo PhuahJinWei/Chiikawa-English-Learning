@@ -12,13 +12,17 @@
   --paper-2: #fcefd8;
   --paper-3: #f4e1c1;
   --ink: #66432f;
-  --ink-2: #8a6a55;
+  /* Small secondary text: dark enough for 4.5:1 on every paper and pastel, the yellow button included (2026-11-17). */
+  --ink-2: #785946;
   --ink-3: #b9a08b;
   --white: #ffffff;
   --sky: #d6eef9;
   --sky-2: #9fd3ec;
   --blush: #fcdce3;
   --blush-2: #f2a7b6;
+  /* A warm peach for what went wrong or takes something away (a miss, a warning, delete, recording): pink stays the
+     model answer's colour (2026-11-17). */
+  --alert: #ffd2c2;
   --mint: #d9f1cf;
   --mint-2: #8cc77c;
   --sun: #ffe6a0;
@@ -134,7 +138,7 @@ input {
   background: var(--mint);
 }
 .btn.oops {
-  background: var(--blush);
+  background: var(--alert);
 }
 
 /* Japanese breaks between any two characters: inside a .keep button it breaks only where a <wbr> says

@@ -42,6 +42,8 @@
   const path = $derived(line ? audioPath(line.en) : '');
   const mine = $derived(audioState.playing && audioState.playing.path === path ? audioState.playing : null);
   const playable = $derived(!!line && (reveal || hideEnglish));
+  /** Compact and still hidden: one slim row, the ♪ marks beside the chip, so the choices under it have the room. */
+  const slim = $derived(compact && !!line && !reveal && !hideEnglish);
 </script>
 
 {#snippet glyph()}
@@ -64,7 +66,7 @@
     </button>
   </div>
 {:else}
-<div class="card {kind}" class:compact class:busy={!!mine}>
+<div class="card {kind}" class:compact class:slim class:busy={!!mine}>
   <div class="head">
     <span class="chip">
       {#if kind === 'other'}
@@ -75,6 +77,11 @@
         お手本
       {/if}
     </span>
+    {#if slim}
+      <span class="hidden inline" aria-label="聞いてね">
+        <span class="note-mark">♪</span><span class="note-mark">♪</span><span class="note-mark">♪</span>
+      </span>
+    {/if}
     {#if badge}<span class="badge">{badge}</span>{/if}
     {#if aside}<span class="aside">{@render aside()}</span>{/if}
     {#if playable}
@@ -95,7 +102,7 @@
       <div class="memory" aria-label="英語は隠しています">？？？</div>
       <div class="ja-meaning">{line.ja}</div>
     </div>
-  {:else}
+  {:else if !slim}
     <div class="hidden" aria-label="聞いてね">
       <span class="note-mark">♪</span><span class="note-mark">♪</span><span class="note-mark">♪</span>
     </div>
@@ -249,6 +256,15 @@
     padding: 8px 0 4px;
     font-size: 26px;
     color: var(--ink-3);
+  }
+  .slim .head {
+    margin-bottom: 0;
+  }
+  .hidden.inline {
+    flex: 1;
+    gap: 14px;
+    padding: 0 40px 0 0;
+    font-size: 21px;
   }
   .hidden-note {
     margin: 2px 0 0;

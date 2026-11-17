@@ -397,7 +397,8 @@
   .row {
     display: flex;
     align-items: center;
-    gap: 2px;
+    /* ▶ is 44px, with room between it and the row, so a tap meant for one does not land on the other. */
+    gap: 8px;
     padding-left: 9px;
     border: var(--line) solid var(--ink);
     border-radius: var(--r-row);
@@ -407,8 +408,8 @@
   /* ▶ as in a lesson: a round button in a drawn ring, yellow while its phrase plays. */
   .play {
     flex: none;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: var(--line) solid var(--ink);
     border-radius: 50%;
     border-image: var(--frame-ring);
@@ -436,7 +437,7 @@
     align-items: center;
     gap: 8px;
     min-height: 60px;
-    padding: 8px 10px 8px 8px;
+    padding: 8px 10px 8px 2px;
     border: none;
     background: none;
     text-align: left;
@@ -494,7 +495,7 @@
     margin: 0;
     padding: 6px 10px;
     border-radius: 10px;
-    background: var(--blush);
+    background: var(--alert);
     font-size: 13px;
     font-weight: 700;
     line-height: 1.5;
@@ -512,7 +513,7 @@
     overflow: hidden;
   }
   .shelves button {
-    min-height: 42px;
+    min-height: 46px;
     border: none;
     background: var(--white);
     font-weight: 900;
@@ -623,8 +624,11 @@
     gap: 8px;
     padding: 14px 16px calc(14px + var(--safe-bottom));
     background: var(--paper);
-    border-radius: 22px 22px 0 0;
-    border-top: 3px solid var(--ink);
+    /* The same hand-drawn top edge as the page panel. */
+    border: 0 solid var(--ink);
+    border-top-width: 4px;
+    border-radius: 26px 26px 0 0;
+    border-image: var(--frame-edge);
   }
   .menu-title {
     margin: 0 0 2px;
@@ -684,11 +688,12 @@
   }
   .clear {
     flex: none;
-    width: 36px;
-    height: 36px;
-    border: none;
+    width: 34px;
+    height: 34px;
+    border: var(--line) solid var(--ink);
     border-radius: 50%;
-    background: var(--paper-2);
+    border-image: var(--frame-ring);
+    background: var(--white);
     display: grid;
     place-items: center;
     padding: 0;
@@ -708,19 +713,21 @@
     justify-content: space-between;
     gap: 10px;
     padding: 8px 8px 8px 14px;
-    border-radius: 14px;
-    background: var(--ink);
-    color: var(--white);
+    /* A sticker, like the notices over the stage. */
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-btn);
+    border-image: var(--frame-btn);
+    background: var(--white);
     font-size: 14.5px;
     font-weight: 800;
   }
   .undo button {
     min-height: 40px;
     padding: 0 14px;
-    border: none;
-    border-radius: 10px;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-row);
+    border-image: var(--frame-row);
     background: var(--sun);
-    color: var(--ink);
     font-size: 14.5px;
     font-weight: 900;
   }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, untrack } from 'svelte';
+  import { untrack } from 'svelte';
   import { UI, replyWord } from '../../content/index.ts';
   import type { Exchange } from '../../content/types.ts';
   import { audioPath } from '../clips.ts';
@@ -9,7 +9,6 @@
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
   import { act, calm, partnerOnStage, pick } from '../scene.ts';
-  import { canRecord, forget, playMine, recorder, startRecording, stopRecording } from '../recorder.svelte.ts';
   import { lifetime } from '../script.svelte.ts';
   import { sfx } from '../sfx.ts';
   import { stage } from '../stage.ts';
@@ -21,10 +20,21 @@
    * heard (REVIEW 1.9, 1.10). Hachiware asks her to say the model once more, in her own time (no timed turn since
    * 2026-11-17), and then, separately, how her first answer went. Once she checks, the question shrinks to one row
    * so the model is in full view. Longer answers are steps of their own, built from the short one. The phone does not
-   * judge her speech. She may record her answer (録音する, only if she taps it) and hear it beside the model once that
-   * has played: her own ears compare (src/app/recorder.svelte.ts).
+   * judge her speech.
    */
-  let { ex: exProp, onDone, onBack }: { ex: Exchange; onDone: (r: StepResult) => void; onBack: (() => void) | null } = $props();
+  let {
+    ex: exProp,
+    onDone,
+    onBack,
+    intro = false,
+  }: {
+    ex: Exchange;
+    onDone: (r: StepResult) => void;
+    onBack: (() => void) | null;
+    /** The step before was another stage: Hachiware names this one first, and leaves a moment to read it. */
+    intro?: boolean;
+  } = $props();
+  let naming = untrack(() => intro);
   const ex = untrack(() => exProp);
 
   const life = lifetime();
@@ -38,18 +48,17 @@
   let say = $state('');
   let shown = $state(0);
   let armed = $state(false);
-  const recordable = canRecord();
-  forget();
-  onDestroy(forget);
 
   function ask() {
     phase = 'ask';
+    const named = naming;
+    naming = false;
     life.run(async (s) => {
       calm(cast);
       if (question) {
-        say = '「相手」が話しかけてくるよ';
+        say = named ? '次は、声に出して答えよう。「相手」が話しかけてくるよ' : '「相手」が話しかけてくるよ';
         void stage.play(partnerOnStage(), 'listen');
-        await s.wait(1100);
+        await s.wait(named ? 1600 : 400);
         const r = await s.play(audioPath(question.en), 'other');
         stage.stop(partnerOnStage());
         if (r === 'failed') {
@@ -58,9 +67,9 @@
           return;
         }
       } else {
-        say = 'こんなとき、何て言う？';
+        say = named ? '次は、自分から言ってみよう。こんなとき、何て言う？' : 'こんなとき、何て言う？';
         act(ex.scene.heard);
-        await s.wait(1600);
+        await s.wait(named ? 1800 : 1000);
       }
       phase = 'turn';
       // What to do now, and that not knowing is fine: 答え合わせ is the next step either way.
@@ -76,8 +85,6 @@
     sfx.pop();
     say = 'お手本はこれ';
     life.run(async (s) => {
-      // The microphone is released before the model plays.
-      await stopRecording();
       for (const [i, l] of ex.short.entries()) {
         shown = i + 1;
         calm(cast);
@@ -88,10 +95,13 @@
       }
       // One thing at a time: say the model, then rate the first answer.
       phase = 'rate';
-      say = recorder.state === 'ready' ? '自分の声と、お手本を聞き比べてみてね' : 'まねして、もう一度言ってみてね';
-      await s.wait(2200);
-      say = '最初の答えはどうだった？';
+      say = 'まねして、もう一度言ってみてね';
+      // The rating buttons work after a moment (long enough that a double tap on 答え合わせ never rates); the
+      // question about her first answer follows in the bubble.
+      await s.wait(700);
       armed = true;
+      await s.wait(1500);
+      say = '最初の答えはどうだった？';
     });
   }
 
@@ -125,32 +135,9 @@
         <span class="cue-text">{ex.cue}</span>
       </div>
     {/if}
-    {#if recordable && phase === 'turn'}
-      <!-- Optional: her own voice, to hear beside the model after 答え合わせ. Never saved. -->
-      {#if recorder.state === 'recording'}
-        <button class="btn light rec on" onclick={() => void stopRecording()}><span class="dot" aria-hidden="true"></span>録音中…（タップで止める）</button>
-      {:else}
-        <button class="btn light rec" disabled={recorder.state === 'asking'} onclick={() => void startRecording()}>
-          <span class="dot" aria-hidden="true"></span>{recorder.state === 'ready' ? '録音しなおす' : '自分の声を録音する'}
-        </button>
-      {/if}
-      {#if recorder.state === 'denied'}
-        <p class="rec-note">マイクが使えませんでした。iPhoneの「設定」でマイクを許可すると録音できます。</p>
-      {:else if recorder.state === 'failed'}
-        <p class="rec-note">録音できませんでした。録音なしでも続けられます。</p>
-      {:else if recorder.state === 'ready'}
-        <p class="rec-note">録音できました。答え合わせのあとで聞けます。</p>
-      {/if}
-    {/if}
     {#each ex.short.slice(0, shown) as line (line.en)}
       <SpeakerCard kind="model" {line} badge={word} />
     {/each}
-    {#if phase === 'rate' && recorder.state === 'ready'}
-      <button class="btn light rec" class:on={recorder.playing} onclick={playMine}>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" /></svg>
-        {recorder.playing ? '止める' : '自分の声を聞く'}
-      </button>
-    {/if}
   {/snippet}
   {#snippet extra()}
     {#if phase === 'failed'}
@@ -195,44 +182,6 @@
   .cue-text {
     font-size: 17px;
     font-weight: 800;
-  }
-  /* Recording her own voice: a light button like 聞き直す, with a red dot. */
-  .rec {
-    width: auto;
-    justify-self: center;
-    min-height: 44px;
-    padding: 6px 18px 6px 14px;
-    gap: 8px;
-    font-size: 15px;
-  }
-  .rec.on {
-    background: var(--blush);
-  }
-  .rec svg {
-    width: 16px;
-    height: 16px;
-    fill: var(--ink);
-  }
-  .dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #e0607a;
-  }
-  .rec.on .dot {
-    animation: rec 1s ease-in-out infinite;
-  }
-  @keyframes rec {
-    50% {
-      opacity: 0.25;
-    }
-  }
-  .rec-note {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink-2);
-    text-align: center;
   }
   .rates {
     display: grid;

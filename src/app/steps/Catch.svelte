@@ -24,16 +24,27 @@
    * mean?" (Japanese choices) or, for an exchange with a reply, "what would you answer?" (reply choices she can play).
    * A miss gets a worried Chiikawa, the key part again, and another try. Passed = right on the first try. The choices
    * are light buttons in a thin line, so the sound card stays the main thing on the page (2026-11-17). Once answered,
-   * the choices go and the page returns to its top (StepLayout).
+   * the choices go and the page returns to its top (StepLayout). Right the first time, it goes on to the next step by
+   * itself after a moment (2026-11-17; a setting turns that off): 次へ after every right answer was one tap too many.
+   * After a miss it waits for 次へ, since that is when she needs to look.
    */
   let {
     ex: exProp,
     step: stepProp,
     onDone,
     onBack,
-  }: { ex: Exchange; step: Extract<Step, { kind: 'catch' }>; onDone: (r: StepResult) => void; onBack: (() => void) | null } = $props();
+    intro = false,
+  }: {
+    ex: Exchange;
+    step: Extract<Step, { kind: 'catch' }>;
+    onDone: (r: StepResult) => void;
+    onBack: (() => void) | null;
+    /** The step before was another stage: Hachiware names this one first, and leaves a moment to read it. */
+    intro?: boolean;
+  } = $props();
   const ex = untrack(() => exProp);
   const step = untrack(() => stepProp);
+  let naming = untrack(() => intro);
 
   const life = lifetime();
   const cast = ex.cast;
@@ -102,11 +113,13 @@
   function listen() {
     failed = false;
     busy = true;
-    say = '「相手」の英語だよ';
+    const lead = naming ? 1400 : 400;
+    say = naming ? '次は聞き取りクイズ。「相手」の英語だよ' : '「相手」の英語だよ';
+    naming = false;
     life.run(async (s) => {
       calm(cast);
       void stage.play(ex.host, 'listen');
-      await s.wait(1000);
+      await s.wait(lead);
       const r = await s.play(audioPath(line.en), 'other');
       stage.stop(ex.host);
       busy = false;
@@ -121,6 +134,14 @@
   }
   listen();
 
+  let finished = false;
+  /** On to the next step (her tap on 次へ, or by itself after a right first answer): once. */
+  function finish() {
+    if (finished) return;
+    finished = true;
+    onDone({ grade: wrong.length ? 'again' : 'good', missedLine: wrong.length ? line.en : undefined });
+  }
+
   function choose(i: number) {
     if (solved || busy || wrong.includes(i)) return;
     const o = options[i];
@@ -132,7 +153,14 @@
         { who: ex.host, gesture: 'cheer', face: 'happy' },
         { who: 'chiikawa', face: 'happy', mark: 'heart' },
       ]);
-      if (o.reply) void play(audioPath(o.reply.en), 'model');
+      const first = wrong.length === 0;
+      life.run(async (s) => {
+        // The right reply is heard; then, right the first time, a moment to see the English, and on.
+        if (o.reply) await s.play(audioPath(o.reply.en), 'model');
+        if (!first || !app.progress.settings.autoNext) return;
+        await s.wait(o.reply ? 600 : 1300);
+        finish();
+      });
       return;
     }
     wrong = [...wrong, i];
@@ -176,9 +204,9 @@
     {/if}
   {/snippet}
   {#snippet body()}
-    <!-- Once a "what would you answer?" quiz is answered, the question shrinks to one row, so the right answer shows
-         whole under it, as the model does in 答えてみよう (2026-11-17: on a small iPhone it stayed half hidden). -->
-    <SpeakerCard kind="other" {line} reveal={solved} compact={solved && ask === 'reply'} />
+    <!-- In a "what would you answer?" quiz the sound card is one slim row, so the three replies fit under it; once
+         answered, the question is one row too, so the right answer shows whole under it, as the model does in 答えてみよう (2026-11-17: on a small iPhone it stayed half hidden). -->
+    <SpeakerCard kind="other" {line} reveal={solved} compact={ask === 'reply'} />
     {#if !failed && !solved}
       <!-- Asking again sits by the sound it replays; it reads "Sorry, what?" once she has learned that phrase. -->
       <SorryButton {line} channel="other" disabled={!heard || busy} />
@@ -219,7 +247,7 @@
     <button
       class="btn primary"
       disabled={!solved}
-      onclick={() => onDone({ grade: wrong.length ? 'again' : 'good', missedLine: wrong.length ? line.en : undefined })}
+      onclick={finish}
     >
       <UiWord t={UI.next} />
     </button>

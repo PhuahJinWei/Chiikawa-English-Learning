@@ -6,6 +6,51 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Buttons: size and place (2026-11-17)
+
+About 150 buttons on 22 screens were measured at both home-screen sizes.
+
+- **Nothing under 44px:** in 設定, 1 / 2 / 3 went from 42×36 to 52×44 and 標準 / 予備 to 44px tall; the notebook's ▶ from 40 to 44px, with 8px between it and the row (was 2px, so a tap could open the phrase instead of playing it); the notebook's two tabs from 42 to 46px; in the memo editor the ✕ beside another meaning and 「＋ ほかの意味を追加」 to 44px; the licence link has a 44px tap area. Only a one-word block ("Hi", 42px wide) is narrower, as wide as its word.
+- **The lesson's bottom buttons are one height, 64px:** 答え合わせ was 60px, the three ratings 56px, the stamp's buttons 64px, and "Next!" with its reading and Japanese 76px, so the row jumped by up to 16px between steps.
+- **The memo's bin is in the header,** beside ✕ with 18px between them, not next to 保存する: it deletes at once (with 元に戻す), so it should not sit by the button she taps most.
+- **Checked:** every button measured again on both sizes, screenshots, type check, 122 tests, build, WebKit smoke test.
+
+## Which stage she is in (2026-11-17)
+
+You found it hard to tell which stage of a lesson you were in. The name was 15px brown text with a small icon, the same for every stage, and nothing marked a change.
+
+- **A coloured label:** the stage's name and icon are a pill in the stage's own colour: yellow for 新しいフレーズ, blue for 聞き取りクイズ, green for 答えてみよう and 言ってみよう, cream for 会話してみよう. The progress bar fills in the same colour.
+- **A pop on a change:** when the stage's name changes from the step before, the pill pops once (not with Reduce Motion).
+- **Hachiware says it:** on a change he names the stage first and leaves a moment to read it: 「次は聞き取りクイズ。「相手」の英語だよ」, 「次は、声に出して答えよう。「相手」が話しかけてくるよ」, 「次は、自分から言ってみよう。こんなとき、何て言う？」. A new phrase and a conversation already open by naming themselves. The same stage again keeps his short line.
+- **Checked:** a six-step lesson through every stage, captured in Edge at iPhone 13 size; type check, 122 tests, build, WebKit smoke test.
+
+## Recording her own voice: removed (2026-11-17)
+
+You asked to remove 自分の声を録音する completely: she should not have to record herself. The buttons in 答えてみよう and in conversations are gone, with the recorder's code; the app never asks for the microphone. The sections below that describe recording (added earlier the same day) are history.
+
+## A lesson with less tapping and a better order (2026-11-17)
+
+You found yourself tapping 次へ too often, even after a right answer. A day-31 lesson counted 68 taps if she gets everything right, 15 of them 次へ after a right quiz answer, and about 100 seconds of built-in pauses.
+
+- **The quiz goes on by itself:** right the first time, it shows the English and its meaning for about a second (after a reply quiz, until the right reply has played), then moves to the next step. After a miss it waits for 次へ, since that is when she needs to look. ← 前へ and ⏸ work as before, and 設定 has 「クイズに正解したら自動で次へ」 to turn it off.
+- **Shorter pauses:** a clip starts 0.4 s after a step opens (was 1 s), and the 言えた / 迷った / 言えなかった buttons work 0.7 s after the model has played (was 2.2 s). About 40 seconds less waiting in a lesson.
+- **Reviews are mixed:** listening and speaking alternate where both are due, instead of every quiz and then every speaking step, and a phrase's two steps are a whole pass apart.
+- **New phrases come early:** after a warm-up of 5 reviews, not after all of them. Their quizzes come a third of the way through the remaining reviews and their speaking steps two thirds through, so each is checked a while after it was taught.
+- **The conversation is last:** it closes the lesson, after any extra practice.
+- **Kept:** 次へ in 新しいフレーズ (she studies there at her own pace), 答え合わせ and the rating (the phone cannot tell when she has finished speaking), 続ける in conversations, and "Thank you!" and "Bye!" at the stamp.
+- **Checked:** two new tests for the order; in Edge, a quiz answered right the first time went on by itself after 1.2 s, one with a miss waited, and with the setting off both waited; type check, 122 tests, build, WebKit smoke test.
+
+## Design pass: five fixes (2026-11-17)
+
+From a look at every screen at iPhone 13 size, with the colours' contrast measured.
+
+- **The reply quiz fits:** in 「こう聞かれたら、何て答える？」 the ♪ card is one slim row (the 相手 label with the ♪ marks beside it), so the three replies show whole under it. Before, the card slid under the bubble and the third reply was cut, on an iPhone 13 too. Conversations use the same slim row for a line she is about to answer.
+- **No stray line on list pages:** ノート, 練習 and 設定 showed a short brown curve at both top corners. The build's minifier turned `border-image: none` into an empty value, which browsers ignore; the frame is now taken off through its variable.
+- **Small text is darker:** the secondary brown went from #8a6a55 to #785946, so it measures 5.2:1 on the yellow buttons (was 4.0) and 5.6 to 6.3 elsewhere. The stamp's day letters and number are #c8405e (4.8:1, was 3.4), and 完了 ✓ is #347a31 (5.3:1).
+- **Today's additions are drawn like the rest:** the memo and phrase menus have the panel's hand-drawn top edge, the 元に戻す note is a white sticker, and the search box's ✕, the ✕ beside another meaning and 「＋ ほかの意味を追加」 have drawn outlines.
+- **Pink means one thing:** pink stays the model answer's colour. What went wrong or takes something away (a wrong choice, 言えなかった, delete, 練習をやめる, warnings, recording) is a warm peach, #ffd2c2.
+- **Checked:** the same screens captured again, the seven conveniences walked again, type check, tests, build and the WebKit smoke test (36 of 36 on its own; run straight after the long captures, its browser crashed in one check, as once before).
+
 ## Seven more conveniences (2026-11-17)
 
 From a look for what was still missing; you chose all seven.

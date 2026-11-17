@@ -13,7 +13,7 @@
    * spell it. A note may also be Japanese only, a "how do I say…?" question. What she writes is kept however she
    * leaves: ✕, 保存する, the menu bar, or the app going into the background (to copy English from LINE, say).
    * A word can mean several things: ＋ ほかの意味を追加 gives each other meaning a box of its own (2026-11-17).
-   * Deleting is the bin beside 保存する: it deletes at once, and the list offers 元に戻す for a few seconds.
+   * Deleting is the bin in the header: it deletes at once, and the list offers 元に戻す for a few seconds.
    */
   let { note, onClose, onDelete }: { note: Note | null; onClose: () => void; onDelete: () => void } = $props();
   const editing = untrack(() => note);
@@ -93,7 +93,16 @@
 </script>
 
 <div class="sheet" role="dialog" aria-modal="true" aria-label="メモ">
-  <SheetHead title={editing ? 'メモ' : '新しいメモ'} onClose={close} />
+  <SheetHead title={editing ? 'メモ' : '新しいメモ'} onClose={close}>
+    {#snippet extra()}
+      <!-- Deleting is in the header, away from 保存する at the bottom (2026-11-17): it deletes at once. -->
+      {#if editing}
+        <button class="bin" onclick={remove} aria-label="このメモを削除">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 4h4" /><path d="M7 7l1 12.5h8L17 7" /><path d="M10.5 10.5v6M13.5 10.5v6" /></svg>
+        </button>
+      {/if}
+    {/snippet}
+  </SheetHead>
   <div class="scroll">
     <label class="field">
       <span class="label">英語</span>
@@ -149,14 +158,7 @@
 
   </div>
   <div class="actions">
-    <div class="final">
-      {#if editing}
-        <button class="btn light bin" onclick={remove} aria-label="このメモを削除">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 4h4" /><path d="M7 7l1 12.5h8L17 7" /><path d="M10.5 10.5v6M13.5 10.5v6" /></svg>
-        </button>
-      {/if}
-      <button class="btn primary" disabled={!english && !ja.trim()} onclick={done}>保存する</button>
-    </div>
+    <button class="btn primary" disabled={!english && !ja.trim()} onclick={done}>保存する</button>
   </div>
 </div>
 
@@ -229,11 +231,12 @@
   }
   .drop {
     flex: none;
-    width: 40px;
-    height: 40px;
-    border: none;
+    width: 44px;
+    height: 44px;
+    border: var(--line) solid var(--ink);
     border-radius: 50%;
-    background: var(--paper-2);
+    border-image: var(--frame-ring);
+    background: var(--white);
     display: grid;
     place-items: center;
     padding: 0;
@@ -248,14 +251,14 @@
   }
   .add-more {
     justify-self: start;
-    min-height: 40px;
+    min-height: 44px;
     padding: 0 14px;
-    border: 2px dashed var(--ink-3);
-    border-radius: 12px;
-    background: none;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--r-row);
+    border-image: var(--frame-row);
+    background: var(--white);
     font-size: 14px;
     font-weight: 800;
-    color: var(--ink-2);
   }
   .tools {
     grid-auto-flow: row;
@@ -283,7 +286,7 @@
     margin: 0;
     padding: 6px 10px;
     border-radius: 10px;
-    background: var(--blush);
+    background: var(--alert);
     font-size: 13px;
     font-weight: 700;
     line-height: 1.5;
@@ -293,14 +296,16 @@
     gap: 8px;
     padding-top: 8px;
   }
-  .final {
-    display: flex;
-    gap: 10px;
-  }
-  /* Deleting is rare: a small bin beside 保存する. The list offers to undo it. */
+  /* Deleting is rare: a quiet bin in the header. The list offers to undo it. */
   .bin {
     flex: none;
-    width: 60px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: var(--paper-2);
+    display: grid;
+    place-items: center;
     padding: 0;
   }
   .bin svg {

@@ -43,7 +43,7 @@
     animation: drop 0.25s ease-out both;
   }
   .warn {
-    background: var(--blush);
+    background: var(--alert);
   }
   .notice span {
     flex: 1;

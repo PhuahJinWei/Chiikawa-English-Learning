@@ -89,6 +89,8 @@ export interface Settings {
   toured: boolean;
   /** How sound is played (src/app/audio.svelte.ts): 'backup' is for phones where the standard way stays silent. */
   sound: 'standard' | 'backup';
+  /** A quiz answered right the first time goes on to the next step by itself (2026-11-17). On unless she turns it off. */
+  autoNext: boolean;
 }
 
 export function emptyProgress(): Progress {
@@ -111,6 +113,7 @@ export function emptyProgress(): Progress {
       newPerDay: 2,
       toured: false,
       sound: 'standard',
+      autoNext: true,
     },
   };
 }
@@ -221,6 +224,7 @@ export function normalize(raw: unknown): Progress {
       newPerDay: Math.max(1, Math.min(3, Math.round(num(st.newPerDay, base.settings.newPerDay)))),
       toured: st.toured === true,
       sound: st.sound === 'backup' ? 'backup' : 'standard',
+      autoNext: st.autoNext !== false,
     },
   };
 }

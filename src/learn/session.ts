@@ -139,9 +139,71 @@ const practiceStep = (e: Exchange, n: number, flip = false): Step =>
     ? { kind: 'catch', exId: e.id, review: false, ask: catchAsk(e, n >> 1) }
     : { kind: 'answer', exId: e.id, review: false };
 
-/** Today's lesson: due reviews (oldest first), anything left part-way, new exchanges (as many as fit: newAllowance),
- * one conversation once any is ready (the one done longest ago), then practice (today's new phrases first, then the
- * weakest learned ones) until it is about ten minutes long. */
+/** How many reviews warm her up before today's new phrases are taught. */
+export const WARM_UP = 5;
+
+/**
+ * Due reviews in a varied order (2026-11-17; they were every listening quiz, then every speaking step: thirteen of one
+ * and twelve of the other on a usual day). Phrase by phrase, oldest first, the first pass takes one step of each
+ * phrase, listening and speaking in turn; the second pass takes each phrase's other step. So the two kinds alternate,
+ * and a phrase's two steps stay a whole pass apart: the quiz's answer is not fresh in her ear when she is asked to say
+ * it, nor the other way round.
+ */
+export function mixReviews(due: readonly Step[]): Step[] {
+  const byPhrase = new Map<string, ExchangeStep[]>();
+  for (const s of due) if (isExchangeStep(s)) byPhrase.set(s.exId, [...(byPhrase.get(s.exId) ?? []), s]);
+  const first: ExchangeStep[] = [];
+  const second: ExchangeStep[] = [];
+  const count = { catch: 0, answer: 0 };
+  let i = 0;
+  for (const steps of byPhrase.values()) {
+    // A phrase with both steps due leads with the kind the first pass has fewer of (listening on a tie, then speaking).
+    const want = count.catch === count.answer ? (i % 2 === 0 ? 'catch' : 'answer') : count.catch < count.answer ? 'catch' : 'answer';
+    const lead = steps.find((s) => s.kind === want) ?? steps[0];
+    if (lead.kind !== 'meet') count[lead.kind]++;
+    first.push(lead);
+    second.push(...steps.filter((s) => s !== lead));
+    i++;
+  }
+  return [...inTurn(first), ...inTurn(second)];
+}
+
+/** Listening and speaking steps in turn, each kind keeping its order, starting with the kind of the first step. */
+function inTurn(steps: readonly ExchangeStep[]): Step[] {
+  if (!steps.length) return [];
+  const lead = steps.filter((s) => s.kind === steps[0].kind);
+  const other = steps.filter((s) => s.kind !== steps[0].kind);
+  const out: Step[] = [];
+  for (let i = 0; i < Math.max(lead.length, other.length); i++) {
+    if (i < lead.length) out.push(lead[i]);
+    if (i < other.length) out.push(other[i]);
+  }
+  return out;
+}
+
+/**
+ * The lesson's own steps in order (2026-11-17): a few reviews to warm up, anything left part-way, then today's new
+ * phrases are taught while she is fresh (they used to come after every review, about six minutes in). The rest of
+ * the reviews follow, with the new phrases' quizzes a third of the way through them and their speaking steps two
+ * thirds through: each new phrase is checked a while after it was taught, not at once.
+ */
+function arrange(reviews: readonly Step[], unfinished: readonly Step[], fresh: readonly Exchange[]): Step[] {
+  const mixed = mixReviews(reviews);
+  const warm = mixed.slice(0, WARM_UP);
+  const rest = mixed.slice(WARM_UP);
+  const teach = stepsForNew(fresh);
+  const meets = teach.filter((s) => s.kind === 'meet');
+  const quizzes = teach.filter((s) => s.kind === 'catch');
+  const says = teach.filter((s) => s.kind === 'answer');
+  const a = Math.ceil(rest.length / 3);
+  const b = Math.ceil((2 * rest.length) / 3);
+  return [...warm, ...unfinished, ...meets, ...rest.slice(0, a), ...quizzes, ...rest.slice(a, b), ...says, ...rest.slice(b)];
+}
+
+/** Today's lesson: a few due reviews, anything left part-way, new exchanges (as many as fit: newAllowance), the rest
+ * of the reviews with the new phrases' checks among them (arrange), practice (today's new phrases first, then the
+ * weakest learned ones) until it is about ten minutes long, and last, as its finish, one conversation once any is
+ * ready (the one done longest ago). */
 export function buildSession(p: Progress, ordered: readonly Exchange[], today: number, talks: readonly Talk[] = []): Plan {
   const due = dueSteps(p, ordered, today);
   const reviews = due.slice(0, MAX_REVIEWS);
@@ -159,19 +221,21 @@ export function buildSession(p: Progress, ordered: readonly Exchange[], today: n
   const waiting = unmet(p, ordered);
   const allowed = newAllowance(p, today, waiting, [...reviews, ...unfinished, ...talkSteps], due.length > MAX_REVIEWS);
   const fresh = waiting.slice(0, allowed);
-  const steps: Step[] = [...reviews, ...unfinished, ...stepsForNew(fresh), ...talkSteps];
+  const steps: Step[] = arrange(reviews, unfinished, fresh);
   const inLesson = new Set(steps.filter(isExchangeStep).map((s) => s.exId));
   const pool = [...fresh, ...byWeakness(p, ordered).filter((e) => !inLesson.has(e.id))];
   // Up to three passes over the pool, alternating saying and understanding, until about ten minutes.
   let practice = talk ? 1 : 0;
   fill: for (const flip of [false, true, false]) {
     for (const [i, e] of pool.entries()) {
-      if (estimateSeconds(steps) >= TARGET_SECONDS || practice >= MAX_PRACTICE) break fill;
+      if (estimateSeconds([...steps, ...talkSteps]) >= TARGET_SECONDS || practice >= MAX_PRACTICE) break fill;
       if (flip && e.kind === 'understand') continue;
       steps.push(practiceStep(e, i, flip));
       practice++;
     }
   }
+  // The conversation closes the lesson: using what she knows is its finish, not a stop on the way to more drills.
+  steps.push(...talkSteps);
   return { steps, reviews: reviews.length, fresh: fresh.length, practice };
 }
 

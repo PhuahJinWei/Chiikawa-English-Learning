@@ -91,7 +91,7 @@
     fill: var(--ink);
   }
   .quit {
-    background: var(--blush);
+    background: var(--alert);
   }
   .trouble {
     margin: -4px 0 12px !important;

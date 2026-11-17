@@ -18,7 +18,7 @@
   const learned = $derived(Object.values(app.progress.ex).filter((e) => everLearned(e.hear)).length);
   const mastered = $derived(Object.values(app.progress.ex).filter((e) => everMastered(e.hear)).length);
 
-  function toggle(key: 'allJapanese' | 'keepReadings') {
+  function toggle(key: 'allJapanese' | 'keepReadings' | 'autoNext') {
     s[key] = !s[key];
     save();
   }
@@ -85,6 +85,13 @@
 
     <h2>学習</h2>
     <section class="card soft list">
+      <button class="item" onclick={() => toggle('autoNext')} role="switch" aria-checked={s.autoNext}>
+        <span class="label">
+          クイズに正解したら自動で次へ
+          <small><Ja text="間違えたときは、|「次へ」を押すまで|待ちます。" /></small>
+        </span>
+        <span class="switch" class:on={s.autoNext}></span>
+      </button>
       <div class="item static stack">
         <span class="label">
           1回に習う新しいフレーズの数
@@ -243,9 +250,10 @@
     background: var(--ink);
     overflow: hidden;
   }
+  /* 44px or more each way: the smallest size a finger hits reliably. */
   .seg button {
-    width: 42px;
-    height: 36px;
+    width: 52px;
+    height: 44px;
     border: none;
     background: var(--white);
     font-weight: 900;
@@ -256,7 +264,7 @@
   }
   .seg.words button {
     width: auto;
-    padding: 0 16px;
+    padding: 0 18px;
   }
   .label {
     display: grid;
@@ -292,6 +300,8 @@
     font-size: 13px;
   }
   .legal a {
+    display: inline-block;
+    padding: 12px 10px;
     color: inherit;
   }
 </style>

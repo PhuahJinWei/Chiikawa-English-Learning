@@ -302,7 +302,7 @@
     background: var(--mint);
   }
   .mark.ng {
-    background: var(--blush);
+    background: var(--alert);
   }
   .text {
     flex: 1;
