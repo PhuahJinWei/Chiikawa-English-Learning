@@ -54,6 +54,17 @@ export type Face = 'neutral' | 'smile' | 'happy' | 'determined' | 'worried' | 't
 
 export type Mark = 'exclaim' | 'question' | 'zzz' | 'note' | 'heart';
 
+/**
+ * How much of the stage the app lays something over, in CSS pixels: a speech bubble over its top, the panel's edge
+ * over its bottom. `crop`: a share of the friends' height that may go under the bottom edge, for a closer shot on a
+ * short stage (0: their feet show).
+ */
+export interface StageInsets {
+  top?: number;
+  bottom?: number;
+  crop?: number;
+}
+
 /** A point in CSS pixels, relative to the stage container's top-left corner. */
 export interface ScreenPoint {
   x: number;
@@ -64,9 +75,14 @@ export interface StageApi {
   /** Creates the canvas inside `container` and starts drawing. Resolves once the renderer is ready. */
   mount(container: HTMLElement): Promise<void>;
 
+  /** Says what the app covers of the stage (fields left out keep their value). The friends are framed in the part
+   * left showing, with room above their heads for marks. */
+  setInsets(insets: StageInsets): void;
+
   /** Puts these friends on stage (1 to 3), laid out side by side facing the learner. Loads their models if
-   * needed. Friends not listed leave. Resolves once all of them are visible. */
-  setCast(ids: readonly FriendId[]): Promise<void>;
+   * needed. Friends not listed leave. Resolves once all of them are visible. A friend arriving pops in where they
+   * stand; one listed in `walkIn` walks in from beyond the stage's edge on their side instead. */
+  setCast(ids: readonly FriendId[], options?: { walkIn?: readonly FriendId[] }): Promise<void>;
 
   /** Plays a gesture. Resolves when a one-shot gesture ends, or when a looping one is stopped or replaced. */
   play(id: FriendId, gesture: Gesture): Promise<void>;

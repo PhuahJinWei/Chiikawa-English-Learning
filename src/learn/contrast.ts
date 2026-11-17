@@ -44,3 +44,25 @@ export function closest<T extends { line: Line }>(heard: Line, candidates: reado
   }
   return best.length ? best[Math.floor(rand() * best.length)] : null;
 }
+
+/** How many of the phrases coming up next in her path may be a quiz's wrong answers, once those she knows run out. */
+export const COMING_SOON = 8;
+
+/**
+ * Where a quiz's wrong answers come from, best first: phrases she has learned (in any order), then the next few
+ * coming up in her path (in any order), then the rest of the path in its order. So they are at her level: early on, a
+ * wrong reply to "This is for you." is "Nice to meet you!", not "I have two younger brothers." (2026-11-17, once all
+ * 128 phrases were in the app). `path` is in the order she learns it.
+ */
+export function quizCandidates<T>(path: readonly T[], learned: (t: T) => boolean, rand = Math.random): T[] {
+  const mix = (xs: T[]) => {
+    for (let i = xs.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [xs[i], xs[j]] = [xs[j], xs[i]];
+    }
+    return xs;
+  };
+  const known = path.filter(learned);
+  const coming = path.filter((t) => !learned(t));
+  return [...mix(known), ...mix(coming.slice(0, COMING_SOON)), ...coming.slice(COMING_SOON)];
+}

@@ -17,7 +17,7 @@
  * - Development only: `stage.__advance(seconds)` steps and draws by fixed time (see the end of createStage).
  */
 import * as THREE from 'three';
-import type { Face, FriendId, Gesture, Mark, ScreenPoint, StageApi } from './types';
+import type { Face, FriendId, Gesture, Mark, ScreenPoint, StageApi, StageInsets } from './types';
 import type { ActionId } from './rpg/characters/Actions';
 import { Character, HEAD_LOOK, type FrameContext, type HeadLook } from './rpg/characters/Character';
 import { sharedUniforms } from './rpg/characters/CharacterMaterial';
@@ -58,8 +58,13 @@ const ONE_SHOT: ReadonlySet<Gesture> = new Set(['wave', 'hop', 'cheer', 'bow', '
 const LENS = 26;
 /** How far the camera looks down on them (radians): enough to see the ground they stand on. */
 const PITCH = THREE.MathUtils.degToRad(4);
-/** Room above the tallest friend's head for the app's speech bubbles, as a share of that friend's height. */
-const HEADROOM = 0.62;
+/** Room above the tallest friend's head for the marks over heads, in metres: ! and ? sit 0.2 m above the head, 0.3 m
+ * tall, and pop a little larger as they appear (Emotes.ts). The app's speech bubbles lie over the stage instead, and
+ * it says how much they cover (setInsets). */
+const MARK_ROOM = 0.4;
+/** A bubble the app lays over the stage's top may cover the top of the tallest friend down to this share of their
+ * height (ears, Hachiware's hat), and the marks' room, but never their face. */
+const FACE_CLEAR = 0.75;
 /** Ground showing under their feet, as a share of the tallest friend's height. */
 const FLOOR = 0.12;
 /** Space at each side of the friends, and between them (metres). */
@@ -80,6 +85,8 @@ const IDLE_FRAME_MS = 50;
 const LOST_MS = 3000;
 /** A friend further than this from their new place is put there, not walked there (metres). */
 const WALK_MOST = 1.6;
+/** A friend who walks in (setCast's walkIn) starts this far beyond their place, past the stage's edge (metres). */
+const WALK_IN_FROM = 1.8;
 /** A glance toward the learner's finger lasts this long (seconds). */
 const GLANCE_FOR = 1.5;
 /** Where glances and screen points are looked at: on an upright plane this far in front of the friends (metres). */
@@ -173,6 +180,8 @@ export function createStage(): StageApi {
   const frameCallbacks = new Set<() => void>();
 
   // Where the camera is going, and where it is (eased there).
+  /** What the app lays over the stage (setInsets): its bubble over the top, the panel's edge over the bottom. */
+  const insets: Required<StageInsets> = { top: 0, bottom: 0, crop: 0 };
   const camTo = new THREE.Vector3(0, 1.2, 6);
   const lookTo = new THREE.Vector3(0, 0.6, 0);
   const lookNow = new THREE.Vector3(0, 0.6, 0);
@@ -212,7 +221,8 @@ export function createStage(): StageApi {
     });
   }
 
-  /** Where the camera stands to frame `ids` with room for bubbles above, at the container's aspect. */
+  /** Where the camera stands to frame the cast, with room for marks above them, in the part of the stage the app
+   * leaves showing (setInsets), at the container's aspect. */
   function frameCast(): void {
     const shown = cast.map((id) => friends.get(id)!).filter(Boolean);
     if (!shown.length) return;
@@ -224,16 +234,30 @@ export function createStage(): StageApi {
       maxX = Math.max(maxX, f.slot.x + f.ch.width / 2);
     }
     const spanX = maxX - minX + 2 * SIDE_MARGIN;
-    const bottom = -FLOOR * tallest;
-    const top = tallest * (1 + HEADROOM);
-    const spanY = top - bottom;
-    const aspect = width > 0 && height > 0 ? width / height : 1;
+    const h = height > 0 ? height : 1;
+    const w = width > 0 ? width : 1;
+    // The stage's height above what the app lays over its bottom, and between that and what it lays over its top.
+    const above = Math.max(1, h - insets.bottom);
+    const clear = Math.max(0.3 * h, h - insets.top - insets.bottom);
+    // Pixels per metre with `under` metres showing under their feet (less than nothing: their feet cut off): the
+    // marks' room above the tallest fits inside the stage, and their faces below what the app lays over the top.
+    const fit = (under: number) =>
+      Math.min(above / (under + tallest + MARK_ROOM), clear / (under + FACE_CLEAR * tallest));
+    // As close as the crop allows (a little ground under their feet without one), but never so close that the whole
+    // group does not fit across; then as much of them as that leaves room for.
+    const lowest = insets.crop > 0 ? -insets.crop * tallest : FLOOR * tallest;
+    const scale = Math.min(w / spanX, fit(lowest));
+    const under = Math.max(
+      lowest,
+      Math.min(FLOOR * tallest, above / scale - tallest - MARK_ROOM, clear / scale - FACE_CLEAR * tallest),
+    );
     const tanHalf = Math.tan(THREE.MathUtils.degToRad(LENS) / 2);
-    const distance = Math.max(spanY / (2 * tanHalf), spanX / (2 * tanHalf * aspect));
+    const seen = h / scale;
+    const distance = seen / (2 * tanHalf);
     const centreX = (minX + maxX) / 2;
-    // Their feet stay near the bottom: height to spare (a wide group on a squarish stage) goes to the bubbles' room.
-    const seen = 2 * distance * tanHalf;
-    const centreY = bottom + seen / 2;
+    // The bottom of what shows is `under` metres below their feet (above them, cropped): spare height goes on top.
+    const viewBottom = -under - insets.bottom / scale;
+    const centreY = viewBottom + seen / 2;
     lookTo.set(centreX, centreY, 0);
     camTo.set(centreX, centreY + distance * Math.sin(PITCH), distance * Math.cos(PITCH));
     if (!cameraPlaced) {
@@ -543,7 +567,14 @@ export function createStage(): StageApi {
       updateRunning();
     },
 
-    async setCast(ids: readonly FriendId[]): Promise<void> {
+    setInsets(i: StageInsets): void {
+      if (i.top !== undefined) insets.top = Math.max(0, i.top);
+      if (i.bottom !== undefined) insets.bottom = Math.max(0, i.bottom);
+      if (i.crop !== undefined) insets.crop = Math.min(0.5, Math.max(0, i.crop));
+      frameCast();
+    },
+
+    async setCast(ids: readonly FriendId[], options: { walkIn?: readonly FriendId[] } = {}): Promise<void> {
       const version = ++castVersion;
       const wanted = [...new Set(ids)].slice(0, 3);
       const loaded = await Promise.all(wanted.map(friendFor));
@@ -574,6 +605,17 @@ export function createStage(): StageApi {
           if (d > WALK_MOST) ch.teleport(f.slot.x, f.slot.z, f.slot.yaw);
           else if (d > 0.03) f.walking = true;
           else ch.setFacing(f.slot.yaw);
+        } else if (options.walkIn?.includes(f.id)) {
+          // Arriving on foot (a new friend's first day): from beyond the edge on their side, facing the way they go.
+          const side = f.slot.x >= 0 ? 1 : -1;
+          ch.teleport(f.slot.x + side * WALK_IN_FROM, f.slot.z, -side * (Math.PI / 2));
+          ch.setShown(true);
+          ch.root.scale.setScalar(1);
+          f.pop = POP_TIME;
+          f.onStage = true;
+          f.walking = true;
+          f.look = 'learner';
+          f.glanceUntil = 0;
         } else {
           // Arriving: popped in where they stand.
           ch.teleport(f.slot.x, f.slot.z, f.slot.yaw);

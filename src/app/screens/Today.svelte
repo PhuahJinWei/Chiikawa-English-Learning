@@ -8,8 +8,8 @@
   import StepLayout from '../components/StepLayout.svelte';
   import UiWord from '../components/UiWord.svelte';
   import { FRIENDS } from '../friends.ts';
-  import { act, calm, choosePartner, withPartner } from '../scene.ts';
-  import { lifetime } from '../script.svelte.ts';
+  import { act, calm, choosePartner, partnerOnStage, pick, withPartner } from '../scene.ts';
+  import { lifetime, type Run } from '../script.svelte.ts';
   import { stage } from '../stage.ts';
   import { app, go, startDaily, startMore } from '../state.svelte.ts';
 
@@ -18,6 +18,20 @@
    * the week's stamps, and the 英語レベル meter (one level per ten phrases learned).
    */
   const life = lifetime();
+  // The greeting lies over the top of the stage: the friends are framed to stand below it, clear of its tail (18px).
+  let greetEl: HTMLDivElement | undefined = $state();
+  $effect(() => {
+    const el = greetEl;
+    if (!el) return;
+    const report = () => stage.setInsets({ top: el.getBoundingClientRect().bottom + 22 });
+    const watch = new ResizeObserver(report);
+    watch.observe(el);
+    report();
+    return () => {
+      watch.disconnect();
+      stage.setInsets({ top: 0 });
+    };
+  });
   // The app may have stayed open past 4 a.m.
   app.today = dayNumber();
   // Hachiware and today's partner (src/learn/partners.ts): a friend's first day as her partner gets a welcome.
@@ -95,20 +109,62 @@
     else startDaily();
   }
 
+  /**
+   * One small moment, now and then while she is on this screen (2026-11-17): a look between them, a hop or a wave,
+   * a sit, or what fits the hour (a snack at lunchtime, a nap late in the evening). They stay where they stand:
+   * walking about would keep the stage drawing at full speed and take them under the bubble.
+   */
+  async function moment(s: Run) {
+    const buddy = partnerOnStage();
+    const hour = new Date().getHours();
+    // A rest wears its own face (eyes shut for a nap), then the greeting's happy face comes back.
+    const rest = async (gesture: 'sit' | 'eat' | 'doze', ms: number) => {
+      stage.setFace(buddy, null);
+      void stage.play(buddy, gesture);
+      if (gesture === 'doze') stage.mark(buddy, 'zzz');
+      await s.wait(ms);
+      stage.stop(buddy);
+      act([{ who: 'chiikawa', face: 'happy' }]);
+    };
+    const moments = [
+      async () => {
+        stage.lookAt('hachiware', buddy);
+        await s.wait(400);
+        stage.lookAt(buddy, 'hachiware');
+        await s.wait(1600);
+        stage.lookAt('hachiware', 'learner');
+        stage.lookAt(buddy, 'learner');
+      },
+      async () => act([{ who: 'chiikawa', gesture: 'hop', face: 'happy' }]),
+      async () => act([{ who: 'hachiware', gesture: 'wave', face: 'smile' }]),
+      () => rest('sit', 6000),
+      ...(hour >= 11 && hour < 14 ? [() => rest('eat', 5000)] : []),
+      ...(hour >= 21 || hour < 5 ? [() => rest('doze', 8000)] : []),
+    ];
+    await pick(moments)();
+  }
+
   life.run(async (s) => {
-    await stage.setCast(cast);
+    // A friend's first day as her partner, they walk in (App.svelte asks the same, whichever comes first).
+    await stage.setCast(cast, { walkIn: partner.first ? [partnerOnStage()] : [] });
     calm(cast);
     await s.wait(300);
     act([{ who: 'hachiware', gesture: 'wave', face: 'smile' }]);
-    await s.wait(1800);
+    await s.wait(partner.first ? 2600 : 1800);
     // Her partner (ちいかわ's part, played by today's partner: src/app/scene.ts); a new one gets a heart.
     act([{ who: 'chiikawa', gesture: 'hop', face: 'happy', ...(partner.first ? { mark: 'heart' as const } : {}) }]);
+    // Then a small moment every 15 to 25 seconds, not with Reduce Motion, and not under the first-run tour.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (;;) {
+      await s.wait(15000 + Math.random() * 10000);
+      if (app.progress.settings.toured) await moment(s);
+    }
   });
 </script>
 
 <!-- Hachiware's greeting floats over the scene, above the friends (not during the first-run tour, which greets her). -->
 {#if app.progress.settings.toured}
-  <div class="greet">
+  <div class="greet" bind:this={greetEl}>
     <Bubble who="hachiware" text={say} tail="down" named={false}>
       {#snippet before()}
         <span class="hello"><UiWord t={greeting} size="bubble" /></span>

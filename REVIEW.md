@@ -6,6 +6,19 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## The stage's framing, small moments, and the quiz's wrong answers (2026-11-17)
+
+You asked whether the friends should walk around, and whether the zoom was right.
+
+- **Framing:** the stage now knows what the app lays over it (the greeting bubble over its top, the panel's rounded edge over its bottom) and frames the friends in the part left showing.
+  - **Today:** their faces never go under the greeting. At most the top quarter of the tallest friend (ears, Hachiware's hat) may tuck under a tall bubble on a small iPhone, and their feet now show above the panel with a little ground.
+  - **Lessons:** a closer shot. Up to a fifth of them goes under the panel's edge, so their faces show about 27% bigger. My first estimate (a third bigger, from the empty sky over them) was wrong: most of that sky is room the ! and ? marks need, 0.4 m above their heads, so it stays. With three friends the group's width already sets their size, and then the shot is not cropped.
+  - **The celebration** at the end of a lesson shows them whole, as Today does. The self-check page's strip uses the closer shot.
+- **Small moments on Today:** every 15 to 25 seconds, one of these: they look at each other, her partner hops, Hachiware waves, her partner sits for a while, has a snack at lunchtime (11:00 to 14:00), or naps late in the evening (after 21:00, eyes shut, zzz). Nothing with Reduce Motion on, and not under the first-run tour. They stay where they stand: walking about would keep the stage drawing at full speed (it slows to 20 frames a second when still, to save battery) and take them under the bubble. In lessons they stay still, since their reactions are her feedback.
+- **A new friend walks in:** on a friend's first day as her partner (うさぎ at level 2, モモンガ at level 3), they walk in from the edge of the stage instead of popping in, then get their heart.
+- **The quiz's wrong answers:** they came from the phrases she had learned, then from anywhere in the course, so a beginner could get "I have two younger brothers." as a wrong reply to "Thank you!". Now, once the phrases she knows run out, they come from the next 8 phrases in her path, so they are at her level. The same quiz now offers "Hi!", "Thank you!" and "Bye!".
+- **Checked:** Today on an iPhone SE and 13 (with a four-line greeting), a lesson with two and with three friends, the self-check strip, sitting, eating and napping, Usagi walking in on her first day, and the quiz with a beginner's progress; tests (119, two new), type check, build, and the WebKit smoke test (28 of 28). Not checked on a real iPhone.
+
 ## Polish: notes (メモ) and the phrase sheet (2026-11-17)
 
 You asked whether the notes and memo screens look good. The phrase list and sheet did; the memo list was the weakest screen. This pass changes only how they look.

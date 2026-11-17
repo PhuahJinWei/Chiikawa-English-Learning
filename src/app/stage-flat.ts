@@ -1,4 +1,4 @@
-import type { Face, FriendId, Gesture, Mark, ScreenPoint, StageApi } from '../stage/types.ts';
+import type { Face, FriendId, Gesture, Mark, ScreenPoint, StageApi, StageInsets } from '../stage/types.ts';
 import { FRIENDS } from './friends.ts';
 
 /**
@@ -30,8 +30,11 @@ export function createFlatStage(): StageApi {
   let h = 0;
   const frameCbs = new Set<() => void>();
 
-  const size = () => Math.min(w / (cast.length + 0.6), h * 0.42);
-  const ground = () => h * 0.86;
+  /** What the app covers (setInsets): the friends stand in the part left showing. */
+  const insets: Required<StageInsets> = { top: 0, bottom: 0, crop: 0 };
+  const room = () => Math.max(40, h - insets.top - insets.bottom);
+  const size = () => Math.min(w / (cast.length + 0.6), room() * 0.42);
+  const ground = () => h - insets.bottom - room() * 0.14;
 
   function layout() {
     cast.forEach((f, i) => {
@@ -202,6 +205,10 @@ export function createFlatStage(): StageApi {
       const len = ONE_SHOT[gesture];
       f.gestureEnd = performance.now() / 1000 + (len ?? Infinity);
       return new Promise<void>((resolve) => (f.resolve = resolve));
+    },
+    setInsets(i) {
+      if (i.top !== undefined) insets.top = Math.max(0, i.top);
+      if (i.bottom !== undefined) insets.bottom = Math.max(0, i.bottom);
     },
     stop(id) {
       const f = find(id);

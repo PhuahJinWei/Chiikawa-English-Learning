@@ -2,7 +2,7 @@
   import { untrack } from 'svelte';
   import { EXCHANGES, UI, VERSATILE, catchLines, nearIds } from '../../content/index.ts';
   import type { Exchange, Line } from '../../content/types.ts';
-  import { closest } from '../../learn/contrast.ts';
+  import { closest, quizCandidates } from '../../learn/contrast.ts';
   import type { Step } from '../../learn/session.ts';
   import { play } from '../audio.svelte.ts';
   import { audioPath } from '../clips.ts';
@@ -43,10 +43,9 @@
 
   // Exchanges too close in meaning are never each other's wrong answers.
   const near = nearIds(ex);
-  const others = (filter: (e: Exchange) => boolean) => {
-    const pool = EXCHANGES.filter((e) => !near.has(e.id) && filter(e));
-    return [...shuffle(pool.filter((e) => app.progress.ex[e.id])), ...shuffle(pool.filter((e) => !app.progress.ex[e.id]))];
-  };
+  // Wrong answers at her level: phrases she has learned, then the next few coming up in her path (src/learn/contrast.ts).
+  const others = (filter: (e: Exchange) => boolean) =>
+    quizCandidates(EXCHANGES.filter((e) => !near.has(e.id) && filter(e)), (e) => !!app.progress.ex[e.id]);
 
   interface Option {
     key: string;

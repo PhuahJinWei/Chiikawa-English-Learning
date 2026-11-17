@@ -1,4 +1,4 @@
-import type { FriendId, StageApi } from '../stage/types.ts';
+import type { FriendId, StageApi, StageInsets } from '../stage/types.ts';
 import { createStage } from '../stage/index.ts';
 import { createFlatStage } from './stage-flat.ts';
 
@@ -12,6 +12,8 @@ import { createFlatStage } from './stage-flat.ts';
 let impl: StageApi;
 let lastCast: readonly FriendId[] = [];
 let castReady: Promise<void> = Promise.resolve();
+/** What the app covers of the stage, kept for a flat stage that takes over. */
+let insets: StageInsets = {};
 export const stageInfo = { kind: '3d' as '3d' | 'flat', problem: '' };
 
 let host: HTMLElement | null = null;
@@ -40,6 +42,7 @@ async function fallBack(e: unknown) {
   stageInfo.kind = 'flat';
   stageInfo.problem = String(e);
   if (host) await impl.mount(host);
+  impl.setInsets(insets);
   await impl.setCast(lastCast);
 }
 
@@ -69,11 +72,15 @@ export const stage: StageApi = {
       await fallBack(e);
     }
   },
-  setCast(ids) {
+  setInsets(i) {
+    insets = { ...insets, ...i };
+    impl.setInsets(i);
+  },
+  setCast(ids, options) {
     lastCast = ids;
     castReady = (async () => {
       try {
-        await impl.setCast(ids);
+        await impl.setCast(ids, options);
       } catch (e) {
         if (stageInfo.kind === '3d') await fallBack(e);
       }

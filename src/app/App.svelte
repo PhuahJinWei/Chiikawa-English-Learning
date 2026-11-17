@@ -8,7 +8,7 @@
   import TabBar from './components/TabBar.svelte';
   import Tour from './components/Tour.svelte';
   import { isIOS, isStandalone } from './platform.ts';
-  import { choosePartner, withPartner } from './scene.ts';
+  import { choosePartner, partnerOnStage, withPartner } from './scene.ts';
   import ErrorScreen from './screens/ErrorScreen.svelte';
   import InstallGuide from './screens/InstallGuide.svelte';
   import Lesson from './screens/Lesson.svelte';
@@ -44,6 +44,14 @@
   $effect(() => {
     stage.setPaused(mode === 'none');
   });
+  /** How far the panel's rounded top reaches up over the stage (px): the friends are framed to stand above it. */
+  const OVERLAP = 22;
+  /** On a short stage (the lesson's band, a page's strip), a closer shot: up to a fifth of the friends goes under the
+   * panel's edge, so their faces show bigger. The celebration and Today show them whole. */
+  const CLOSE_CROP = 0.2;
+  $effect(() => {
+    stage.setInsets({ bottom: mode === 'none' ? 0 : OVERLAP, crop: mode === 'band' || mode === 'strip' ? CLOSE_CROP : 0 });
+  });
 
   const withTabs = $derived(app.screen !== 'lesson');
   const touring = $derived(!app.progress.settings.toured && app.screen === 'today');
@@ -61,12 +69,13 @@
 
   onMount(() => {
     if (stageEl) {
-      // Hachiware and today's partner (src/learn/partners.ts).
-      choosePartner();
+      // Hachiware and today's partner (src/learn/partners.ts); a friend's first day as her partner, they walk in.
+      const partner = choosePartner();
       const cast = withPartner(['hachiware', 'chiikawa']);
+      const walkIn = partner.first ? [partnerOnStage()] : [];
       void stage
         .mount(stageEl)
-        .then(() => stage.setCast(cast))
+        .then(() => stage.setCast(cast, { walkIn }))
         .then(() => stage.followPointer(true));
     }
     let later = false;
@@ -82,7 +91,7 @@
   });
 </script>
 
-<div class="app mode-{mode}" class:no-tabs={!withTabs}>
+<div class="app mode-{mode}" class:no-tabs={!withTabs} style="--overlap: {OVERLAP}px">
   <div class="stage" bind:this={stageEl} aria-hidden={mode === 'none'}></div>
   <Notices />
   <div class="lower">
@@ -182,7 +191,7 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    margin-top: -22px;
+    margin-top: calc(-1 * var(--overlap));
   }
   .panel {
     position: relative;

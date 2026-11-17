@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { EXCHANGES, catchLines, exchangeById, nearIds } from '../src/content/index.ts';
 import type { Line } from '../src/content/types.ts';
-import { alike, closest, wordsOf } from '../src/learn/contrast.ts';
+import { COMING_SOON, alike, closest, quizCandidates, wordsOf } from '../src/learn/contrast.ts';
 
 const line = (en: string): Line => ({ en, ja: en, parts: [], role: 'heard' });
 const pool = (...ens: string[]) => ens.map((en) => ({ line: line(en) }));
@@ -43,5 +43,26 @@ describe('lines that sound alike', () => {
     expect(closest(sorry, others('its-ok'))?.id).toBe('sorry-what');
     const timeToEat = exchangeById('lets-eat')!.heard.find((l) => l.en === 'Time to eat!')!;
     expect(closest(timeToEat, others('lets-eat'))?.line.en).toBe('Time to go!');
+  });
+});
+
+describe('wrong answers in the quiz', () => {
+  it('come from what she has learned, then the next phrases in her path, then the rest in order', () => {
+    const path = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'];
+    const r = quizCandidates(path, (x) => x === 'c' || x === 'h', () => 0.5);
+    expect(r.slice(0, 2).sort()).toEqual(['c', 'h']);
+    expect(r.slice(2, 2 + COMING_SOON).sort()).toEqual(['a', 'b', 'd', 'e', 'f', 'g', 'i', 'j']);
+    expect(r.slice(2 + COMING_SOON)).toEqual(['k', 'l']);
+  });
+
+  it('early on are the phrases coming up next, not sentences from far along the path', () => {
+    // Day 2: "Hi!" and "Sorry, what?" learned, and the quiz asks what she answers to "This is for you.".
+    const learned = new Set(['hi', 'sorry-what']);
+    const near = nearIds(exchangeById('thank-you')!);
+    const replies = EXCHANGES.filter((e) => !near.has(e.id) && e.kind === 'reply');
+    const at = new Map(EXCHANGES.map((e, i) => [e.id, i] as const));
+    for (const e of quizCandidates(replies, (e) => learned.has(e.id)).slice(0, COMING_SOON)) {
+      expect(at.get(e.id)!, e.id).toBeLessThan(20);
+    }
   });
 });
