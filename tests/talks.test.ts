@@ -56,14 +56,18 @@ describe('conversations as written', () => {
     for (const { def } of TALKS_WRITTEN) for (const text of [def.title, def.cue]) expect(text, def.id).not.toMatch(SPACED);
   });
 
-  it('are all in the app: every line has its audio and every step is taught', () => {
-    expect(TALKS.map((t) => t.id)).toEqual(TALKS_WRITTEN.map((w) => w.def.id));
+  it('are all in the app unless they are drafts: every line has its audio and every step is taught', () => {
+    expect(TALKS.map((t) => t.id)).toEqual(TALKS_WRITTEN.filter((w) => w.def.status !== 'draft').map((w) => w.def.id));
+    expect(TALKS.some((t) => t.status === 'draft')).toBe(false);
   });
 
-  it('are written in the order they become ready', () => {
+  it('are written in the order they become ready, drafts too', () => {
     const at = new Map(ORDERED.map((e, i) => [e.id, i] as const));
     const ready = (t: Talk) => Math.max(...t.steps.map((id) => at.get(id)!));
-    const order = TALKS.map(ready);
+    const order = TALKS_WRITTEN.map(({ def, talk }) => {
+      expect(talk, `${def.id}: a line is not in its step`).toBeTruthy();
+      return ready(talk!);
+    });
     expect(order).toEqual([...order].sort((a, b) => a - b));
   });
 

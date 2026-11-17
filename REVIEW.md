@@ -6,6 +6,17 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## 18 more conversations, C12 to C29 (2026-11-17)
+
+You said "Yes, draft them". The 11 conversations in the app used only phrases #1 to #51, so nothing she learns from about day 26 on came up in one.
+
+- **18 conversations, C12 to C29**, at the end of the content sheet's conversation table. You approved all of them the same day, and they are in the app: each comes up once she has learned the phrases it uses, like the first 11. They needed no new audio: every line already had its clip.
+- **What they cover:** 44 of the 77 phrases from #52 on, mostly as her own small talk: her work (C13), hobbies and brothers (C14), introducing herself (C15), arriving with a gift (C16), asking again (C17), food (C18, C19, C22), feelings (C20), greeting Uncle and asking back (C21), helping (C23), going out and plans (C24, C25), a present (C26), the day's news and good night (C27), Japan (C28), and the day she leaves (C29).
+- **Not in any conversation yet:** numbers, the time and the days as answers (#53 to #62), the in-between sentences that build up to her longer ones (#64, #66 to #68, #70, #71, #73), and #80, #81, #86, #88, #89, #93, #104, #105, #114, #119 and #123.
+- **Would need a new line:** "What do you do?" asked back (#98) has no answer with audio. A conversation with it needs the other person's answer, for example "I'm a teacher.", which would need audio once you approve it.
+- **Three lines have their own Japanese here,** because their step's does not fit the moment: a waiter's "This way!" is こちらです。 (C12); on the day she leaves, "Thank you for having me!" is お世話になりました！ and the family's "Welcome!" is どういたしまして！ (C29, as in C9).
+- **Checked:** every line is found in its step and said by the right person, all 29 conversations are in the order they become ready and in the app (tests, 120 of 120), and C29's lines show the Japanese written for them. The sheet was regenerated.
+
 ## Fit on the home-screen app, and the pace of new phrases (2026-11-17)
 
 You chose these two from the fresh look at the whole app.
