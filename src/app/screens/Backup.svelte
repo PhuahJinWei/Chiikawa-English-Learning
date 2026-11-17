@@ -73,7 +73,8 @@
     save();
     found = null;
     pasted = '';
-    tell('記録を戻しました！');
+    // Only when it was really written: a full phone leaves the old record on it.
+    tell(app.saved ? '記録を戻しました！' : '保存できませんでした。iPhoneの空き容量を確かめて、もう一度ためしてください。');
   }
 
   function eraseAll() {

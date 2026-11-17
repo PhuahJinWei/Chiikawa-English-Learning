@@ -4,7 +4,7 @@
   import type { Exchange, Line } from '../../content/types.ts';
   import { closest, quizCandidates } from '../../learn/contrast.ts';
   import type { Step } from '../../learn/session.ts';
-  import { play } from '../audio.svelte.ts';
+  import { audioState, play } from '../audio.svelte.ts';
   import { audioPath } from '../clips.ts';
   import Blocks from '../components/Blocks.svelte';
   import Bubble from '../components/Bubble.svelte';
@@ -34,6 +34,8 @@
     onDone,
     onBack,
     intro = false,
+    missed = false,
+    onMiss = null,
   }: {
     ex: Exchange;
     step: Extract<Step, { kind: 'catch' }>;
@@ -41,10 +43,15 @@
     onBack: (() => void) | null;
     /** The step before was another stage: Hachiware names this one first, and leaves a moment to read it. */
     intro?: boolean;
+    /** She already missed this step before it was restarted: it cannot be passed first time any more. */
+    missed?: boolean;
+    onMiss?: (() => void) | null;
   } = $props();
   const ex = untrack(() => exProp);
   const step = untrack(() => stepProp);
   let naming = untrack(() => intro);
+  const missedBefore = untrack(() => missed);
+  const slipped = () => missedBefore || wrong.length > 0;
 
   const life = lifetime();
   const cast = ex.cast;
@@ -135,11 +142,16 @@
   listen();
 
   let finished = false;
+  /** She played a clip herself after answering (▶ or a word block). */
+  let touched = false;
+  $effect(() => {
+    if (audioState.manual && solved) touched = true;
+  });
   /** On to the next step (her tap on 次へ, or by itself after a right first answer): once. */
   function finish() {
     if (finished) return;
     finished = true;
-    onDone({ grade: wrong.length ? 'again' : 'good', missedLine: wrong.length ? line.en : undefined });
+    onDone({ grade: slipped() ? 'again' : 'good', missedLine: slipped() ? line.en : undefined });
   }
 
   function choose(i: number) {
@@ -153,17 +165,21 @@
         { who: ex.host, gesture: 'cheer', face: 'happy' },
         { who: 'chiikawa', face: 'happy', mark: 'heart' },
       ]);
-      const first = wrong.length === 0;
+      const first = !slipped();
+      touched = false;
       life.run(async (s) => {
         // The right reply is heard; then, right the first time, a moment to see the English, and on.
         if (o.reply) await s.play(audioPath(o.reply.en), 'model');
         if (!first || !app.progress.settings.autoNext) return;
         await s.wait(o.reply ? 600 : 1300);
+        // She tapped something to hear it again: she is studying the card, so the step waits for 次へ.
+        if (touched) return;
         finish();
       });
       return;
     }
     wrong = [...wrong, i];
+    onMiss?.();
     sfx.boing();
     busy = true;
     // Her partner worries with her (each in character: src/app/scene.ts).

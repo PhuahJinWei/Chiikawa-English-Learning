@@ -84,7 +84,7 @@
       <div class="boot-card">
         <p class="boot-title" id="boot-title">読み込みに時間がかかっています</p>
         <p>電波のよいところで「もう一度読み込む」を押してください。何度やっても開かないときは、この画面のスクリーンショットを送ってください。</p>
-        <button type="button" onclick="location.reload()">もう一度読み込む</button>
+        <button type="button" onclick="window.__bootReload()">もう一度読み込む</button>
         <pre id="boot-detail"></pre>
       </div>
     </div>
@@ -105,6 +105,40 @@
         }
         window.__bootFailed = function (detail) {
           show(detail, true);
+        };
+        // もう一度読み込む: a plain reload would open the same broken version again, because a newer one waits until
+        // the app (which did not start) tells it to take over. So: ask for a newer version, tell any that is waiting
+        // or arrives to take over, and reload when it has, or after 4 seconds (2026-11-17).
+        window.__bootReload = function () {
+          var done = false;
+          function go() {
+            if (done) return;
+            done = true;
+            location.reload();
+          }
+          function takeOver(worker) {
+            if (worker) worker.postMessage({ type: 'activate' });
+          }
+          try {
+            var sw = navigator.serviceWorker;
+            if (!sw) return go();
+            sw.addEventListener('controllerchange', go);
+            sw.getRegistration().then(function (reg) {
+              if (!reg) return go();
+              takeOver(reg.waiting);
+              reg.addEventListener('updatefound', function () {
+                var fresh = reg.installing;
+                if (!fresh) return;
+                fresh.addEventListener('statechange', function () {
+                  if (fresh.state === 'installed') takeOver(fresh);
+                });
+              });
+              reg.update()['catch'](function () {});
+              setTimeout(go, 4000);
+            }, go);
+          } catch (e) {
+            go();
+          }
         };
         window.addEventListener('error', function (e) {
           lastError = (e && e.message) || 'error';

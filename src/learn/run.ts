@@ -19,9 +19,9 @@ import {
  * - A step's result is recorded once, however often she goes back and redoes it.
  * - Practice (mode 'practice') never changes the schedule: it only notes when a phrase was practised and what she
  *   missed. Only today's lesson records results.
- * - A missed Catch or Answer gets one practice retry at the end of the lesson.
- * - The day is stamped only when the lesson reached its end AND recorded at least one answer: skipping every step
- *   earns nothing.
+ * - A missed Catch or Answer gets one practice retry at the end of the lesson, before its closing conversation.
+ * - The day is stamped only when the lesson reached its end AND recorded at least one answer, or a phrase she
+ *   already knew (もう知ってる): skipping every step earns nothing.
  */
 export interface Run {
   daily: boolean;
@@ -86,7 +86,9 @@ export function finishStep(r: Run, p: Progress, find: (id: string) => Exchange |
   const key = `${s.kind}:${s.exId}`;
   if (res.grade === 'again' && !r.retried.includes(key)) {
     r.retried.push(key);
-    r.steps.push({ ...s, review: false });
+    // The conversation stays the lesson's last step.
+    const end = r.steps.at(-1)?.kind === 'talk' && r.steps.length - 1 > r.index ? r.steps.length - 1 : r.steps.length;
+    r.steps.splice(end, 0, { ...s, review: false });
   }
 }
 
@@ -103,6 +105,9 @@ export function skipKnown(r: Run, p: Progress, e: Exchange): void {
   const moved = (i: number) => keep.slice(0, i).filter(Boolean).length;
   r.recorded = r.recorded.filter((i) => keep[i]).map(moved);
   r.steps = r.steps.filter((_, i) => keep[i]);
+  // Saying she knows a phrase is an answer too: a lesson of nothing but known phrases still earns its stamp (until
+  // 2026-11-17 it did not, and the Today screen offered a second lesson).
+  if (!r.recorded.includes(r.index)) r.recorded.push(r.index);
   // Its own checks (a Catch, and an Answer unless it is only understood) were part of the new phrase; the rest
   // were practice, which the end of the lesson counts.
   const own = e.kind === 'understand' ? 1 : 2;

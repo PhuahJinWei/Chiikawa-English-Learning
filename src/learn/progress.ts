@@ -1,6 +1,6 @@
 import { STEP_KINDS, type Step } from './session.ts';
 import { isPartner, type PartnerId } from './partners.ts';
-import type { SkillState } from './schedule.ts';
+import { TOP_BOX, type SkillState } from './schedule.ts';
 
 /** Everything saved on the phone. Nothing is sent anywhere. */
 export interface Progress {
@@ -121,15 +121,36 @@ export function emptyProgress(): Progress {
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
 const num = (x: unknown, fallback = 0) => (typeof x === 'number' && Number.isFinite(x) ? x : fallback);
 
+/** A whole number, or the fallback: what a hand-edited save or backup may hold instead (2.5, Infinity, a string). */
+const whole = (x: unknown, fallback = 0) => (typeof x === 'number' && Number.isFinite(x) ? Math.round(x) : fallback);
+/** Day numbers that make sense (about 1970 to 2240), so the schedule's sums never leave the numbers it can save. */
+const isDay = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x) && x >= 0 && x < 100_000;
+/** How many entries a saved table may have, and how long its names: far more than the app ever writes. */
+const MOST_ENTRIES = 3000;
+const LONGEST_KEY = 320;
+/** A table of numbers by name, without anything else a restored backup may have put there. */
+function numbers(raw: unknown): Record<string, number> {
+  if (!isObj(raw)) return {};
+  const out: Record<string, number> = {};
+  let n = 0;
+  for (const [k, v] of Object.entries(raw)) {
+    if (typeof v !== 'number' || !Number.isFinite(v) || k.length > LONGEST_KEY) continue;
+    if (++n > MOST_ENTRIES) break;
+    out[k] = v;
+  }
+  return out;
+}
+
 function normalizeSkill(s: unknown): SkillState | undefined {
-  if (!isObj(s) || typeof s.box !== 'number' || typeof s.due !== 'number') return undefined;
+  if (!isObj(s) || !isDay(s.due) || typeof s.box !== 'number' || !Number.isFinite(s.box)) return undefined;
+  const box = Math.min(TOP_BOX, Math.max(1, Math.round(s.box)));
   return {
-    box: s.box,
-    best: Math.max(num(s.best, s.box), s.box),
-    due: s.due,
-    last: num(s.last, s.due),
-    reviews: num(s.reviews),
-    misses: num(s.misses),
+    box,
+    best: Math.min(TOP_BOX, Math.max(whole(s.best, box), box)),
+    due: Math.round(s.due),
+    last: isDay(s.last) ? Math.round(s.last) : Math.round(s.due),
+    reviews: Math.max(0, whole(s.reviews)),
+    misses: Math.max(0, whole(s.misses)),
   };
 }
 
@@ -159,7 +180,7 @@ function normalizeSession(s: unknown): SavedSession | null {
 }
 
 function normalizeNote(n: unknown): Note | null {
-  if (!isObj(n) || typeof n.id !== 'string' || !n.id) return null;
+  if (!isObj(n) || typeof n.id !== 'string' || !n.id || n.id.length > 60) return null;
   const en = typeof n.en === 'string' ? n.en.slice(0, NOTE_EN_MAX) : '';
   const ja = typeof n.ja === 'string' ? n.ja.slice(0, NOTE_JA_MAX) : '';
   if (!en.trim() && !ja.trim()) return null;
@@ -172,7 +193,7 @@ function normalizeNote(n: unknown): Note | null {
     ...(more.length ? { more } : {}),
     created,
     updated: num(n.updated, created),
-    ...(typeof n.from === 'string' ? { from: n.from } : {}),
+    ...(typeof n.from === 'string' && n.from.length <= 80 ? { from: n.from } : {}),
   };
 }
 
@@ -194,27 +215,25 @@ export function normalize(raw: unknown): Progress {
   if (!isObj(raw) || raw.v !== 1) return base;
   const ex: Record<string, ExchangeProgress> = {};
   if (isObj(raw.ex)) {
-    for (const [id, e] of Object.entries(raw.ex)) {
-      if (!isObj(e) || typeof e.met !== 'number') continue;
-      ex[id] = { met: e.met, hear: normalizeSkill(e.hear), say: normalizeSkill(e.say) };
+    for (const [id, e] of Object.entries(raw.ex).slice(0, MOST_ENTRIES)) {
+      if (!isObj(e) || !isDay(e.met) || id.length > 80) continue;
+      ex[id] = { met: Math.round(e.met), hear: normalizeSkill(e.hear), say: normalizeSkill(e.say) };
     }
   }
   const st = isObj(raw.settings) ? raw.settings : {};
   return {
     v: 1,
-    started: typeof raw.started === 'number' ? raw.started : null,
-    days: Array.isArray(raw.days) ? raw.days.filter((d): d is number => typeof d === 'number') : [],
+    started: isDay(raw.started) ? Math.round(raw.started) : null,
+    days: Array.isArray(raw.days) ? [...new Set(raw.days.filter(isDay).map(Math.round))].sort((a, b) => a - b) : [],
     ex,
-    missedLines: isObj(raw.missedLines) ? (raw.missedLines as Record<string, number>) : {},
-    practiced: isObj(raw.practiced) ? (raw.practiced as Record<string, number>) : {},
-    talked: isObj(raw.talked)
-      ? Object.fromEntries(Object.entries(raw.talked).filter((x): x is [string, number] => typeof x[1] === 'number'))
-      : {},
+    missedLines: numbers(raw.missedLines),
+    practiced: numbers(raw.practiced),
+    talked: numbers(raw.talked),
     session: normalizeSession(raw.session),
-    backedUp: typeof raw.backedUp === 'number' ? raw.backedUp : null,
+    backedUp: isDay(raw.backedUp) ? Math.round(raw.backedUp) : null,
     notes: normalizeNotes(raw.notes),
     partner:
-      isObj(raw.partner) && isPartner(raw.partner.id) && typeof raw.partner.day === 'number'
+      isObj(raw.partner) && isPartner(raw.partner.id) && isDay(raw.partner.day)
         ? { id: raw.partner.id, day: raw.partner.day, first: raw.partner.first === true }
         : null,
     partnered: Array.isArray(raw.partnered) ? [...new Set(raw.partnered.filter(isPartner))] : [],
@@ -246,7 +265,12 @@ export function loadProgress(): Progress {
   let text: string | null = null;
   try {
     text = localStorage.getItem(KEY);
-    return text ? normalize(JSON.parse(text)) : emptyProgress();
+    if (!text) return emptyProgress();
+    const raw: unknown = JSON.parse(text);
+    // A save this version does not know (a newer format, after a step back to an older version): kept aside like an
+    // unreadable one, before the next save writes over it (2026-11-17).
+    if (!isObj(raw) || raw.v !== 1) throw new Error('unknown save format');
+    return normalize(raw);
   } catch {
     // Unreadable: keep a copy before the next save overwrites it, so it can still be rescued by hand.
     try {

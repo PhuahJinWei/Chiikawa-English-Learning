@@ -8,10 +8,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# The build job (which installs and runs dependencies) can only read the code; only the deploy job may publish.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -20,6 +19,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Reading the Pages settings (configure-pages) is all this job needs beyond the code.
+    permissions:
+      contents: read
+      pages: read
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -36,6 +39,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

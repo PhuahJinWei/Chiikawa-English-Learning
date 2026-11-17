@@ -38,9 +38,6 @@ export const stepLines = (s: Pick<StepDef, 'hear' | 'say' | 'then'>): Line[] => 
   ...(s.then ?? []),
 ];
 
-/** The same sentence, whatever its punctuation or capitals: "I'm hungry." and "I'm hungry!" */
-export const sameSentence = (a: string, b: string): boolean => keyOf(a) === keyOf(b);
-
 /** Replies that fit so many questions ("OK!", "Yes.") that the quiz never offers them as a wrong answer. */
 export const VERSATILE: ReadonlySet<string> = new Set([
   'OK!', 'Yes.', 'No.', 'Thank you!', 'A little.', "I'm OK.", "It's OK.", 'Not yet.', "I don't know.",

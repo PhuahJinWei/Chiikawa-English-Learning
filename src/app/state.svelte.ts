@@ -66,6 +66,12 @@ export function startDaily(): void {
 /** The next new phrases once today's lesson is done (もっと覚える): from the Today screen, or the end of a round. */
 export function startMore(): void {
   app.today = dayNumber();
+  // Past 4 a.m. it is a new day: its own lesson (with its reviews) comes first, or the round would take the day's
+  // stamp and its reviews could not be reached until tomorrow.
+  if (!app.progress.days.includes(app.today)) {
+    startDaily();
+    return;
+  }
   app.lesson = { mode: 'more', steps: [], title: 'もっと覚える', returnTo: 'today' };
   app.lessonKey++;
   app.screen = 'lesson';

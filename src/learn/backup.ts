@@ -27,9 +27,31 @@ function fromBase64(text: string): Uint8Array {
   return out;
 }
 
+/** The most a backup may unpack to: a full course with 500 long notes is under 1 MB. A pasted text that unpacks to
+ * more is not a backup, and unpacking it whole could use up the phone's memory (2026-11-17). */
+export const BACKUP_MAX_BYTES = 4 * 1024 * 1024;
+
 async function through(data: Uint8Array, stream: CompressionStream | DecompressionStream): Promise<Uint8Array> {
-  const out = new Blob([data as BlobPart]).stream().pipeThrough(stream);
-  return new Uint8Array(await new Response(out).arrayBuffer());
+  const reader = new Blob([data as BlobPart]).stream().pipeThrough(stream).getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > BACKUP_MAX_BYTES) {
+      await reader.cancel();
+      throw new Error('too big');
+    }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(size);
+  let at = 0;
+  for (const c of chunks) {
+    out.set(c, at);
+    at += c.length;
+  }
+  return out;
 }
 
 const canSqueeze = () => typeof CompressionStream !== 'undefined' && typeof DecompressionStream !== 'undefined';

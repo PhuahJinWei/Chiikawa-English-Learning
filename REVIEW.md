@@ -6,6 +6,25 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Code audit (2026-11-17)
+
+Mechanical checks (dependency audit, a search for code-injection patterns and unused code) and two independent reads: the lesson logic and saved data, and security, privacy and offline code. Clean: no known vulnerabilities, nothing pasted or restored can run as code, nothing leaves the phone, no secrets in the repo. Ten defects were found and fixed:
+
+1. **A broken release could not fix itself:** the start-up panel's もう一度読み込む only reloaded the same version, while a fixed one waited to be told to take over by an app that had not started. The button now asks for a newer version, tells a waiting or arriving one to take over, and reloads when it has (or after 4 seconds). Not tried against a real broken release.
+2. **A miss in a quiz could be erased** by restarting the step or going back and forward: the next try counted as a first try. The lesson now remembers which quiz steps she missed. (It does not survive closing the app mid-step.)
+3. **Reviews due on the same day had no fixed order:** the sort's tie-break contradicted itself, so the order, and which 30 of more than 30 survived, depended on the browser (25 listening and 5 speaking in one test). Now oldest first, then path order, a phrase's two steps together.
+4. **Marking every new phrase もう知ってる earned no stamp,** and Today offered a second lesson. It counts as an answer now.
+5. **Retries came after the closing conversation.** They go before it.
+6. **The quiz's auto-next cut her off** when she tapped ▶ or a word to hear it again after answering. Her tap now holds the step until 次へ.
+7. **もっと覚える after 4 a.m.** started a round that took the new day's stamp and left its reviews out of reach. It now starts that day's lesson.
+8. **Restore trusted its input too much:** a backup could unpack to hundreds of megabytes (now refused above 4 MB), and a hand-edited one could hold numbers the schedule cannot use, or bloat storage (fractions, infinities, text where numbers belong, endless tables: now rounded, bounded or dropped). A restore that could not be saved no longer says 「記録を戻しました！」.
+9. **A save in a format this version does not know** was replaced by an empty one at the next save. It is now kept aside first, like an unreadable save.
+10. **The publish workflow** gave the job that installs dependencies the right to publish. Only the deploy job has it now. The first push after this will show whether GitHub accepts the narrower permissions; if the build job fails at "configure-pages", restore the three lines at the top.
+
+One unused function (sameSentence) was removed. Not code: your email is in every commit, the learner's job, hours and family are in public content, and in Safari (not the installed app) other sites published under the same GitHub Pages account share its storage.
+
+**Checked:** 5 new tests (tests/audit.test.ts), 127 in all; type check, build, WebKit smoke test.
+
 ## Buttons: size and place (2026-11-17)
 
 About 150 buttons on 22 screens were measured at both home-screen sizes.

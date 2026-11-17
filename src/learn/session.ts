@@ -107,18 +107,22 @@ const catchAsk = (e: Exchange, n: number): 'meaning' | 'reply' => (e.kind === 'r
 
 /** Every review due today, the longest overdue first (a lesson holds MAX_REVIEWS of them). */
 function dueSteps(p: Progress, ordered: readonly Exchange[], today: number): Step[] {
-  const due: { step: Step; due: number }[] = [];
-  for (const e of ordered) {
+  const due: { step: Step; due: number; at: number }[] = [];
+  for (const [at, e] of ordered.entries()) {
     const ep = p.ex[e.id];
     if (!ep) continue;
     if (ep.hear && isDue(ep.hear, today)) {
-      due.push({ step: { kind: 'catch', exId: e.id, review: true, ask: catchAsk(e, ep.hear.reviews) }, due: ep.hear.due });
+      due.push({ step: { kind: 'catch', exId: e.id, review: true, ask: catchAsk(e, ep.hear.reviews) }, due: ep.hear.due, at });
     }
     if (e.kind !== 'understand' && ep.say && isDue(ep.say, today)) {
-      due.push({ step: { kind: 'answer', exId: e.id, review: true }, due: ep.say.due });
+      due.push({ step: { kind: 'answer', exId: e.id, review: true }, due: ep.say.due, at });
     }
   }
-  due.sort((a, b) => a.due - b.due || (a.step.kind === 'catch' ? -1 : 1));
+  // Oldest first; on the same day in path order, a phrase's listening step before its speaking step. (Until
+  // 2026-11-17 the tie-break answered -1 or 1 whichever way two like steps were compared, so the order, and which
+  // reviews survived the cut to MAX_REVIEWS, depended on the browser.)
+  const rank = (s: Step) => (s.kind === 'catch' ? 0 : 1);
+  due.sort((a, b) => a.due - b.due || a.at - b.at || rank(a.step) - rank(b.step));
   return due.map((d) => d.step);
 }
 
