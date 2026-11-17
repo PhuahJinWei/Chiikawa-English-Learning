@@ -6,6 +6,18 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## More "and": 6 new phrases (2026-11-17)
+
+You said she often forgets "and". Only 4 of the 128 phrases had it, and two of those are the fixed "And you?".
+
+- **6 drafts**, #70, #77, #78, #103, #113 and #127 in the content sheet (Status: Draft). Each joins sentences she already knows and comes right after what it builds on, so "and" is the one new piece:
+  - Two things, like 〜と: "I work on Saturdays and Sundays." (#70, after "I'm off on Mondays and Fridays."), and "Chicken and rice, please." (#103, answering "What do you want to eat?").
+  - Two sentences, like 〜て or そして: "My name is Yuki, and I'm from Japan." (#77), "I work at a bakery, and I like drawing." (#78), "I'm tired and hungry." (#113), and "I went to the beach and took pictures." (#127, answering "What did you do today?").
+- **New word blocks:** rice, on Saturdays, Sundays, and a second meaning of "and" (〜て／そして) for joining sentences, so tapping "and" in those four shows that meaning. Their readings were checked against the voice's phonemes; no audio was made.
+- **In the listening quiz,** a shorter phrase she knows, such as "I'm tired.", can come up as the wrong meaning, so she has to catch the "and" part.
+- **Approved the same day, voiced (9 new clips) and in the app.** The steps after #69 moved down in the numbering, because the new ones sit between them.
+- **Checked:** tests (120 of 120: the path, the built-from rule, readings, highlights) and the type check; the sheet was regenerated.
+
 ## Lesson cards on small iPhones (2026-11-17)
 
 You asked me to fix cards sliding under Hachiware's bubble in lessons. I walked two lessons at both home-screen sizes and measured every moment of every step: a first lesson, and one with the tallest cards (the longest lines she hears and says, quizzes answered with long replies, a new phrase with three phrasings and two replies, a long conversation).

@@ -1,5 +1,5 @@
 /**
- * The order she learns the steps in: the learning path. The steps themselves are written in part1.ts to part5.ts,
+ * The order she learns the steps in: the learning path. The steps themselves are written in part1.ts to part6.ts,
  * grouped by when they were written; this list alone decides the order (2026-11-17, so introductions could move up
  * without moving any step between files). Two new steps a day by default, so each line below is about one day.
  *
@@ -52,10 +52,12 @@ export const ORDER: readonly string[] = [
   'start-at-seven', 'work-seven-to-four',
   'work-five-days', 'work-hours-and-days',
   'work-all', 'off-on-mondays',
-  'off-mondays-and-fridays', 'whats-your-hobby',
+  'off-mondays-and-fridays', 'work-saturdays-and-sundays', // more "and" (2026-11-17)
+  'whats-your-hobby',
   'like-taking-pictures', 'like-both',
   'do-you-have-brothers', 'two-younger-brothers',
-  'my-name-is', 'where-do-you-live',
+  'my-name-is', 'name-and-from-japan', 'bakery-and-drawing', // more "and" (2026-11-17)
+  'where-do-you-live',
   'do-you-like-malaysia', 'how-was-your-trip',
 
   // ── Days 40–49: longer answers, built from the short ones.
@@ -71,11 +73,12 @@ export const ORDER: readonly string[] = [
   'how-about-you', 'ask-what-do-you-do',
 
   // ── Days 50–57: food and feelings, and asking things herself.
-  'what-do-you-want-to-eat', 'can-i-have-this',
+  'what-do-you-want-to-eat', 'chicken-and-rice', // more "and" (2026-11-17)
+  'can-i-have-this',
   'can-i-have-some-water', 'i-like-this',
   'too-spicy', 'im-hungry',
   'me-too', 'im-thirsty',
-  'im-tired', 'im-happy',
+  'im-tired', 'im-happy', 'tired-and-hungry', // more "and" (2026-11-17)
   'ask-how-are-you', 'ask-like-it',
   'what-is-this', 'help-me',
   'lets-go-she', 'what-tomorrow',
@@ -84,7 +87,8 @@ export const ORDER: readonly string[] = [
   'want-to-take-pictures', 'where-are-we-going',
   'tomorrow-the-beach', 'what-time-tomorrow',
   'what-did-you-do-today', 'went-to-the-beach',
-  'took-pictures', 'yesterday-went-shopping',
+  'took-pictures', 'beach-and-pictures', // more "and" (2026-11-17)
+  'yesterday-went-shopping',
   'tomorrow-want-shopping', 'it-was-fun',
   'today-was-fun', 'been-to-japan',
   'see-you-next-year', 'come-again-next-year',

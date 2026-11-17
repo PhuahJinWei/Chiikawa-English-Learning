@@ -416,6 +416,16 @@
     "end": 183
    }
   },
+  "chicken-and-rice-please": {
+   "text": "Chicken and rice, please.",
+   "ms": 1600,
+   "phonemes": "tʃˈɪkɪn ænd ɹˈaɪs plˈiːz",
+   "pitch": {
+    "start": 261,
+    "low": 106,
+    "end": 245
+   }
+  },
   "chicken-please": {
    "text": "Chicken, please.",
    "ms": 1160,
@@ -1457,6 +1467,16 @@
     "end": 175
    }
   },
+  "i-went-to-the-beach-and-took-pictures": {
+   "text": "I went to the beach and took pictures.",
+   "ms": 1990,
+   "phonemes": "aɪ wɛnt tə ðə bˈiːtʃ ænd tˈʊk pˈɪktʃɚz",
+   "pitch": {
+    "start": 180,
+    "low": 92,
+    "end": 184
+   }
+  },
   "i-work-at-a-bakery": {
    "text": "I work at a bakery.",
    "ms": 1280,
@@ -1465,6 +1485,16 @@
     "start": 184,
     "low": 96,
     "end": 183
+   }
+  },
+  "i-work-at-a-bakery-and-i-like-drawing": {
+   "text": "I work at a bakery, and I like drawing.",
+   "ms": 2330,
+   "phonemes": "aɪ wˈɜːk æɾə bˈeɪkɚɹi ænd aɪ lˈaɪk dɹˈɔːɪŋ",
+   "pitch": {
+    "start": 235,
+    "low": 152,
+    "end": 169
    }
   },
   "i-work-at-a-bakery-from-seven-to-four-five-days-a-week": {
@@ -1505,6 +1535,16 @@
     "start": 227,
     "low": 154,
     "end": 171
+   }
+  },
+  "i-work-on-saturdays-and-sundays": {
+   "text": "I work on Saturdays and Sundays.",
+   "ms": 2020,
+   "phonemes": "aɪ wˈɜːk ˌɔn sˈæɾɚdˌeɪz ænd sˈʌndeɪz",
+   "pitch": {
+    "start": 188,
+    "low": 84,
+    "end": 197
    }
   },
   "ill": {
@@ -1665,6 +1705,16 @@
     "start": 222,
     "low": 80,
     "end": 170
+   }
+  },
+  "im-tired-and-hungry": {
+   "text": "I'm tired and hungry.",
+   "ms": 1430,
+   "phonemes": "aɪm tˈaɪɚd ænd hˈʌŋɡɹi",
+   "pitch": {
+    "start": 229,
+    "low": 129,
+    "end": 202
    }
   },
   "im-yuki": {
@@ -2118,6 +2168,16 @@
     "end": 174
    }
   },
+  "my-name-is-yuki-and-im-from-japan": {
+   "text": "My name is Yuki, and I'm from Japan.",
+   "ms": 2450,
+   "phonemes": "maɪ nˈeɪm ɪz jˈuːki ænd aɪm fɹʌm dʒəpˈæn",
+   "pitch": {
+    "start": 207,
+    "low": 149,
+    "end": 220
+   }
+  },
   "next-one-x": {
    "text": "Next one!",
    "ms": 900,
@@ -2308,6 +2368,16 @@
     "end": 214
    }
   },
+  "on-saturdays": {
+   "text": "on Saturdays",
+   "ms": 1100,
+   "phonemes": "ˌɔn sˈæɾɚdˌeɪz",
+   "pitch": {
+    "start": 196,
+    "low": 145,
+    "end": 211
+   }
+  },
   "once-more": {
    "text": "Once more.",
    "ms": 890,
@@ -2396,6 +2466,16 @@
     "start": 218,
     "low": 182,
     "end": 210
+   }
+  },
+  "rice": {
+   "text": "rice,",
+   "ms": 770,
+   "phonemes": "ɹˈaɪs",
+   "pitch": {
+    "start": 217,
+    "low": 189,
+    "end": 225
    }
   },
   "saturday": {
@@ -2746,6 +2826,16 @@
     "start": 249,
     "low": 173,
     "end": 197
+   }
+  },
+  "sundays": {
+   "text": "Sundays.",
+   "ms": 890,
+   "phonemes": "sˈʌndeɪz",
+   "pitch": {
+    "start": 256,
+    "low": 94,
+    "end": 208
    }
   },
   "sure-x": {
