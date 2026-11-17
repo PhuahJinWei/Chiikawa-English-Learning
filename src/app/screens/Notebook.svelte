@@ -83,7 +83,7 @@
         <Ja
           text={shelf === 'notes'
             ? notes.length
-              ? 'メモは▶で聞けます。|タップすると|書き直せます。'
+              ? 'メモは▶で聞けます|（レッスンにない英語は、|iPhoneの声で読みます）。|タップすると|書き直せます。'
               : '送ってもらった英語を|貼り付けたり、|英語で何て言うか|知りたいことを|書いたりできます。'
             : count
               ? '習ったフレーズは|▶で聞けます。|タップすると|詳しく見られます。'
@@ -116,16 +116,17 @@
                 {:else}
                   <span class="play ask" aria-hidden="true">?</span>
                 {/if}
+                <!-- In the list a note is short: two lines of English and of its reading, then two of her own
+                     Japanese, which is what she scans for. The note opens whole in the editor. -->
                 <button class="row-main" onclick={() => (writing = n)}>
                   <span class="text">
                     {#if n.en}
                       <span class="note-en" lang="en">{n.en}</span>
-                      <NoteReading en={n.en} />
+                      <NoteReading en={n.en} small />
                     {:else}
-                      <span class="ask-label">英語で何て言う？</span>
+                      <span class="ask-tag">英語で何て言う？</span>
                     {/if}
-                    {#if n.ja}<span class="note-ja">{n.ja}</span>{/if}
-                    {#if n.en && !heartPath(n.en)}<span class="voice">iPhoneの声</span>{/if}
+                    {#if n.ja}<span class="note-ja" class:main={!n.en}>{n.ja}</span>{/if}
                   </span>
                   <span class="go" aria-hidden="true">›</span>
                 </button>
@@ -359,36 +360,48 @@
     font-size: 22px;
     font-weight: 900;
   }
+  .note-item .text {
+    gap: 2px;
+  }
   .note-en {
     font-family: var(--font-en);
     font-weight: 800;
     font-size: 17px;
+    line-height: 1.3;
     overflow-wrap: anywhere;
-  }
-  .ask-label {
-    font-weight: 900;
-    font-size: 14px;
-    color: var(--ink-2);
-  }
-  .note-ja {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--ink-2);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .voice {
+  /* A question with no English yet: a small tag, then her question as the note's main line. */
+  .ask-tag {
     justify-self: start;
-    margin-top: 2px;
-    padding: 0 6px;
-    border-radius: 6px;
+    padding: 2px 9px;
+    border-radius: 99px;
     background: var(--paper-2);
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 800;
     color: var(--ink-2);
+  }
+  /* Her own Japanese: darker than the reading, since it is what she looks for in the list. */
+  .note-ja {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--ink);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .note-ja.main {
+    font-size: 15.5px;
+    font-weight: 800;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
   }
   .text-out {
     width: 100%;

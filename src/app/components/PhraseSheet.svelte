@@ -47,10 +47,12 @@
       {#each ex.short as line (line.en)}<SpeakerCard kind="model" {line} badge={replyWord(ex)} compact />{/each}
     {/if}
 
+    <!-- The same bars as beside the phrase in the notebook (覚えた度), for understanding and saying apart. -->
     <div class="card soft strength">
-      <div><span>聞く</span><span class="dots">{#each dots(ep?.hear?.box) as on, i (i)}<i class:on></i>{/each}</span></div>
+      <span class="strength-title">覚えた度</span>
+      <div><span>聞く</span><span class="bars">{#each dots(ep?.hear?.box) as on, i (i)}<i class:on></i>{/each}</span></div>
       {#if ex.kind !== 'understand'}
-        <div><span>話す</span><span class="dots">{#each dots(ep?.say?.box) as on, i (i)}<i class:on></i>{/each}</span></div>
+        <div><span>話す</span><span class="bars">{#each dots(ep?.say?.box) as on, i (i)}<i class:on></i>{/each}</span></div>
       {/if}
     </div>
     <button class="btn soft" disabled={noted} onclick={addToNotes}>{noted ? 'メモにあります' : 'メモに追加'}</button>
@@ -131,18 +133,22 @@
     justify-content: space-between;
     align-items: center;
   }
-  .dots {
+  .strength-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--ink-2);
+  }
+  .bars {
     display: inline-flex;
-    gap: 5px;
+    gap: 3px;
   }
-  .dots i {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2px solid var(--ink);
-    background: var(--white);
+  .bars i {
+    width: 10px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--paper-3);
   }
-  .dots i.on {
+  .bars i.on {
     background: var(--mint-2);
   }
   .actions {

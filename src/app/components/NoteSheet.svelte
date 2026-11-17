@@ -103,13 +103,14 @@
     </label>
     <div class="row tools">
       <button class="btn soft" onclick={paste}>コピーした英語を貼り付ける</button>
+      <!-- Which voice reads it is said on the button itself: the lessons' voice, or the iPhone's for other English. -->
       <button class="btn soft listen" disabled={!english} onclick={async () => (voiceProblem = await hearNote(english))} aria-label="英語を聞く">
-        ▶ 聞く
+        <span>▶ 聞く</span>
+        {#if english}<span class="voice">{heart ? 'レッスンの声' : 'iPhoneの声'}</span>{/if}
       </button>
     </div>
     {#if english}
       <NoteReading en={english} boxed />
-      <p class="voice">{heart ? 'レッスンと同じ声で読みます。' : 'iPhoneの声で読みます（レッスンとは違う声です）。'}</p>
     {/if}
     {#if voiceProblem}<p class="warn">{voiceProblem}</p>{/if}
     {#if hasJapanese}<p class="warn">英語の欄に日本語が入っています。英語だけにすると、正しく読み上げられます。</p>{/if}
@@ -133,7 +134,10 @@
           </div>
         </div>
       {:else}
-        <button class="btn soft oops" onclick={() => (confirming = true)}>このメモを削除</button>
+        <button class="delete" onclick={() => (confirming = true)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 4h4" /><path d="M7 7l1 12.5h8L17 7" /><path d="M10.5 10.5v6M13.5 10.5v6" /></svg>
+          このメモを削除
+        </button>
       {/if}
     {/if}
   </div>
@@ -201,12 +205,19 @@
     grid-template-columns: 1fr auto;
   }
   .listen {
-    padding: 8px 16px;
+    flex-direction: column;
+    gap: 0;
+    padding: 6px 14px;
+    line-height: 1.2;
   }
-  .voice,
+  .voice {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink-2);
+  }
   .hint {
     margin: 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--ink-2);
     line-height: 1.5;
@@ -219,6 +230,32 @@
     font-size: 13px;
     font-weight: 700;
     line-height: 1.5;
+  }
+  /* Deleting is rare: a quiet link under the note, not a button as big as 保存する. It still asks first. */
+  .delete {
+    justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-2);
+  }
+  .delete:active {
+    color: var(--ink);
+  }
+  .delete svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
   .confirm {
     display: grid;

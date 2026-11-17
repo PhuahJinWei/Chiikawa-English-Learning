@@ -6,9 +6,9 @@
   /**
    * The katakana reading of a note's English (src/app/reading.ts), with its strong beats marked. Nothing shows until
    * it is ready. `boxed`: the note editor's version, larger, under a label, saying when it was made on the phone; it
-   * follows her typing a moment after her.
+   * follows her typing a moment after her. `small`: the notebook list's version, smaller and at most two lines.
    */
-  let { en, boxed = false }: { en: string; boxed?: boolean } = $props();
+  let { en, boxed = false, small = false }: { en: string; boxed?: boolean; small?: boolean } = $props();
   let kana = $state(untrack(() => readyReading(en) ?? ''));
 
   $effect(() => {
@@ -40,7 +40,7 @@
     {#if !handMade(en)}<span class="auto">自動でつけた読み方です。目安にしてください。</span>{/if}
   </div>
 {:else if kana}
-  <span class="reading" lang="ja"><Kana text={kana} /></span>
+  <span class="reading" class:sm={small} lang="ja"><Kana text={kana} /></span>
 {/if}
 
 <style>
@@ -60,6 +60,16 @@
     font-size: 19px;
     color: var(--ink);
   }
+  /* In a list: smaller than the English and her own note, and at most two lines (the editor shows it whole). */
+  .sm {
+    font-size: 13.5px;
+    line-height: 1.75;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
   .box {
     display: grid;
     padding: 6px 12px 8px;
@@ -72,7 +82,7 @@
     color: var(--ink-2);
   }
   .auto {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--ink-2);
   }

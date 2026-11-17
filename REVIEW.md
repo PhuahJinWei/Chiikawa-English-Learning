@@ -6,6 +6,16 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## Polish: notes (メモ) and the phrase sheet (2026-11-17)
+
+You asked whether the notes and memo screens look good. The phrase list and sheet did; the memo list was the weakest screen. This pass changes only how they look.
+
+- **Memo list:** a note is short in the list: at most two lines of English, two of its reading (smaller and lighter now), then two of her own Japanese, which is darker and has room between its lines, since it is what she scans for. The editor still shows everything. A question with no English yet shows 「英語で何て言う？」 as a small tag above her question in bold.
+- **Which voice reads a note** is said once in the memo shelf's intro (「レッスンにない英語は、iPhoneの声で読みます」), not by a tiny 「iPhoneの声」 tag on every note.
+- **Memo editor:** the 聞く button says which voice it will use (iPhoneの声 or レッスンの声), so the loose line under the reading is gone. Deleting is a quiet link with a bin icon instead of a pink button as big as 保存する; it still asks first. The reading box's caption is 13px (it was 12px). The labels 英語 and メモ（日本語） were already 14px, so they are unchanged.
+- **Phrase sheet:** progress uses the same green bars as the notebook list, under a 覚えた度 title, instead of rows of circles with no name.
+- **Checked:** the memo list (a short note, a long LINE message, a question with no English, a note saved from a phrase), the editor and the phrase sheet at iPhone 13 size; tests (117), type check, build, and the WebKit smoke test (28 of 28, including writing, reading back, changing and deleting a note).
+
 ## Polish: Today, Practice, Notebook, Settings (2026-11-17)
 
 You asked whether the design looks good, modern and neat. The lesson screens did; the four tab screens were plainer and less tidy. This pass changes only how they look.
