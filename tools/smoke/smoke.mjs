@@ -31,9 +31,16 @@ async function check(name, fn, { info = false } = {}) {
   }
 }
 
-/** A phone-sized WebKit page, with every page error collected. */
+/**
+ * A phone-sized WebKit page, with every page error collected. Like Safari on an iPhone (through iOS 26.5 at least), it
+ * cannot read a stream with `for await`: this WebKit can, and the notes' katakana readings passed here while they
+ * failed on a phone (2026-11-18, tools/build/engine-data.ts).
+ */
 async function open(browser, phone, options = {}) {
   const context = await browser.newContext({ ...devices[phone], ...options });
+  await context.addInitScript(() => {
+    delete ReadableStream.prototype[Symbol.asyncIterator];
+  });
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));

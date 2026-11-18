@@ -6,6 +6,28 @@ Reviewed 2026-11-16, before anything was committed or published. Nothing in the 
 
 **Labels.** *Confirmed* means seen by running the app or the code. *Predicted* means expected on an iPhone from documented Safari behaviour, which nobody can confirm until it runs on one.
 
+## The smoke test's crash, and memo readings on an iPhone (2026-11-18)
+
+**What failed.** The WebKit smoke test crashed the page in its offline check in every run on 2026-11-18 (33 of 36 passed), also with the build that had passed all 36 the evening before.
+
+**Why.** WebKit's `DecompressionStream` crashes the page when it is given a large block (about 450 KB) in one piece. The format makes no difference (gzip and deflate both crash), and it depends on what else the page has loaded. Fed 1 KB at a time, it never crashed. A three-line page reproduces it without the app. It is not the JavaScript compiler (it crashes with the JIT switched off), not the service worker, and not being offline (it crashed online too).
+
+The note-reading engine unpacks its 450 KB of pronunciation data exactly that way when it starts, the first time a memo needs a reading. It also reads that stream with `for await`, which Safari does not support: not in Safari on iOS through 26.5 ([caniuse](https://caniuse.com/mdn-api_readablestream_--asynciterator), WebKit bug 194379). In WebKit made to lack it, as on an iPhone, the engine never started, so **a memo's English got no katakana reading on her iPhone** unless it was a lesson line (those have hand-made readings). Every test passed because Playwright's WebKit is newer and has `for await` on streams.
+
+**Fix.** The build unpacks the engine's data (tools/build/engine-data.ts), so the phone runs neither the unpacking nor `for await`. If an update of the engine changes that code, the build stops with an error. The engine file grows from 1.3 to 1.9 MB (785 KB to download instead of 685 KB), and the offline copy from 6.9 to 7.4 MB. The backup already fed the unpacker 1 KB at a time, and backups are small.
+
+**Checked:**
+- The smoke test now runs without `for await` on streams, as Safari does. Before the fix its readings failed on both phones; after it, 36 of 36 passed three runs in a row.
+- The scripts that had crashed 25–45% of the time crashed in 0 of 30 tries.
+- 2 new tests show the engine as built reads sentences exactly as before and uses no streams.
+- Not tried on an iPhone. Whether the unpacker crash also happens on one is unknown; with the fix it no longer matters.
+
+## Updates, and the date of the version (2026-11-18)
+
+You asked whether updates reach her phone, since the fixes of 2026-11-18 seemed missing. They were live (version 9858658, published at 00:38). In WebKit, two older versions installed as on her phone (the first day's, and the one before the fixes) each switched to it by themselves within 2 seconds of the app being opened or coming back to the front; one in the middle of a lesson waited, and switched 3 seconds after she was back on 今日. Not tried on an iPhone.
+
+設定 now shows when the version she has was made, under its number, as 最終更新 with a date and time in the phone's own time. It is the time of the last commit that changed the app itself, so a push of notes or tests alone is still not a new version for her phone to download (5.4). The reports she sends include it, and the deploy now fetches the whole history to find it.
+
 ## Review of the audit's fixes (2026-11-18)
 
 A review of the code audit's own changes (below) found 15 problems. All are fixed:

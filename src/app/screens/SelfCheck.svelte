@@ -17,7 +17,7 @@
   import { errorLog } from '../errors.ts';
   import { deviceSummary, featureProbes, isIOS, isStandalone, screenSummary, shareText } from '../platform.ts';
   import { stage, stageInfo } from '../stage.ts';
-  import { app, go, save, versionText } from '../state.svelte.ts';
+  import { app, go, save, versionLine } from '../state.svelte.ts';
   import { workerStatus } from '../updates.ts';
   import { testWakeLock, wakeInfo } from '../wakelock.svelte.ts';
 
@@ -183,7 +183,7 @@
     const time = (at: number) => new Date(at).toTimeString().slice(0, 8);
     return [
       '【えいごフレンズ】動作チェック',
-      `バージョン: ${versionText()}`,
+      `バージョン: ${versionLine()}`,
       `日時: ${new Date().toLocaleString('ja-JP')}`,
       `端末: ${deviceSummary()}`,
       ...rows.map((r) => `${MARKS[r.status]} ${r.label}${r.detail ? `（${r.detail}）` : ''}`),

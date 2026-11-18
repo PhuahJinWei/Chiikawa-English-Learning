@@ -5,7 +5,7 @@
   import { audioPath } from '../clips.ts';
   import Ja from '../components/Ja.svelte';
   import { shareText } from '../platform.ts';
-  import { app, go, save, versionText } from '../state.svelte.ts';
+  import { app, go, save, versionDate, versionLine, versionText } from '../state.svelte.ts';
 
   /** Settings (a menu tab): display, learning pace, and the app's tools. */
   const s = app.progress.settings;
@@ -53,7 +53,7 @@
       `出会ったフレーズ: ${met} / ${EXCHANGES.length}`,
       `覚えた: ${learned}　定着した: ${mastered}`,
       missed.length ? `聞き取りで間違えた:\n${missed.join('\n')}` : '聞き取りの間違い: なし',
-      `バージョン: ${versionText()}`,
+      `バージョン: ${versionLine()}`,
     ].join('\n');
     const r = await shareText('【えいごフレンズ】がんばり記録', text);
     // Never fail silently (REVIEW 4.12): if it could not be sent or copied, show it to copy by hand.
@@ -138,7 +138,7 @@
 
     <p class="note muted">
       記録はこのiPhoneの中だけに保存されます{app.saved ? '' : '（いま保存できていません）'}。<br />
-      バージョン {versionText()}
+      バージョン {versionText()}{#if versionDate()}<br />最終更新 {versionDate()}{/if}
     </p>
     <!-- The notice the GPL asks of an app people use: who holds the copyright, the licence, no warranty, and where to
          read the licence (README, Licence). -->

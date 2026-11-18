@@ -47,6 +47,17 @@ export const app = $state({
 /** The version as shown to her and in reports: '0.1.0' plus the build, when known. */
 export const versionText = (): string => `${__APP_VERSION__}${app.build ? ` (${app.build.slice(0, 7)})` : ''}`;
 
+/** When the version she has was made (the app's last change, vite.config.ts), in the phone's own time:
+ * '2026/11/18 0:36'. Empty when unknown. */
+export function versionDate(): string {
+  const d = new Date(__APP_DATE__);
+  if (!__APP_DATE__ || Number.isNaN(d.getTime())) return '';
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+/** The version with its date, for the reports she sends. */
+export const versionLine = (): string => (versionDate() ? `${versionText()}、最終更新 ${versionDate()}` : versionText());
+
 export function save(): void {
   app.saved = saveProgress($state.snapshot(app.progress) as Progress);
 }

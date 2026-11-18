@@ -2,7 +2,7 @@
   import { untrack } from 'svelte';
   import { errorText } from '../errors.ts';
   import { deviceSummary, shareText } from '../platform.ts';
-  import { app, go, versionText } from '../state.svelte.ts';
+  import { app, go, versionLine } from '../state.svelte.ts';
 
   /**
    * A screen failed to draw (App.svelte catches it, so the menu and the friends keep working): a calm message, a way
@@ -16,7 +16,7 @@
   async function send() {
     const text = [
       '【えいごフレンズ】エラー',
-      `バージョン: ${versionText()}`,
+      `バージョン: ${versionLine()}`,
       `端末: ${deviceSummary()}`,
       `画面: ${failedOn}`,
       `内容: ${errorText(error)}`,

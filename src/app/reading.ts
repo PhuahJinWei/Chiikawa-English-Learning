@@ -5,9 +5,9 @@ import { clauses, joinClauses, kanaFromPhonemes, markAfter } from '../learn/read
 
 /**
  * Katakana readings for her notes. English that is a lesson line keeps its hand-made reading; any other English gets
- * one made on the phone: the pronunciation engine (espeak-ng, about 1.3 MB) writes its sounds, and
- * src/learn/reading.ts turns them into katakana. The engine is loaded the first time a note needs it, and is kept
- * offline with the rest of the app.
+ * one made on the phone: the pronunciation engine (espeak-ng, about 1.9 MB, its data unpacked by the build:
+ * tools/build/engine-data.ts) writes its sounds, and src/learn/reading.ts turns them into katakana. The engine is
+ * loaded the first time a note needs it, and is kept offline with the rest of the app.
  */
 
 type Phonemize = (text: string, language?: string) => Promise<string[]>;
